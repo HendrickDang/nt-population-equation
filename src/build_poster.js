@@ -25,26 +25,13 @@ const M = 1.15;                         // outer margin
 const GUT = 0.62;                       // gutter between columns
 const COLW = (W - 2 * M - 2 * GUT) / 3; // three-column grid
 
-const THEME = {
-  name: "NT Population Equation Poster",
-  headFontFace: "Cambria",
-  bodyFontFace: "Calibri",
-  colors: {
-    dk1: "16181C", lt1: "FCFCFB",
-    dk2: "52514E", lt2: "F2F0EB",
-    accent1: "2A78D6", accent2: "EB6834", accent3: "1BAF7A",
-    accent4: "A8552A", accent5: "8B857A", accent6: "0B0B0B",
-    hlink: "2A78D6", folHlink: "6250D6",
-  },
-};
-
 const INK = "16181C", INK2 = "52514E", INK3 = "8B857A";
 const OCHRE = "A8552A", OVERSEAS = "EB6834", PANEL = "F2F0EB", LINE = "E0DCD3";
 
 const pres = new pptxgen();
 pres.defineLayout({ name: "A1", width: W, height: H });
 pres.layout = "A1";
-pres.theme = { headFontFace: THEME.headFontFace, bodyFontFace: THEME.bodyFontFace };
+pres.theme = { headFontFace: "Cambria", bodyFontFace: "Calibri" };
 pres.author = "Van Hoi (Hendrick) Dang";
 pres.title = "The Territory's Population Equation";
 
@@ -302,10 +289,4 @@ slide.addText(
 );
 
 pres.writeFile({ fileName: path.join(OUT, "POS006_population_equation_poster_A1.pptx") })
-  .then(async () => {
-    const { applyTheme } = require(
-      "/root/.claude/skills/synced/e15b6dca-e10c-4ff4-8122-2af941d18169_bf341102-e215-4b50-83a0-e1221ef0b088/pptx/scripts/apply_theme.js"
-    );
-    await applyTheme(path.join(OUT, "POS006_population_equation_poster_A1.pptx"), THEME);
-    console.log("Poster -> outputs/POS006_population_equation_poster_A1.pptx");
-  });
+  .then(() => console.log("Poster -> outputs/POS006_population_equation_poster_A1.pptx"));

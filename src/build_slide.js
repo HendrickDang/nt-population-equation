@@ -19,37 +19,34 @@ const ROOT = path.resolve(__dirname, "..");
 const OUT = path.join(ROOT, "outputs");
 const f = JSON.parse(fs.readFileSync(path.join(OUT, "figures.json"), "utf8"));
 
-const THEME = {
-  name: "NT Population Equation",
-  headFontFace: "Cambria",
-  bodyFontFace: "Calibri",
-  colors: {
-    dk1: "16181C", lt1: "FCFCFB",
-    dk2: "52514E", lt2: "E8E7E3",
-    accent1: "2A78D6", accent2: "EB6834", accent3: "1BAF7A",
-    accent4: "6F6E6A", accent5: "C9C8C4", accent6: "0B0B0B",
-    hlink: "2A78D6", folHlink: "6250D6",
-  },
+// Colours are written as literal hex rather than theme scheme colours, so the
+// script needs nothing outside this repository to produce a correctly styled
+// deck on any machine.
+const PALETTE = {
+  bg: "FCFCFB",
+  ink: "16181C",
+  ink2: "52514E",
+  ink3: "6F6E6A",
 };
+
+const FONTS = { headFontFace: "Cambria", bodyFontFace: "Calibri" };
 
 const pres = new pptxgen();
 pres.layout = "LAYOUT_16x9";            // 10" x 5.625"
-pres.theme = { headFontFace: THEME.headFontFace, bodyFontFace: THEME.bodyFontFace };
+pres.theme = FONTS;
 pres.author = "Van Hoi (Hendrick) Dang";
 pres.title = "The Territory's Population Equation";
 
-const C = pres.SchemeColor;
-
 pres.defineSlideMaster({
   title: "RESEARCH_SLIDE",
-  background: { color: THEME.colors.lt1 },
+  background: { color: PALETTE.bg },
   objects: [
     {
       placeholder: {
         options: {
           name: "title", type: "title",
           x: 0.5, y: 0.34, w: 9.0, h: 0.52,
-          fontSize: 30, bold: true, color: C.text1, margin: 0,
+          fontSize: 30, bold: true, color: PALETTE.ink, margin: 0,
         },
         text: "",
       },
@@ -59,7 +56,7 @@ pres.defineSlideMaster({
         options: {
           name: "subtitle", type: "body",
           x: 0.5, y: 0.86, w: 9.0, h: 0.3,
-          fontSize: 14, color: C.text2, margin: 0,
+          fontSize: 14, color: PALETTE.ink2, margin: 0,
         },
         text: "",
       },
@@ -69,7 +66,7 @@ pres.defineSlideMaster({
         options: {
           name: "footer", type: "body",
           x: 0.5, y: 5.06, w: 9.0, h: 0.34,
-          fontSize: 9, color: THEME.colors.accent4, margin: 0,
+          fontSize: 9, color: PALETTE.ink3, margin: 0,
         },
         text: "",
       },
@@ -105,7 +102,7 @@ slide.addText(
         "Four-quarter rolling average. Source: ABS, National, state and territory " +
         "population, tables 310102 and 310104 (March 2026).  " +
         "Code and data: github.com/HendrickDang/nt-population-equation",
-      options: { fontSize: 8, color: THEME.colors.accent5 === undefined ? "6F6E6A" : "6F6E6A" },
+      options: { fontSize: 8, color: PALETTE.ink3 },
     },
   ],
   { placeholder: "footer" },
@@ -118,10 +115,4 @@ slide.addNotes(
 );
 
 pres.writeFile({ fileName: path.join(OUT, "RES003_population_equation_slide.pptx") })
-  .then(async () => {
-    const { applyTheme } = require(
-      "/root/.claude/skills/synced/e15b6dca-e10c-4ff4-8122-2af941d18169_bf341102-e215-4b50-83a0-e1221ef0b088/pptx/scripts/apply_theme.js"
-    );
-    await applyTheme(path.join(OUT, "RES003_population_equation_slide.pptx"), THEME);
-    console.log("Slide written to outputs/RES003_population_equation_slide.pptx");
-  });
+  .then(() => console.log("Slide -> outputs/RES003_population_equation_slide.pptx"));
