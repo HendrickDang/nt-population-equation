@@ -1,5 +1,8 @@
 """
-Builds the supporting figures for the A1 poster.
+Builds the chart images for the poster, plus the QR code.
+
+Every file this writes is a finished image, sized and styled for an A1
+poster. Drop them straight into whatever the poster is laid out in.
 
     python src/build_poster_figures.py
 
@@ -14,6 +17,8 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+
+import qrcode
 
 import matplotlib
 matplotlib.use("Agg")
@@ -77,6 +82,19 @@ def hbars(path: str, labels, values, colours, fmt, title: str, xlabel: str) -> N
     print(f"  {path}")
 
 
+REPO = "https://github.com/HendrickDang/nt-population-equation"
+
+
+def qr_code(path: str, url: str) -> None:
+    """The code printed on the poster, so a reader can reach the source."""
+    code = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_M,
+                         box_size=20, border=2)
+    code.add_data(url)
+    code.make(fit=True)
+    code.make_image(fill_color=INK, back_color="white").save(OUT / path)
+    print(f"  {path}")
+
+
 def main() -> None:
     f = json.loads((OUT / "figures.json").read_text())
     df = pd.read_csv(OUT / "nt_components.csv", parse_dates=["date"])
@@ -136,6 +154,9 @@ def main() -> None:
           lambda v: f"{v:.0f}%",
           "Quarters with net interstate gain",
           "Share of quarters in each decade")
+
+    # 5. QR code to the repository.
+    qr_code("qr_repo.png", REPO)
 
 
 if __name__ == "__main__":

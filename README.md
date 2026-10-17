@@ -12,8 +12,7 @@ Van Hoi (Hendrick) Dang, Ngoc Ngan Le, Phuong Vy Ho, Thi Kim Anh Bui
 ## The question
 
 The Northern Territory plans schools, hospitals and housing from population
-forecasts. The published growth figure is a single number, and that number
-hides which of its parts carries the risk.
+forecasts. A forecast is only as stable as the parts it is built from.
 
 Population change has exactly three components:
 
@@ -21,10 +20,10 @@ Population change has exactly three components:
 change  =  natural increase  +  net interstate migration  +  net overseas migration
 ```
 
-For the Northern Territory one of those three is persistently negative: more
-residents leave for other states than arrive from them. The Territory grows
-anyway. This project asks which component makes up the difference, and how
-steady that component is.
+The NT is the only Australian jurisdiction that loses residents to other
+states while still growing. This project asks which component makes up the
+difference, how that has shifted, and which component carries the forecast
+risk.
 
 ## Findings
 
@@ -62,12 +61,15 @@ is arithmetic, not an estimate of ours.
    resident population. If they do not, the pipeline says so rather than
    reporting a number nobody checked.
 4. Measures the volatility of each component across the full series.
-5. Produces the chart, the headline figures, the poster figures, the
-   presentation slide, the A1 poster and the dashboard.
+5. Writes the headline figures, the cleaned series, the chart images and an
+   interactive dashboard.
 
 The analysis is a pipeline rather than a report. The ABS revises these tables
-every quarter; re-running one command against a newer download reproduces
-every figure in the talk and on the poster.
+every quarter; re-running three commands against a newer download reproduces
+every figure in the project.
+
+The slide and the poster are laid out separately. This repository supplies the
+numbers and the finished chart images that go into them.
 
 ## Getting the data
 
@@ -83,61 +85,85 @@ Licensed CC BY 4.0 by the Australian Bureau of Statistics.
 
 ## Running it
 
+Python 3.9 or newer.
+
 ```bash
 pip install -r requirements.txt
-python src/pipeline.py              # analysis, figures, chart
-python src/build_poster_figures.py  # the poster's four charts
+
+python src/pipeline.py              # analysis, headline figures, main chart
+python src/build_poster_figures.py  # poster-sized charts and the QR code
 python src/build_dashboard.py       # the interactive page
-node src/build_slide.js             # the one static slide
-node src/build_poster.js            # the A1 poster
 ```
 
-Run `pipeline.py` first: everything else reads `outputs/figures.json`.
+Run `pipeline.py` first: the other two read `outputs/figures.json`.
 
-| File in `outputs/` | What it is |
+## What it writes
+
+Everything lands in `outputs/`.
+
+**Numbers**
+
+| File | What it is |
 |---|---|
-| `nt_components.csv` | tidy quarterly series for the NT |
 | `figures.json` | every headline figure, including the reconciliation result |
-| `components.png` / `.svg` | the chart |
-| `components_slide.png` | the same chart without its title, for the slide |
-| `poster_*.png` | the poster's hero chart and three supporting figures |
-| `dashboard.html` | self-contained interactive page |
-| `RES003_population_equation_slide.pptx` | the Research Competition slide |
-| `POS006_population_equation_poster_A1.pptx` | the A1 poster, editable |
-| `POS006_population_equation_poster_A1.pdf` | the file to submit, 594 x 841 mm |
+| `nt_components.csv` | the cleaned quarterly series, raw values |
+| `dashboard_data.json` | the smoothed series behind the dashboard |
+
+**Charts**, 300 dpi PNG and vector SVG, ready to place in a slide or poster.
+
+| File | What it shows |
+|---|---|
+| `components.png` / `.svg` | the three components over 45 years, with a title |
+| `components_slide.png` / `.svg` | the same chart with no title, for a layout that supplies its own heading |
+| `poster_components.png` | the same chart again, sized and weighted for A1 |
+| `poster_dependency.png` | share of growth from overseas migration, over three windows |
+| `poster_volatility.png` | volatility of each component |
+| `poster_decades.png` | quarters with a net interstate gain, by decade |
+| `qr_repo.png` | QR code pointing at this repository |
+
+**Page**
+
+| File | What it is |
+|---|---|
+| `dashboard.html` | self-contained interactive page, no server or build step |
 
 ## Reading the workbook
 
-The ABS changes this file's layout between releases: sometimes one sheet per
+The ABS changes these files' layout between releases: sometimes one sheet per
 state, sometimes every state side by side on one sheet. Rather than hard-code
-a layout that breaks next quarter, `find_nt_table()` searches the workbook for
-the header row naming the components, then matches the Northern Territory
-columns by their header text. It prints what it found on each sheet, so a
-layout change produces a diagnosis rather than a silent wrong answer.
+a layout that breaks next quarter, the pipeline searches the workbook for the
+header row naming the components, then matches the Northern Territory columns
+by their header text. It prints what it found on each sheet, so a layout
+change produces a diagnosis rather than a silent wrong answer.
 
 ## Method notes
 
-**Reconciliation.** The three components should sum to the change in estimated
-resident population over the same period. The pipeline checks this before
-reporting anything. This is what makes the headline figure arithmetic rather
-than an estimate of our own.
+**Reconciliation.** The three components should sum to the change in
+population that the ABS publishes for the same period. The pipeline checks
+this before reporting anything. This is what makes the headline figure
+arithmetic rather than an estimate of our own.
 
 **Volatility.** Coefficient of variation, computed against the mean *absolute*
-value of each series. Interstate migration is mostly negative, so dividing by a
-signed mean would make the measure meaningless. The question is how much each
-component moves relative to its own typical size.
+value of each series. Interstate migration is mostly negative, so dividing by
+a signed mean would make the measure meaningless. The question is how much
+each component moves relative to its own typical size.
 
-**Smoothing.** The chart plots a four-quarter rolling average. Quarterly
+**Smoothing.** The charts plot a four-quarter rolling average. Quarterly
 figures are noisy and the shape is what matters. Raw values remain in
-`nt_components.csv`.
+`outputs/nt_components.csv`.
+
+**Colour.** Each component keeps the same hue in every chart, so the three
+read as one system. Charts that encode a single measure rather than three
+identities use one hue instead. The palette is validated for colour-vision
+deficiency and for contrast against a light background.
 
 ## Known limitations of the source data
 
 These belong in any honest presentation of the results:
 
-- **Net overseas migration** uses the 12-of-16-month rule. A person counts as a
-  migrant only once they have been in Australia twelve months out of sixteen,
-  so somebody can change category without changing address.
+- **Net overseas migration** uses the 12-of-16-month rule. A person counts as
+  a migrant only once they have been in Australia twelve months out of
+  sixteen, so somebody can change category without changing address.
 - **Net interstate migration** is derived from administrative address records.
   People who rarely update those records are counted late, or not at all.
 - **Census undercount** is higher in the Northern Territory than nationally,
@@ -156,7 +182,7 @@ recommendation.
 ## Source
 
 Australian Bureau of Statistics. (2026). *National, state and territory
-population* [Data set]. https://www.abs.gov.au/statistics/people/population/national-state-and-territory-population/latest-release
+population, March 2026* [Data set]. https://www.abs.gov.au/statistics/people/population/national-state-and-territory-population/latest-release
 
 ## Licence
 

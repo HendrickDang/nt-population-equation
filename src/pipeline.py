@@ -18,8 +18,10 @@ Outputs
 -------
 outputs/nt_components.csv    tidy quarterly series for the NT
 outputs/figures.json         every headline figure used in the talk and poster
-outputs/components.png       chart for the slide, 300 dpi
-outputs/components.svg       same chart as vector, for the A1 poster
+outputs/components.png       titled chart, 300 dpi
+outputs/components.svg       same chart as vector, for print
+outputs/components_slide.*   the chart without its title, for a deck or poster
+                             that supplies its own heading
 outputs/dashboard_data.json  payload for the web dashboard
 
 Run
@@ -307,8 +309,8 @@ def chart(df: pd.DataFrame, f: dict, *, bare: bool = False,
           size: tuple[float, float] = (11, 6), stem: str = "components") -> None:
     """Draw the three components.
 
-    bare=True omits the title and the source note, for the presentation slide
-    where both live on the slide itself rather than inside the image.
+    bare=True omits the title and the source note, for a slide or poster that
+    supplies its own heading. That is the variant to drop into Canva.
     """
     import matplotlib
     matplotlib.use("Agg")
