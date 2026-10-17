@@ -1,0 +1,6 @@
+data/raw/*.xlsx
+__pycache__/
+*.pyc
+.venv/
+outputs/slide-*.jpg
+outputs/poster-*.jpg

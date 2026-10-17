@@ -1,0 +1,61 @@
+{
+  "reference_period": "March 2026",
+  "series_start": "June 1981",
+  "quarters_in_series": 180,
+  "natural_increase_12m": 1969,
+  "net_interstate_migration_12m": -1589,
+  "net_overseas_migration_12m": 3585,
+  "total_growth_12m": 3965,
+  "nom_share_of_growth_pct": 90.4,
+  "erp_latest": 268899,
+  "annual_growth_pct": 1.5,
+  "quarters_nim_positive": 52,
+  "quarters_nim_negative": 128,
+  "quarters_nim_positive_pct": 28.9,
+  "nim_last_positive": "September 2021",
+  "nim_consecutive_negative": 18,
+  "nim_by_decade": {
+    "1980": {
+      "quarters": 35,
+      "positive_pct": 49,
+      "mean_per_quarter": -8
+    },
+    "1990": {
+      "quarters": 40,
+      "positive_pct": 30,
+      "mean_per_quarter": -82
+    },
+    "2000": {
+      "quarters": 40,
+      "positive_pct": 40,
+      "mean_per_quarter": -146
+    },
+    "2010": {
+      "quarters": 40,
+      "positive_pct": 8,
+      "mean_per_quarter": -483
+    },
+    "2020": {
+      "quarters": 25,
+      "positive_pct": 16,
+      "mean_per_quarter": -305
+    }
+  },
+  "overseas_dependency": {
+    "1y": 90.4,
+    "5y": 84.5,
+    "10y": 74.4
+  },
+  "volatility": {
+    "natural_increase": 0.125,
+    "net_overseas_migration": 0.959,
+    "net_interstate_migration": 1.143
+  },
+  "most_volatile": "net_interstate_migration",
+  "reconciliation": {
+    "components_sum": 3965,
+    "abs_published_change": 3965,
+    "difference": 0.0,
+    "passes": true
+  }
+}
