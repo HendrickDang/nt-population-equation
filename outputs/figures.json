@@ -52,6 +52,29 @@
     "net_interstate_migration": 1.143
   },
   "most_volatile": "net_interstate_migration",
+  "robustness_post_2006": {
+    "note": "ABS moved net overseas migration to the 12-of-16-months rule from the September quarter of 2006. Levels either side of that date are not comparable.",
+    "quarters": 79,
+    "window_start": "September 2006",
+    "volatility": {
+      "natural_increase": 0.148,
+      "net_overseas_migration": 0.773,
+      "net_interstate_migration": 0.942
+    },
+    "ranking_full_series": [
+      "net_interstate_migration",
+      "net_overseas_migration",
+      "natural_increase"
+    ],
+    "ranking_post_2006": [
+      "net_interstate_migration",
+      "net_overseas_migration",
+      "natural_increase"
+    ],
+    "ranking_unchanged": true,
+    "nom_mean_abs_pre": 207.0,
+    "nom_mean_abs_post": 571.4
+  },
   "reconciliation": {
     "components_sum": 3965,
     "abs_published_change": 3965,

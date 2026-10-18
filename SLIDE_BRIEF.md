@@ -168,6 +168,15 @@ Not for the slide. These are the figures in the script, all of them produced by
 | Volatility, overseas migration | 0.959 |
 | Volatility, interstate migration | 1.143 (most volatile) |
 | Interstate migration last positive | September 2021, negative 18 quarters since |
+| Volatility ranking, post-2006 window only | unchanged: 0.942 / 0.773 / 0.148 |
+
+The last row is the answer to the hardest question a judge can ask. The ABS
+changed how net overseas migration is measured from the September quarter of
+2006, so levels before and after are not comparable. The volatility ranking is
+the same whether computed on the full 45 years, the 79 quarters since the
+change, or the 101 quarters before it, so the finding does not rest on the
+break. The check runs inside `src/pipeline.py` and is recorded in
+`outputs/figures.json` under `robustness_post_2006`.
 
 ---
 

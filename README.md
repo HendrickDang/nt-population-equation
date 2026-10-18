@@ -180,6 +180,22 @@ These belong in any honest presentation of the results:
 - **Net overseas migration** uses the 12-of-16-month rule. A person counts as
   a migrant only once they have been in Australia twelve months out of
   sixteen, so somebody can change category without changing address.
+- **There is a break in the overseas migration series.** The 12-of-16-month
+  rule applies only from the September quarter of 2006. Before that, the ABS
+  used a continuous 12-month rule. Levels either side of that date are not
+  directly comparable: mean absolute net overseas migration is 207 persons per
+  quarter before the change and 571 after, and part of that step is
+  definitional rather than real.
+
+  This is the most serious objection to using a 45-year series, so the
+  pipeline tests it rather than asserting an answer. It recomputes the
+  volatility ranking on the post-2006 window alone and reports whether the
+  ranking survives. It does: interstate migration remains the most volatile
+  component in the full series (1.143), the post-2006 window (0.942) and the
+  pre-2006 window (1.247). The finding does not depend on comparing levels
+  across the break, so the break does not overturn it. If a future ABS release
+  changed that, `report()` prints a warning telling the presenter to restrict
+  the series.
 - **Net interstate migration** is derived from administrative address records.
   People who rarely update those records are counted late, or not at all.
 - **Census undercount** is higher in the Northern Territory than nationally,

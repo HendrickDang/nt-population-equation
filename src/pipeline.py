@@ -184,6 +184,28 @@ def compute(df: pd.DataFrame) -> dict:
         mean_abs = float(s.abs().mean())
         volatility[p] = float(s.std() / mean_abs) if mean_abs else float("nan")
 
+    # Robustness: the ABS changed how net overseas migration is measured from
+    # the September quarter of 2006, moving from a continuous 12-month rule to
+    # the 12-of-16-months rule. Levels either side of that date are not
+    # comparable, which would be a fatal objection if our finding depended on
+    # comparing them. It does not, but asserting that is not enough: recompute
+    # the volatility ranking on the post-2006 window alone and record whether
+    # it survives.
+    BREAK = pd.Timestamp("2006-09-01")
+
+    def _volatility(frame: pd.DataFrame) -> dict:
+        out = {}
+        for p in PARTS:
+            s = frame[p]
+            ma = float(s.abs().mean())
+            out[p] = float(s.std() / ma) if ma else float("nan")
+        return out
+
+    post = df[df["date"] >= BREAK]
+    vol_post = _volatility(post)
+    rank_full = sorted(volatility, key=volatility.get, reverse=True)
+    rank_post = sorted(vol_post, key=vol_post.get, reverse=True)
+
     nim = df["net_interstate_migration"]
 
     # Is the Territory's reliance on overseas migration changing? Compare the
@@ -240,6 +262,20 @@ def compute(df: pd.DataFrame) -> dict:
         "volatility": {k: round(v, 3) for k, v in volatility.items()},
         "most_volatile": max(volatility, key=volatility.get),
 
+        "robustness_post_2006": {
+            "note": "ABS moved net overseas migration to the 12-of-16-months "
+                    "rule from the September quarter of 2006. Levels either "
+                    "side of that date are not comparable.",
+            "quarters": int(len(post)),
+            "window_start": post["date"].iloc[0].strftime("%B %Y") if len(post) else None,
+            "volatility": {k: round(v, 3) for k, v in vol_post.items()},
+            "ranking_full_series": rank_full,
+            "ranking_post_2006": rank_post,
+            "ranking_unchanged": rank_full == rank_post,
+            "nom_mean_abs_pre": round(float(df[df["date"] < BREAK]["net_overseas_migration"].abs().mean()), 1),
+            "nom_mean_abs_post": round(float(post["net_overseas_migration"].abs().mean()), 1),
+        },
+
         "reconciliation": {
             "components_sum": round(total),
             "abs_published_change": round(published),
@@ -291,6 +327,21 @@ def report(f: dict) -> None:
     print("\nVolatility (std / mean absolute)")
     for k, v in sorted(f["volatility"].items(), key=lambda kv: -kv[1]):
         print(f"  {LABELS[k]:<28} {v:.3f}")
+    rb = f["robustness_post_2006"]
+    print(f"\nRobustness, post-2006 window only "
+          f"({rb['quarters']} quarters from {rb['window_start']})")
+    print("  ABS changed the overseas migration rule from Sept 2006.")
+    for k, v in sorted(rb["volatility"].items(), key=lambda kv: -kv[1]):
+        print(f"  {LABELS[k]:<28} {v:.3f}")
+    print(f"  Mean absolute overseas migration "
+          f"{rb['nom_mean_abs_pre']:,}/quarter before, "
+          f"{rb['nom_mean_abs_post']:,}/quarter after")
+    if rb["ranking_unchanged"]:
+        print("  Volatility ranking UNCHANGED by the break. The finding holds.")
+    else:
+        print("  WARNING: ranking CHANGES on the post-2006 window.")
+        print("  The 45-year claim cannot be made. Restrict the series.")
+
     print(f"\nMost volatile: {LABELS[f['most_volatile']]}")
     if f["most_volatile"] == "net_overseas_migration":
         print("  The component carrying most growth is also the most volatile.")
