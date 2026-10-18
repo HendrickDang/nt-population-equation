@@ -372,6 +372,23 @@ def main() -> None:
 
     figures = compute(df)
     report(figures)
+
+    # The validation gate. Nothing downstream is written unless the three
+    # components reconcile against the change the ABS publishes for the same
+    # period. A department that re-runs this after a revised release should get
+    # a refusal, not a plausible-looking number nobody checked.
+    if not figures["reconciliation"]["passes"]:
+        if "--allow-mismatch" not in sys.argv:
+            sys.exit(
+                "\nSTOPPED: components do not reconcile against the published "
+                "change.\nNo figures, charts or dashboard data were written.\n"
+                "Check that 310102 and 310104 come from the same ABS release, "
+                "then re-run.\nTo write the outputs anyway, re-run with "
+                "--allow-mismatch.\n"
+            )
+        print("\n--allow-mismatch: writing outputs despite a failed "
+              "reconciliation.\nEvery figure below is unverified.\n")
+
     (OUT / "figures.json").write_text(json.dumps(figures, indent=2))
 
     smooth = df.set_index("date")[PARTS].rolling(4, min_periods=4).mean().dropna()

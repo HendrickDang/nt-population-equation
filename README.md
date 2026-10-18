@@ -58,8 +58,8 @@ is arithmetic, not an estimate of ours.
 1. Reads ABS tables 310102 and 310104, quarterly, Northern Territory only.
 2. Decomposes population change into the three components.
 3. **Validates** that they reconcile against the published change in estimated
-   resident population. If they do not, the pipeline says so rather than
-   reporting a number nobody checked.
+   resident population. If they do not, the pipeline stops and writes nothing,
+   rather than reporting a number nobody checked.
 4. Measures the volatility of each component across the full series.
 5. Writes the headline figures, the cleaned series, the chart images and an
    interactive dashboard.
@@ -70,6 +70,11 @@ every figure in the project.
 
 The slide and the poster are laid out separately. This repository supplies the
 numbers and the finished chart images that go into them.
+
+[`SLIDE_BRIEF.md`](SLIDE_BRIEF.md) is the specification for the single
+presentation slide: canvas size, exact text, which chart image to use, the
+colour values, and what must stay off it. It is written to be followed in Canva
+without reading any code.
 
 ## Getting the data
 
@@ -139,9 +144,20 @@ change produces a diagnosis rather than a silent wrong answer.
 ## Method notes
 
 **Reconciliation.** The three components should sum to the change in
-population that the ABS publishes for the same period. The pipeline checks
-this before reporting anything. This is what makes the headline figure
-arithmetic rather than an estimate of our own.
+population that the ABS publishes for the same period. The two come from
+different ABS tables and different administrative sources, so agreement is
+evidence that the right columns, jurisdiction and period were read.
+
+The check is a gate, not a warning. Tolerance is the larger of five persons or
+0.5% of the published change, which absorbs ABS rounding without being
+meaningless when the change is near zero. On failure the pipeline exits with
+status 1 and writes no figures, charts or dashboard data, so a scheduled run
+fails loudly instead of quietly publishing an unverified number. `--allow-mismatch`
+overrides the gate and labels every figure as unverified.
+
+This is what makes the headline figure arithmetic rather than an estimate of
+our own. It establishes internal consistency, not the accuracy of the ABS
+estimates themselves, which is covered under limitations below.
 
 **Volatility.** Coefficient of variation, computed against the mean *absolute*
 value of each series. Interstate migration is mostly negative, so dividing by
