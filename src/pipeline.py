@@ -343,12 +343,14 @@ def report(f: dict) -> None:
         print("  The 45-year claim cannot be made. Restrict the series.")
 
     print(f"\nMost volatile: {LABELS[f['most_volatile']]}")
-    if f["most_volatile"] == "net_overseas_migration":
-        print("  The component carrying most growth is also the most volatile.")
+    if f["most_volatile"] == "net_interstate_migration":
+        print("  Growth rests on the two migration components, and the one")
+        print("  that swings hardest is the one already running negative.")
         print("  That is the finding.")
     else:
-        print("  NOTE: most volatile is NOT overseas migration.")
-        print("  Rewrite the close to match what the data shows.")
+        print("  NOTE: interstate migration is no longer the most volatile")
+        print("  component. The presentation argues that it is. Check the")
+        print("  release and rewrite the close before presenting.")
     print("=" * 70 + "\n")
 
 
