@@ -1,9 +1,13 @@
 # Source data
 
-The two workbooks in this folder are the exact files every figure in this
-project was computed from. They are committed deliberately, so that cloning the
+The workbooks in this folder are the exact files every figure in this project
+was computed from. They are committed deliberately, so that cloning the
 repository and running the pipeline reproduces the published numbers rather than
 different ones.
+
+## Population, the main analysis
+
+Read by `src/pipeline.py`.
 
 | File | ABS table | What it holds |
 |---|---|---|
@@ -14,14 +18,39 @@ different ones.
 **Downloaded:** 18 October 2026
 **Series covered:** June 1981 to March 2026, 180 quarters
 
-## Attribution
-
 Australian Bureau of Statistics. (2026). *National, state and territory
 population, March 2026* [Data set].
 https://www.abs.gov.au/statistics/people/population/national-state-and-territory-population/latest-release
 
-Licensed under [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/),
-which permits redistribution with attribution. These files are unmodified.
+## Housing and wages, the supporting analysis
+
+Read by `src/housing.py`. Not used in the presentation; see that script's
+docstring for why it exists.
+
+| File | ABS table | Series ID | What it holds |
+|---|---|---|---|
+| `643202.xlsx` | 643202 | A83728569K | Median price of established house transfers, Darwin, quarterly |
+| `634502b.xlsx` | 634502b | A2606269C | Wage price index, Northern Territory, all industries, quarterly |
+
+**Downloaded:** 19 October 2026
+**Common window:** March 2002 to June 2026, 98 quarters
+
+The Darwin price series is an **unstratified median of transfers**, not a
+hedonic index. It moves with the mix of houses sold as well as with prices,
+which is why it differs from commercially published measures such as Cotality's
+for the same period. The comparison here is stated on that basis.
+
+Australian Bureau of Statistics. (2026). *Total value of dwellings* [Data set].
+https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/total-value-dwellings/latest-release
+
+Australian Bureau of Statistics. (2026). *Wage price index, Australia*
+[Data set]. https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/wage-price-index-australia/latest-release
+
+## Attribution
+
+All files are Australian Bureau of Statistics data, licensed under
+[Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/),
+which permits redistribution with attribution. They are unmodified.
 
 ## Why these are committed rather than downloaded
 

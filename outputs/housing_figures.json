@@ -1,0 +1,25 @@
+{
+  "window_start": "March 2002",
+  "window_end": "June 2026",
+  "quarters": 98,
+  "years": 24.3,
+  "darwin_median_house_price_start": 190000,
+  "darwin_median_house_price_end": 752500,
+  "darwin_price_growth_pct": 296.1,
+  "nt_wage_index_start": 77.4,
+  "nt_wage_index_end": 159.3,
+  "nt_wage_growth_pct": 105.8,
+  "gap_percentage_points": 190.2,
+  "price_to_wage_ratio_end": 192.4,
+  "price_to_wage_peak": 207.5,
+  "price_to_wage_peak_quarter": "December 2010",
+  "validation": {
+    "description": "Year-on-year wage growth recomputed from the index and compared against the ABS published column in the same workbook.",
+    "quarters_checked": 94,
+    "largest_difference_pp": 0.049,
+    "tolerance_pp": 0.15,
+    "passes": true
+  },
+  "price_series_id": "A83728569K",
+  "wage_series_id": "A2606269C"
+}

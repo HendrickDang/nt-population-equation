@@ -126,6 +126,9 @@ This is the part most teams get wrong, so it is worth being blunt.
 - **No bullet-point list.** There is no list on this slide at all.
 - **No logos** other than the university's, if one is required.
 - **No second chart.** The other images in `outputs/` are for the A1 poster.
+  That includes `housing_gap.png`. The house price analysis is supporting
+  material held in reserve for a judge's question, and putting it on the slide
+  turns a descriptive project into a causal claim it does not support.
 - **No stock photography.** No maps of Australia, no crowds, no sunsets over
   Uluru. The chart is the picture.
 - **No methodology text.** That is what the presenter is for.

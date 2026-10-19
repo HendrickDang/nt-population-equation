@@ -104,9 +104,47 @@ pip install -r requirements.txt
 python src/pipeline.py              # analysis, headline figures, main chart
 python src/build_poster_figures.py  # poster-sized charts and the QR code
 python src/build_dashboard.py       # the interactive page
+
+python src/housing.py               # supporting analysis, stands alone
 ```
 
-Run `pipeline.py` first: the other two read `outputs/figures.json`.
+Run `pipeline.py` first: the next two read `outputs/figures.json`. `housing.py`
+is independent of all three.
+
+## Supporting analysis: house prices against wages
+
+The presentation argues where growth comes from and which component is least
+stable. It does not argue why people leave, and nothing in the main pipeline
+touches that question.
+
+`src/housing.py` measures one thing alongside it. Over the 98 quarters from
+March 2002 to June 2026, the Darwin median established house price rose from
+$190,000 to $752,500, **up 296%**, while the Northern Territory wage price
+index rose from 77.4 to 159.3, **up 106%**. The gap is **190 percentage
+points**, and the price-to-wage ratio peaked in December 2010 rather than
+recently.
+
+![Darwin house prices against NT wages](outputs/housing_gap.png)
+
+This is deliberately not in the slide or the script. It is descriptive: one
+correlation between two series over the same period establishes nothing about
+cause, and the question of what drives Territory migration has been tested
+properly elsewhere. Taylor and Dyrting (2025) found residential property prices
+to be the strongest macroeconomic predictor of Northern Territory net
+interstate migration, and job vacancies to predict nothing. The presentation
+cites them. This script exists so the measurement is in the repository rather
+than only in a citation.
+
+The script carries its own validation: it recomputes year-on-year wage growth
+from the index and compares it against the figure the ABS publishes in its own
+column of the same workbook. Across 94 quarters the largest difference is
+0.049 percentage points. On failure it stops and writes nothing, like the
+population pipeline.
+
+The Darwin price series is an unstratified median of transfers rather than a
+hedonic index, so it moves with the mix of houses sold as well as with prices.
+That is why it differs from commercially published measures for the same
+period, and it is stated on that basis.
 
 ## What it writes
 
