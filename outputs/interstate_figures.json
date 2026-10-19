@@ -1,0 +1,23 @@
+{
+  "window_start": "June 1981",
+  "window_end": "March 2026",
+  "quarters": 180,
+  "arrivals_12m": 14290,
+  "departures_12m": 15879,
+  "net_12m": -1589,
+  "churn_12m": 30169,
+  "churn_share_of_population_pct": 11.2,
+  "population": 268899,
+  "prior_decade_mean_arrivals": 16395,
+  "prior_decade_mean_departures": 18062,
+  "arrivals_vs_prior_decade_pct": -12.8,
+  "departures_vs_prior_decade_pct": -12.1,
+  "validation": {
+    "description": "Arrivals minus departures, from tables 16A and 16B, against the net interstate migration published in table 310102.",
+    "quarters_checked": 180,
+    "largest_difference": 0.0,
+    "passes": true
+  },
+  "arrivals_series_id": "A2060858X",
+  "departures_series_id": "A2060867A"
+}

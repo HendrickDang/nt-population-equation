@@ -106,10 +106,40 @@ python src/build_poster_figures.py  # poster-sized charts and the QR code
 python src/build_dashboard.py       # the interactive page
 
 python src/housing.py               # supporting analysis, stands alone
+python src/interstate_flows.py      # supporting analysis, needs pipeline first
 ```
 
 Run `pipeline.py` first: the next two read `outputs/figures.json`. `housing.py`
 is independent of all three.
+
+## Supporting analysis: arrivals and departures
+
+Table 310102 reports net interstate migration: one number per quarter, the
+balance of two much larger flows. A net loss of 1,589 tells a planner the
+Territory shrank on that measure. It does not say whether fewer people arrived,
+more left, or both, and those call for different responses.
+
+`src/interstate_flows.py` separates them, using ABS tables 16A and 16B from the
+same release.
+
+In the year to March 2026, **14,290 people arrived** from other states and
+**15,879 left**. The net is the published -1,589, but the gross movement is
+**30,169 people, 11.2% of a population of 268,899**. The Territory exchanges
+roughly one in nine of its residents with other states every year, and the
+headline net figure is the small residue of that.
+
+![Interstate arrivals and departures](outputs/interstate_flows.png)
+
+Against the prior decade's annual average, arrivals are down 12.8% and
+departures down 12.1%. Both flows have shrunk by almost the same proportion, so
+the recent deficit is not a story of fewer people arriving or more people
+leaving: the whole exchange is slowing while the imbalance persists.
+
+The script validates before it writes. Arrivals minus departures must equal the
+net interstate migration published in table 310102, and across all 180 quarters
+the largest difference is zero. The three tables are produced separately by the
+ABS, so agreement is evidence the right columns and jurisdiction were read. On
+failure it exits 1 and writes nothing.
 
 ## Supporting analysis: house prices against wages
 
@@ -169,6 +199,7 @@ Everything lands in `outputs/`.
 | `poster_volatility.png` | volatility of each component |
 | `poster_decades.png` | quarters with a net interstate gain, by decade |
 | `qr_dashboard.png` | QR code pointing at the live dashboard |
+| `interstate_flows.png` / `.svg` | arrivals and departures plotted together |
 
 **Page**
 

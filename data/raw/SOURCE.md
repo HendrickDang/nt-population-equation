@@ -22,6 +22,25 @@ Australian Bureau of Statistics. (2026). *National, state and territory
 population, March 2026* [Data set].
 https://www.abs.gov.au/statistics/people/population/national-state-and-territory-population/latest-release
 
+## Interstate flows, the supporting analysis
+
+Read by `src/interstate_flows.py`. Same release as the population tables above.
+
+| File | ABS table | Series ID (NT) | What it holds |
+|---|---|---|---|
+| `3101016A.xlsx` | 16A | A2060858X | Interstate migration arrivals, quarterly |
+| `3101016B.xlsx` | 16B | A2060867A | Interstate migration departures, quarterly |
+
+**Downloaded:** 19 October 2026
+**Series covered:** June 1981 to March 2026, 180 quarters
+
+Table 310102 gives only the net of these two flows. Arrivals minus departures
+reproduces that net exactly in all 180 quarters, which the script checks before
+writing anything.
+
+Same citation as the population tables: ABS, *National, state and territory
+population, March 2026*.
+
 ## Housing and wages, the supporting analysis
 
 Read by `src/housing.py`. Not used in the presentation; see that script's
