@@ -6,13 +6,12 @@ Decomposes Northern Territory population change into its three components,
 validates them against the published change, and measures how volatile each
 component is.
 
-Inputs (both from the same ABS release)
----------------------------------------
+Inputs (both committed, both from the same ABS release)
+-------------------------------------------------------
 data/raw/310102.xlsx   Components of population change, states and territories
 data/raw/310104.xlsx   Estimated resident population, states and territories
 
-    https://www.abs.gov.au/statistics/people/population/
-    national-state-and-territory-population/latest-release
+See data/raw/SOURCE.md for the release, the attribution and how to update.
 
 Outputs
 -------
@@ -103,10 +102,9 @@ def _read_series(path: Path, wanted: dict[str, list[str]]) -> pd.DataFrame:
     if not path.exists():
         sys.exit(
             f"Missing {path}\n\n"
-            "Download the table from\n"
-            "https://www.abs.gov.au/statistics/people/population/"
-            "national-state-and-territory-population/latest-release\n"
-            f"and save it as {path}"
+            "This file is committed to the repository, so it should be here.\n"
+            "If it was deleted, restore it with `git checkout -- data/raw`,\n"
+            "or see data/raw/SOURCE.md to download the release again."
         )
 
     book = pd.ExcelFile(path)

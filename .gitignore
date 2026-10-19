@@ -1,4 +1,3 @@
-data/raw/*.xlsx
 __pycache__/
 *.pyc
 .venv/

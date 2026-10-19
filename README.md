@@ -76,21 +76,27 @@ presentation slide: canvas size, exact text, which chart image to use, the
 colour values, and what must stay off it. It is written to be followed in Canva
 without reading any code.
 
-## Getting the data
+## The data
 
-The ABS files are not committed, because shipping a snapshot means shipping
-one that silently goes stale.
+Both ABS workbooks are committed, in `data/raw/`. Nothing needs downloading.
 
-1. Open [ABS, National, state and territory population](https://www.abs.gov.au/statistics/people/population/national-state-and-territory-population/latest-release)
-2. Download **310102** (components of population change) and **310104**
-   (estimated resident population)
-3. Save them as `data/raw/310102.xlsx` and `data/raw/310104.xlsx`
+They are the exact files every figure here was computed from, the March 2026
+release, 181 KB together. The ABS republishes each quarter at the same
+`latest-release` URL and replaces what was there before, so a reader who
+downloads from that link next year gets a different release and different
+numbers. Pinning the snapshot is what lets a clone reproduce the figures on the
+poster rather than merely reproduce the method.
 
-Licensed CC BY 4.0 by the Australian Bureau of Statistics.
+[`data/raw/SOURCE.md`](data/raw/SOURCE.md) records the release, the download
+date, the attribution and how to move to a newer release.
+
+Australian Bureau of Statistics data, licensed
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), redistributed
+unmodified with attribution.
 
 ## Running it
 
-Python 3.9 or newer.
+Python 3.9 or newer. Clone and run; there is no data step.
 
 ```bash
 pip install -r requirements.txt
