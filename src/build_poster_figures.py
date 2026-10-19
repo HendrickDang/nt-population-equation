@@ -83,10 +83,15 @@ def hbars(path: str, labels, values, colours, fmt, title: str, xlabel: str) -> N
 
 
 REPO = "https://github.com/HendrickDang/nt-population-equation"
+# The dashboard, served by GitHub Pages from index.html at the repository root.
+# The poster QR points here rather than at the source: a reader standing in
+# front of a poster wants the working page, and the dashboard links on to the
+# code for anyone who wants it.
+DASHBOARD = "https://hendrickdang.github.io/nt-population-equation/"
 
 
 def qr_code(path: str, url: str) -> None:
-    """The code printed on the poster, so a reader can reach the source."""
+    """The code printed on the poster, so a reader can reach the dashboard."""
     code = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_M,
                          box_size=20, border=2)
     code.add_data(url)
@@ -155,8 +160,8 @@ def main() -> None:
           "Quarters with net interstate gain",
           "Share of quarters in each decade")
 
-    # 5. QR code to the repository.
-    qr_code("qr_repo.png", REPO)
+    # 5. QR code to the live dashboard.
+    qr_code("qr_dashboard.png", DASHBOARD)
 
 
 if __name__ == "__main__":

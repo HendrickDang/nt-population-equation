@@ -168,13 +168,24 @@ Everything lands in `outputs/`.
 | `poster_dependency.png` | share of growth from overseas migration, over three windows |
 | `poster_volatility.png` | volatility of each component |
 | `poster_decades.png` | quarters with a net interstate gain, by decade |
-| `qr_repo.png` | QR code pointing at this repository |
+| `qr_dashboard.png` | QR code pointing at the live dashboard |
 
 **Page**
 
 | File | What it is |
 |---|---|
 | `dashboard.html` | self-contained interactive page, no server or build step |
+| `../index.html` | the same page at the repository root, served by GitHub Pages |
+
+The dashboard is live at
+**https://hendrickdang.github.io/nt-population-equation/**
+
+`build_dashboard.py` writes the page twice, to `outputs/dashboard.html` and to
+`index.html` at the repository root. GitHub Pages serves the root copy, which
+gives the dashboard a short address worth putting on a poster. Both copies are
+generated from the same build, so they cannot drift apart. The page is
+self-contained: no images, no data files, no server. The only external request
+is to Google Fonts, and the typography falls back cleanly without it.
 
 ## Reading the workbook
 

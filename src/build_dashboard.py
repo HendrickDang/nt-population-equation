@@ -437,6 +437,14 @@ def main() -> None:
     print(f"Dashboard -> {OUT / 'dashboard.html'} "
           f"({len(html) // 1024} KB)")
 
+    # Second copy at the repository root, so GitHub Pages serves the dashboard
+    # at the bare repository address rather than a long path ending in
+    # outputs/dashboard.html. That short URL is what the poster QR code
+    # encodes. It is written here rather than maintained by hand so the two
+    # copies cannot drift apart.
+    (ROOT / "index.html").write_text(html)
+    print(f"GitHub Pages copy -> {ROOT / 'index.html'}")
+
 
 if __name__ == "__main__":
     main()
