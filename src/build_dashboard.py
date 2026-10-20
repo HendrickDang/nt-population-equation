@@ -79,7 +79,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 .wrap {
-  max-width: 1040px;
+  max-width: 1120px;
   margin: 0 auto;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
@@ -108,6 +108,30 @@ h1 {
 }
 .big-say { max-width: 46ch; color: var(--ink-2); font-size: 15px; }
 .big-say strong { color: var(--ink); font-weight: 600; }
+
+/* The equation, drawn. Every bar is measured from a shared centre line, so
+   the one component that subtracts points the other way and is impossible to
+   misread. */
+.eq { margin: 4px 0 0; }
+.eq-row {
+  display: grid; grid-template-columns: minmax(130px, 190px) 1fr 92px;
+  align-items: center; gap: 8px 14px; padding: 5px 0;
+}
+.eq-name { font-size: 13.5px; color: var(--ink-2); }
+.eq-track { position: relative; height: 17px; }
+.eq-track::before {
+  content: ""; position: absolute; left: 50%; top: -4px; bottom: -4px;
+  width: 1px; background: var(--line);
+}
+.eq-fill { position: absolute; top: 0; height: 100%; border-radius: 3px; }
+.eq-val {
+  text-align: right; font-variant-numeric: tabular-nums;
+  font-weight: 600; font-size: 14px;
+}
+.eq-row.total { border-top: 1px solid var(--line); margin-top: 6px; padding-top: 11px; }
+.eq-row.total .eq-name, .eq-row.total .eq-val { color: var(--ink); font-weight: 600; }
+.eq-row.total .eq-name { font-size: 14px; }
+.eq-hint { color: var(--ink-3); font-size: 12.5px; margin: 10px 0 0; }
 
 h2 {
   font-family: var(--display); font-weight: 600; font-size: 21px;
@@ -195,16 +219,23 @@ footer a { color: var(--ochre); }
   </div>
 
   <section>
+    <h2>The equation</h2>
+    <p class="note">Where the year&rsquo;s growth came from. Each bar is measured
+      from the centre line, so the component that subtracts points the other way.</p>
+    <div class="card">
+      <div class="eq">__EQUATION__</div>
+      <p class="eq-hint">Read it as arithmetic: the three parts add to the total,
+        and that total matches the figure the ABS publishes separately.</p>
+    </div>
+  </section>
+
+  <section>
     <h2>Forty-five years, three components</h2>
-    <p class="note">Four-quarter rolling average, __START__ to __REF__.
-      Hover or tap the chart to read any quarter.</p>
+    <p class="note">Four-quarter rolling average, __START__ to __REF__. Above
+      the zero line a component adds people; below it, the component subtracts
+      them. Hover to read any quarter, or click to pin a quarter in place.</p>
     <div class="chartcard">
-      <div class="legend">
-        <span class="key"><span class="swatch" style="background:var(--s-natural)"></span>Natural increase</span>
-        <span class="key"><span class="swatch" style="background:var(--s-overseas)"></span>Net overseas migration</span>
-        <span class="key"><span class="swatch" style="background:var(--s-interstate)"></span>Net interstate migration</span>
-      </div>
-      <div class="plot"><svg id="chart" viewBox="0 0 920 390" role="img"
+      <div class="plot"><svg id="chart" viewBox="0 0 1000 390" role="img"
         aria-label="Northern Territory population change by component, quarterly, 1982 to 2026"></svg></div>
       <div class="readout" id="readout"></div>
     </div>
@@ -288,7 +319,7 @@ const S = [
 
 const svg = document.getElementById("chart");
 const readout = document.getElementById("readout");
-const W = 920, H = 390, M = { t: 14, r: 150, b: 30, l: 52 };
+const W = 1000, H = 390, M = { t: 14, r: 182, b: 30, l: 54 };
 const dates = DATA.series.dates;
 const n = dates.length;
 
@@ -357,10 +388,14 @@ function showAt(i) {
   const [y, m] = dates[i].split("-");
   const q = { "03": "Mar", "06": "Jun", "09": "Sep", "12": "Dec" }[m] || m;
   readout.innerHTML = `<span><b>${q} ${y}</b></span>` + S.map(s =>
-    `<span>${s.label} <b>${Math.round(DATA.series[s.key][i]).toLocaleString()}</b></span>`).join("");
+    `<span>${s.label} <b>${Math.round(DATA.series[s.key][i]).toLocaleString()}</b></span>`).join("")
+    + (pinned !== null ? `<span style="color:var(--ochre)">pinned &middot; click to release</span>` : "");
 }
 
+let pinned = null;
+
 function fromEvent(e) {
+  if (pinned !== null) return;
   const r = svg.getBoundingClientRect();
   const x = ((e.touches ? e.touches[0].clientX : e.clientX) - r.left) / r.width * W;
   const i = Math.round((x - M.l) / (W - M.l - M.r) * (n - 1));
@@ -368,7 +403,14 @@ function fromEvent(e) {
 }
 svg.addEventListener("mousemove", fromEvent);
 svg.addEventListener("touchmove", e => { fromEvent(e); e.preventDefault(); }, { passive: false });
-svg.addEventListener("mouseleave", () => showAt(n - 1));
+svg.addEventListener("mouseleave", () => { if (pinned === null) showAt(n - 1); });
+svg.addEventListener("click", e => {
+  if (pinned !== null) { pinned = null; fromEvent(e); return; }
+  const r = svg.getBoundingClientRect();
+  const x = (e.clientX - r.left) / r.width * W;
+  const i = Math.round((x - M.l) / (W - M.l - M.r) * (n - 1));
+  if (i >= 0 && i < n) { pinned = i; showAt(i); }
+});
 
 draw();
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
@@ -404,6 +446,32 @@ def main() -> None:
         for k, v in sorted(vol.items(), key=lambda kv: -kv[1])
     )
 
+    # The equation as a centre-origin bar chart: every component is measured
+    # against the largest absolute contribution, so the single negative one
+    # reads as a subtraction rather than just a minus sign.
+    parts = [
+        ("Natural increase", f["natural_increase_12m"], "--s-natural"),
+        ("Net overseas migration", f["net_overseas_migration_12m"], "--s-overseas"),
+        ("Net interstate migration", f["net_interstate_migration_12m"], "--s-interstate"),
+    ]
+    scale = max(abs(v) for _, v, _ in parts) or 1
+    rows = []
+    for label, value, hue in parts:
+        pct = abs(value) / scale * 50
+        side = f"left:50%;width:{pct:.1f}%" if value >= 0 else f"right:50%;width:{pct:.1f}%"
+        rows.append(
+            f'<div class="eq-row"><span class="eq-name">{label}</span>'
+            f'<span class="eq-track"><i class="eq-fill" style="{side};'
+            f'background:var({hue})"></i></span>'
+            f'<span class="eq-val">{value:+,}</span></div>'
+        )
+    rows.append(
+        f'<div class="eq-row total"><span class="eq-name">Total growth</span>'
+        f'<span class="eq-track"></span>'
+        f'<span class="eq-val">{f["total_growth_12m"]:+,}</span></div>'
+    )
+    equation = "".join(rows)
+
     decades = "".join(
         f"<tr><td>{d}s</td><td>{v['positive_pct']}%</td>"
         f"<td>{v['mean_per_quarter']:,}</td></tr>"
@@ -424,6 +492,7 @@ def main() -> None:
         "__NIM_RUN__": f"{f['nim_consecutive_negative']}",
         "__RECON__": f"{f['reconciliation']['components_sum']:,}",
         "__DIFF__": f"{f['reconciliation']['difference']:g}",
+        "__EQUATION__": equation,
         "__DEPENDENCY__": dependency,
         "__VOLATILITY__": volatility,
         "__DECADES__": decades,
