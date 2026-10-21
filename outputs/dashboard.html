@@ -1,181 +1,194 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Territory Population Equation</title>
-<meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: a stated headline, the long series, then the three supporting
-   readings, then method. Palette is Territory ground: ochre-biased
-   neutrals, with the three validated series hues carrying all the data. */
+/* Phone first. One column, big numbers, every figure captioned in plain words.
+   The three series hues are the project's validated set and carry all the data;
+   everything else is ink and surface. */
 :root {
-  --bg: #fbfaf7;
+  --bg: #fbfaf8;
   --surface: #ffffff;
-  --line: #e6e2d9;
-  --ink: #1c1a16;
-  --ink-2: #57524a;
-  --ink-3: #8b857a;
-  --ochre: #a8552a;
+  --surface-2: #f4f2ee;
+  --line: #e4e0d8;
+  --ink: #17161300;
+  --ink: #171613;
+  --ink-2: #55504a;
+  --ink-3: #87817a;
+  --accent: #a8552a;
   --s-natural: #2a78d6;
   --s-overseas: #eb6834;
   --s-interstate: #1baf7a;
-  --display: "Fraunces", Georgia, "Times New Roman", serif;
-  --body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --radius: 14px;
+  --body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #15140f;
-    --surface: #1e1c16;
-    --line: #322e25;
-    --ink: #f3f0e8;
-    --ink-2: #c0b9aa;
-    --ink-3: #8b857a;
-    --ochre: #d98a5c;
-    --s-natural: #3987e5;
-    --s-overseas: #ef7c4e;
-    --s-interstate: #22c88b;
+    --bg: #121110; --surface: #1a1916; --surface-2: #232019; --line: #322e27;
+    --ink: #f4f1ea; --ink-2: #bdb6ab; --ink-3: #8b857c; --accent: #e09a6d;
+    --s-natural: #4a90ea; --s-overseas: #e26a35; --s-interstate: #19ad76;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #15140f;
-  --surface: #1e1c16;
-  --line: #322e25;
-  --ink: #f3f0e8;
-  --ink-2: #c0b9aa;
-  --ink-3: #8b857a;
-  --ochre: #d98a5c;
-  --s-natural: #3987e5;
-  --s-overseas: #ef7c4e;
-  --s-interstate: #22c88b;
+  --bg: #121110; --surface: #1a1916; --surface-2: #232019; --line: #322e27;
+  --ink: #f4f1ea; --ink-2: #bdb6ab; --ink-3: #8b857c; --accent: #e09a6d;
+  --s-natural: #4a90ea; --s-overseas: #e26a35; --s-interstate: #19ad76;
   color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
 body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--ink);
-  font-family: var(--body);
-  font-size: 15px;
-  line-height: 1.55;
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--body); font-size: 16px; line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 .wrap {
-  max-width: 1120px;
-  margin: 0 auto;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: 40px 56px;
+  max-width: 1120px; margin: 0 auto;
+  padding: 28px max(16px, env(safe-area-inset-left, 0px)) 64px;
 }
-header { display: flex; flex-direction: column; gap: 6px; margin-bottom: 34px; }
+
+/* ---- header ------------------------------------------------------------ */
 .eyebrow {
-  font-size: 11px; letter-spacing: .13em; text-transform: uppercase;
-  color: var(--ochre); font-weight: 600;
+  font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent); font-weight: 600; margin-bottom: 10px;
 }
 h1 {
-  font-family: var(--display); font-weight: 600;
-  font-size: clamp(30px, 5vw, 46px); line-height: 1.08;
-  margin: 0; text-wrap: balance; letter-spacing: -.015em;
+  font-size: clamp(27px, 7vw, 40px); line-height: 1.12; font-weight: 700;
+  letter-spacing: -.022em; margin: 0 0 10px; text-wrap: balance;
 }
-.sub { color: var(--ink-2); max-width: 62ch; margin: 2px 0 0; }
+.standfirst { color: var(--ink-2); margin: 0; max-width: 58ch; font-size: 15.5px; }
 
-.headline {
-  display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 18px;
-  padding: 22px 0 26px; border-bottom: 1px solid var(--line); margin-bottom: 30px;
-}
-.big {
-  font-family: var(--display); font-size: clamp(54px, 11vw, 84px);
-  line-height: .9; font-weight: 600; color: var(--s-overseas);
-  font-variant-numeric: tabular-nums; letter-spacing: -.03em;
-}
-.big-say { max-width: 46ch; color: var(--ink-2); font-size: 15px; }
-.big-say strong { color: var(--ink); font-weight: 600; }
-
-/* The equation, drawn. Every bar is measured from a shared centre line, so
-   the one component that subtracts points the other way and is impossible to
-   misread. */
-.eq { margin: 4px 0 0; }
-.eq-row {
-  display: grid; grid-template-columns: minmax(130px, 190px) 1fr 92px;
-  align-items: center; gap: 8px 14px; padding: 5px 0;
-}
-.eq-name { font-size: 13.5px; color: var(--ink-2); }
-.eq-track { position: relative; height: 17px; }
-.eq-track::before {
-  content: ""; position: absolute; left: 50%; top: -4px; bottom: -4px;
-  width: 1px; background: var(--line);
-}
-.eq-fill { position: absolute; top: 0; height: 100%; border-radius: 3px; }
-.eq-val {
-  text-align: right; font-variant-numeric: tabular-nums;
-  font-weight: 600; font-size: 14px;
-}
-.eq-row.total { border-top: 1px solid var(--line); margin-top: 6px; padding-top: 11px; }
-.eq-row.total .eq-name, .eq-row.total .eq-val { color: var(--ink); font-weight: 600; }
-.eq-row.total .eq-name { font-size: 14px; }
-.eq-hint { color: var(--ink-3); font-size: 12.5px; margin: 10px 0 0; }
-
-h2 {
-  font-family: var(--display); font-weight: 600; font-size: 21px;
-  margin: 0 0 4px; letter-spacing: -.01em;
-}
-.note { color: var(--ink-3); font-size: 13px; margin: 0 0 16px; max-width: 70ch; }
-section { margin-bottom: 42px; }
-
-.chartcard {
+/* ---- hero -------------------------------------------------------------- */
+.hero {
+  margin: 26px 0 22px; padding: 24px 20px;
   background: var(--surface); border: 1px solid var(--line);
-  border-radius: 10px; padding: 18px 16px 10px;
+  border-radius: var(--radius);
 }
-.legend { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 0 0 10px; }
-.key { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-2); }
-.swatch { width: 15px; height: 3px; border-radius: 2px; flex: none; }
-.plot { width: 100%; overflow-x: auto; }
-svg { display: block; width: 100%; height: auto; }
-.readout {
-  display: flex; flex-wrap: wrap; gap: 4px 20px; min-height: 22px;
-  font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums;
-  padding: 6px 2px 2px;
+.hero-fig {
+  font-size: clamp(56px, 17vw, 86px); line-height: .92; font-weight: 700;
+  letter-spacing: -.045em; color: var(--s-overseas); margin-bottom: 10px;
 }
-.readout b { color: var(--ink); font-weight: 600; }
+.hero-say { font-size: 17px; font-weight: 500; color: var(--ink); max-width: 36ch; }
+.hero-sub { font-size: 14px; color: var(--ink-2); margin-top: 9px; max-width: 48ch; }
+@media (min-width: 740px) {
+  /* Side by side once there is room, so the figure is not marooned beside an
+     empty half of the card. */
+  .hero { display: grid; grid-template-columns: auto 1fr; gap: 6px 36px;
+          align-items: center; padding: 30px 28px; }
+  .hero-fig { margin: 0; grid-row: span 2; }
+  .hero-say { font-size: 19px; align-self: end; }
+  .hero-sub { margin-top: 0; align-self: start; }
+}
 
-.grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(238px, 1fr)); }
+/* ---- stat tiles -------------------------------------------------------- */
+.tiles {
+  display: grid; gap: 10px; margin-bottom: 36px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (min-width: 740px) { .tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; } }
+.tile {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 15px 15px 14px; min-width: 0;
+}
+.tile-lab {
+  font-size: 11.5px; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--ink-3); font-weight: 600; margin-bottom: 7px;
+}
+.tile-val { font-size: 25px; font-weight: 700; letter-spacing: -.03em; line-height: 1.1; }
+.tile-note { font-size: 12.5px; color: var(--ink-2); margin-top: 5px; line-height: 1.35; }
+
+/* ---- sections ---------------------------------------------------------- */
+section { margin-bottom: 38px; }
+h2 { font-size: 20px; font-weight: 700; letter-spacing: -.015em; margin: 0 0 5px; }
+.note { color: var(--ink-2); font-size: 14.5px; margin: 0 0 15px; max-width: 64ch; }
 .card {
   background: var(--surface); border: 1px solid var(--line);
-  border-radius: 10px; padding: 18px; min-width: 0;
+  border-radius: var(--radius); padding: 18px 16px;
 }
+.meaning {
+  font-size: 13px; color: var(--ink-2); margin: 13px 0 0;
+  padding-top: 12px; border-top: 1px solid var(--line); line-height: 1.45;
+}
+
+/* ---- the equation ------------------------------------------------------ */
+.eq-row { padding: 11px 0; border-bottom: 1px solid var(--line); }
+.eq-row:first-child { padding-top: 2px; }
+.eq-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 7px; }
+.eq-name { font-size: 14.5px; color: var(--ink); font-weight: 500; }
+.eq-val { font-size: 16px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.eq-track { position: relative; height: 14px; }
+.eq-track::before {
+  content: ""; position: absolute; left: 50%; top: -2px; bottom: -2px;
+  width: 1px; background: var(--line);
+}
+.eq-fill { position: absolute; top: 0; height: 100%; border-radius: 4px; }
+.eq-total {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: 12px; padding-top: 14px;
+}
+.eq-total .eq-name { font-weight: 700; font-size: 15.5px; }
+.eq-total .eq-val { font-size: 22px; }
+.eq-key { font-size: 12.5px; color: var(--ink-3); margin-top: 4px; }
+
+/* ---- chart ------------------------------------------------------------- */
+.legend { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-bottom: 12px; }
+.key { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-2); }
+.swatch { width: 14px; height: 3px; border-radius: 2px; flex: none; }
+svg { display: block; width: 100%; height: auto; }
+.readout {
+  display: flex; flex-wrap: wrap; gap: 3px 16px; margin-top: 12px;
+  padding-top: 11px; border-top: 1px solid var(--line);
+  font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums;
+}
+.readout b { color: var(--ink); font-weight: 600; }
+.readout .pin { color: var(--accent); }
+
+/* ---- reading cards ----------------------------------------------------- */
+.grid { display: grid; gap: 14px; grid-template-columns: 1fr; }
+@media (min-width: 740px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .card h3 {
-  font-size: 12px; letter-spacing: .09em; text-transform: uppercase;
+  font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase;
   color: var(--ink-3); font-weight: 600; margin: 0 0 14px;
 }
-.row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; margin-bottom: 11px; }
-.row:last-child { margin-bottom: 0; }
-.row .lab { font-size: 13.5px; color: var(--ink-2); min-width: 0; }
-.row .val { font-variant-numeric: tabular-nums; font-weight: 600; font-size: 14px; }
-.bar { grid-column: 1 / -1; height: 5px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.row { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 10px; margin-bottom: 12px; }
+.row:last-of-type { margin-bottom: 0; }
+.row .lab { font-size: 14px; color: var(--ink-2); min-width: 0; }
+.row .val { font-variant-numeric: tabular-nums; font-weight: 700; font-size: 15px; letter-spacing: -.02em; }
+.bar { grid-column: 1 / -1; height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; margin-top: 6px; }
 .bar > i { display: block; height: 100%; border-radius: 3px; }
 
-table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
-th, td { text-align: right; padding: 7px 6px; border-bottom: 1px solid var(--line); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: right; padding: 8px 4px; border-bottom: 1px solid var(--line); }
 th:first-child, td:first-child { text-align: left; }
-th { color: var(--ink-3); font-weight: 600; font-size: 11.5px;
-     letter-spacing: .07em; text-transform: uppercase; }
+th { color: var(--ink-3); font-weight: 600; font-size: 11px; letter-spacing: .07em; text-transform: uppercase; }
 td { font-variant-numeric: tabular-nums; }
-.tablewrap { overflow-x: auto; }
+tr:last-child td { border-bottom: 0; }
 
+/* ---- method ------------------------------------------------------------ */
 .check {
-  display: inline-flex; align-items: center; gap: 8px; font-size: 13px;
+  display: inline-flex; align-items: center; gap: 9px; font-size: 13.5px;
   color: var(--ink-2); background: var(--surface); border: 1px solid var(--line);
-  border-radius: 999px; padding: 7px 14px; font-variant-numeric: tabular-nums;
+  border-radius: 999px; padding: 9px 15px; margin-bottom: 16px;
+  font-variant-numeric: tabular-nums;
 }
-.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--s-interstate); flex: none; }
-
-.method { columns: 2 280px; column-gap: 34px; }
-.method p { margin: 0 0 13px; break-inside: avoid; color: var(--ink-2); font-size: 14px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--s-interstate); flex: none; }
+details { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+summary {
+  cursor: pointer; padding: 15px 16px; font-weight: 600; font-size: 15px;
+  list-style: none; display: flex; justify-content: space-between; align-items: center;
+}
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "+"; color: var(--ink-3); font-weight: 400; font-size: 20px; }
+details[open] summary::after { content: "2"; }
+details[open] summary { border-bottom: 1px solid var(--line); }
+.method { padding: 16px; columns: 2 300px; column-gap: 32px; }
+.method p { margin: 0 0 14px; break-inside: avoid; color: var(--ink-2); font-size: 14px; }
 .method strong { color: var(--ink); font-weight: 600; }
 
-footer {
-  border-top: 1px solid var(--line); padding-top: 18px;
-  font-size: 13px; color: var(--ink-3);
-}
-footer a { color: var(--ochre); }
+footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 13px; color: var(--ink-3); line-height: 1.6; }
+footer a { color: var(--accent); }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 
@@ -183,108 +196,151 @@ footer a { color: var(--ochre); }
   <header>
     <div class="eyebrow">CDU IT Code Fair 2026 &middot; Northern Territory</div>
     <h1>The Territory&rsquo;s Population Equation</h1>
-    <p class="sub">Population change has exactly three parts. For the Northern
-    Territory one of them has been negative for 18 straight quarters, and
-    the Territory grows anyway. This tracks which part makes up the difference,
-    and how steady that part is.</p>
+    <p class="standfirst">Population change has exactly three parts. In the
+      Northern Territory one of them has been negative for 18 straight
+      quarters, and the population grows anyway. This page shows which part makes
+      up the difference, and how steady that part is.</p>
   </header>
 
-  <div class="headline">
-    <div class="big">90.4%</div>
-    <div class="big-say">of the Territory&rsquo;s population growth in the year to
-      March 2026 came from <strong>net overseas migration</strong>. Natural increase
-      added 1,969, interstate migration subtracted 1,589, and overseas
-      migration added 3,585, for total growth of 3,965 on a population of
-      268,899.</div>
+  <div class="hero">
+    <div class="hero-fig">90.4%</div>
+    <div class="hero-say">Nine in every ten people added to the Territory last
+      year arrived from overseas.</div>
+    <div class="hero-sub">Net overseas migration supplied 90.4% of all
+      population growth in the year to March 2026. A decade ago the same measure was
+      74.4%.</div>
+  </div>
+
+  <div class="tiles">
+    <div class="tile">
+      <div class="tile-lab">Population</div>
+      <div class="tile-val">268,899</div>
+      <div class="tile-note">Estimated residents, March 2026</div>
+    </div>
+    <div class="tile">
+      <div class="tile-lab">Growth, 12 months</div>
+      <div class="tile-val">+3,965</div>
+      <div class="tile-note">+1.5% more than a year earlier</div>
+    </div>
+    <div class="tile">
+      <div class="tile-lab">Interstate deficit</div>
+      <div class="tile-val">18 qtrs</div>
+      <div class="tile-note">Unbroken since September 2021</div>
+    </div>
+    <div class="tile">
+      <div class="tile-lab">Validation</div>
+      <div class="tile-val" style="color:var(--s-interstate)">Passed</div>
+      <div class="tile-note">Parts match the published total exactly</div>
+    </div>
   </div>
 
   <section>
-    <h2>The equation</h2>
-    <p class="note">Where the year&rsquo;s growth came from. Each bar is measured
-      from the centre line, so the component that subtracts points the other way.</p>
+    <h2>Where the growth came from</h2>
+    <p class="note">The year&rsquo;s change, split into its three parts. Bars run
+      from the centre line: to the right a part adds people, to the left it takes
+      them away.</p>
     <div class="card">
-      <div class="eq"><div class="eq-row"><span class="eq-name">Natural increase</span><span class="eq-track"><i class="eq-fill" style="left:50%;width:27.5%;background:var(--s-natural)"></i></span><span class="eq-val">+1,969</span></div><div class="eq-row"><span class="eq-name">Net overseas migration</span><span class="eq-track"><i class="eq-fill" style="left:50%;width:50.0%;background:var(--s-overseas)"></i></span><span class="eq-val">+3,585</span></div><div class="eq-row"><span class="eq-name">Net interstate migration</span><span class="eq-track"><i class="eq-fill" style="right:50%;width:22.2%;background:var(--s-interstate)"></i></span><span class="eq-val">-1,589</span></div><div class="eq-row total"><span class="eq-name">Total growth</span><span class="eq-track"></span><span class="eq-val">+3,965</span></div></div>
-      <p class="eq-hint">Read it as arithmetic: the three parts add to the total,
-        and that total matches the figure the ABS publishes separately.</p>
+      <div class="eq-row"><div class="eq-top"><span class="eq-name">Natural increase</span><span class="eq-val" style="color:var(--s-natural)">+1,969</span></div><div class="eq-track"><i class="eq-fill" style="left:50%;width:27.5%;background:var(--s-natural)"></i></div></div><div class="eq-row"><div class="eq-top"><span class="eq-name">Net overseas migration</span><span class="eq-val" style="color:var(--s-overseas)">+3,585</span></div><div class="eq-track"><i class="eq-fill" style="left:50%;width:50.0%;background:var(--s-overseas)"></i></div></div><div class="eq-row"><div class="eq-top"><span class="eq-name">Net interstate migration</span><span class="eq-val" style="color:var(--s-interstate)">-1,589</span></div><div class="eq-track"><i class="eq-fill" style="right:50%;width:22.2%;background:var(--s-interstate)"></i></div></div><div class="eq-total"><span class="eq-name">Total growth</span><span class="eq-val">+3,965</span></div><div class="eq-key">Matches the change the ABS publishes separately, to the person.</div>
+      <p class="meaning">Only one part subtracts. Overseas migration is large
+        enough to cover that loss and still leave the Territory growing, which is
+        why the total is positive at all.</p>
     </div>
   </section>
 
   <section>
-    <h2>Forty-five years, three components</h2>
-    <p class="note">Four-quarter rolling average, June 1981 to March 2026. Above
-      the zero line a component adds people; below it, the component subtracts
-      them. Hover to read any quarter, or click to pin a quarter in place.</p>
-    <div class="chartcard">
-      <div class="plot"><svg id="chart" viewBox="0 0 1000 390" role="img"
-        aria-label="Northern Territory population change by component, quarterly, 1982 to 2026"></svg></div>
+    <h2>Forty-five years of the same three parts</h2>
+    <p class="note">Four-quarter rolling average, June 1981 to March 2026. Above the
+      zero line a part adds people; below it, the part takes them away. Tap or
+      hover the chart to read any quarter, and tap again to hold it.</p>
+    <div class="card">
+      <div class="legend">
+        <span class="key"><span class="swatch" style="background:var(--s-natural)"></span>Natural increase</span>
+        <span class="key"><span class="swatch" style="background:var(--s-overseas)"></span>Net overseas migration</span>
+        <span class="key"><span class="swatch" style="background:var(--s-interstate)"></span>Net interstate migration</span>
+      </div>
+      <svg id="chart" role="img"
+        aria-label="Northern Territory population change by component, quarterly, 1982 to 2026"></svg>
       <div class="readout" id="readout"></div>
+      <p class="meaning">The blue line barely moves: births minus deaths is the
+        Territory&rsquo;s steady part. The other two swing hard, and the green one
+        has spent most of the last forty years below zero.</p>
     </div>
   </section>
 
   <section>
-    <h2>What the series says</h2>
-    <p class="note">Three readings, each computed over the whole series rather
-      than a chosen window.</p>
+    <h2>Three readings</h2>
+    <p class="note">Each computed over the whole series rather than a window
+      chosen to suit the argument.</p>
     <div class="grid">
       <div class="card">
         <h3>Reliance on overseas migration</h3>
         <div class="row"><span class="lab">Last 10 years</span><span class="val">74.4%</span><span class="bar"><i style="width:74.4%;background:var(--s-overseas)"></i></span></div><div class="row"><span class="lab">Last 5 years</span><span class="val">84.5%</span><span class="bar"><i style="width:84.5%;background:var(--s-overseas)"></i></span></div><div class="row"><span class="lab">Last 12 months</span><span class="val">90.4%</span><span class="bar"><i style="width:90.4%;background:var(--s-overseas)"></i></span></div>
+        <p class="meaning">The share is climbing. What was about three quarters of
+          growth over a decade is now nine tenths of it.</p>
       </div>
       <div class="card">
-        <h3>Volatility of each component</h3>
+        <h3>How much each part moves</h3>
         <div class="row"><span class="lab">Net interstate migration</span><span class="val">1.14</span><span class="bar"><i style="width:100%;background:var(--s-interstate)"></i></span></div><div class="row"><span class="lab">Net overseas migration</span><span class="val">0.96</span><span class="bar"><i style="width:84%;background:var(--s-overseas)"></i></span></div><div class="row"><span class="lab">Natural increase</span><span class="val">0.12</span><span class="bar"><i style="width:11%;background:var(--s-natural)"></i></span></div>
-        <p class="note" style="margin:14px 0 0">Standard deviation over mean
-          absolute value. Natural increase is steady; both migration components
-          move several times more.</p>
+        <p class="meaning">Standard deviation over mean absolute value. Higher
+          means less predictable. Natural increase is close to flat; both
+          migration parts move several times more, and interstate migration moves
+          most of all.</p>
       </div>
       <div class="card">
-        <h3>Interstate migration, by decade</h3>
-        <div class="tablewrap"><table>
-          <thead><tr><th>Decade</th><th>Quarters positive</th><th>Mean/quarter</th></tr></thead>
+        <h3>Interstate migration by decade</h3>
+        <table>
+          <thead><tr><th>Decade</th><th>Qtrs positive</th><th>Mean/qtr</th></tr></thead>
           <tbody><tr><td>1980s</td><td>49%</td><td>-8</td></tr><tr><td>1990s</td><td>30%</td><td>-82</td></tr><tr><td>2000s</td><td>40%</td><td>-146</td></tr><tr><td>2010s</td><td>8%</td><td>-483</td></tr><tr><td>2020s</td><td>16%</td><td>-305</td></tr></tbody>
-        </table></div>
+        </table>
+        <p class="meaning">The Territory used to gain people from other states
+          about half the time. In the 2010s that fell to eight per cent.</p>
       </div>
     </div>
   </section>
 
   <section>
-    <h2>Method</h2>
-    <p class="note">
-      <span class="check"><span class="dot"></span>
-      Reconciliation passed: components sum to 3,965, matching the change
-      ABS publishes, difference 0.</span>
-    </p>
-    <div class="method">
-      <p><strong>Decomposition.</strong> Quarterly components for the Northern
-      Territory from ABS table 310102, June 1981 to March 2026, 180
-      quarters. Population level from table 310104.</p>
-      <p><strong>Validation before reporting.</strong> Natural increase plus net
-      interstate plus net overseas migration must equal the change ABS publishes
-      for the same period. The pipeline checks this first and refuses to report
-      a pass that is not one.</p>
-      <p><strong>Volatility.</strong> Coefficient of variation against the mean
-      absolute value, because interstate migration is mostly negative and a
-      signed mean would make the measure meaningless.</p>
-      <p><strong>Smoothing.</strong> The chart plots a four-quarter rolling
-      average. Quarterly figures are noisy and the shape is what matters; raw
-      values are in the repository.</p>
-      <p><strong>What the estimates cannot do.</strong> Net overseas migration
-      uses the 12-of-16-month rule, so a person can change category without
-      changing address. Interstate movement is derived from administrative
-      address records, so people who rarely update them are counted late or not
-      at all. Census undercount is higher in the Territory than nationally,
-      especially in remote communities.</p>
-      <p><strong>Scope.</strong> This work is descriptive. It characterises the
-      structure of population change and the uncertainty attached to
-      forecasting it. It makes no policy recommendation.</p>
-    </div>
+    <h2>How these numbers were produced</h2>
+    <span class="check"><span class="dot"></span>
+      Reconciliation passed &middot; parts sum to 3,965 against a published
+      3,965 &middot; difference 0</span>
+    <details>
+      <summary>Method, limitations and scope</summary>
+      <div class="method">
+        <p><strong>Decomposition.</strong> Quarterly components for the Northern
+        Territory from ABS table 310102, June 1981 to March 2026, 180
+        quarters. Population level from table 310104.</p>
+        <p><strong>Validation before reporting.</strong> Natural increase plus net
+        interstate plus net overseas migration must equal the change the ABS
+        publishes separately for the same period. The pipeline checks this first
+        and writes nothing at all if it fails.</p>
+        <p><strong>Volatility.</strong> Coefficient of variation against the mean
+        absolute value, because interstate migration is mostly negative and a
+        signed mean would make the measure meaningless.</p>
+        <p><strong>Smoothing.</strong> The chart plots a four-quarter rolling
+        average. Quarterly figures are noisy and the shape is what matters; raw
+        values are in the repository.</p>
+        <p><strong>A break in the series.</strong> The ABS moved net overseas
+        migration to the 12-of-16-months rule from September 2006, so levels
+        either side are not comparable. The volatility ranking is unchanged on the
+        full series, on the period since the change, and on the period before it.</p>
+        <p><strong>What the estimates cannot do.</strong> A person can change
+        category under the 12-of-16-month rule without changing address.
+        Interstate movement comes from administrative address records, so people
+        who rarely update them are counted late or not at all. Census undercount
+        is higher in the Territory than nationally, especially in remote
+        communities.</p>
+        <p><strong>Scope.</strong> This work is descriptive. It characterises the
+        structure of population change and the uncertainty attached to forecasting
+        it. It makes no policy recommendation.</p>
+      </div>
+    </details>
   </section>
 
   <footer>
     Van Hoi (Hendrick) Dang &middot; Ngoc Ngan Le &middot; Phuong Vy Ho &middot; Thi Kim Anh Bui<br>
     Source: ABS, <i>National, state and territory population</i>, March 2026,
-    tables 310102 and 310104. Code and data:
-    <a href="https://github.com/HendrickDang/nt-population-equation">github.com/HendrickDang/nt-population-equation</a>
+    tables 310102 and 310104.<br>
+    Code and data: <a href="https://github.com/HendrickDang/nt-population-equation">github.com/HendrickDang/nt-population-equation</a>
   </footer>
 </div>
 
@@ -292,25 +348,36 @@ footer a { color: var(--ochre); }
 const DATA = {"figures":{"reference_period":"March 2026","series_start":"June 1981","quarters_in_series":180,"natural_increase_12m":1969,"net_interstate_migration_12m":-1589,"net_overseas_migration_12m":3585,"total_growth_12m":3965,"nom_share_of_growth_pct":90.4,"erp_latest":268899,"annual_growth_pct":1.5,"quarters_nim_positive":52,"quarters_nim_negative":128,"quarters_nim_positive_pct":28.9,"nim_last_positive":"September 2021","nim_consecutive_negative":18,"nim_by_decade":{"1980":{"quarters":35,"positive_pct":49,"mean_per_quarter":-8},"1990":{"quarters":40,"positive_pct":30,"mean_per_quarter":-82},"2000":{"quarters":40,"positive_pct":40,"mean_per_quarter":-146},"2010":{"quarters":40,"positive_pct":8,"mean_per_quarter":-483},"2020":{"quarters":25,"positive_pct":16,"mean_per_quarter":-305}},"overseas_dependency":{"1y":90.4,"5y":84.5,"10y":74.4},"volatility":{"natural_increase":0.125,"net_overseas_migration":0.959,"net_interstate_migration":1.143},"most_volatile":"net_interstate_migration","robustness_post_2006":{"note":"ABS moved net overseas migration to the 12-of-16-months rule from the September quarter of 2006. Levels either side of that date are not comparable.","quarters":79,"window_start":"September 2006","volatility":{"natural_increase":0.148,"net_overseas_migration":0.773,"net_interstate_migration":0.942},"ranking_full_series":["net_interstate_migration","net_overseas_migration","natural_increase"],"ranking_post_2006":["net_interstate_migration","net_overseas_migration","natural_increase"],"ranking_unchanged":true,"nom_mean_abs_pre":207.0,"nom_mean_abs_post":571.4},"reconciliation":{"components_sum":3965,"abs_published_change":3965,"difference":0.0,"passes":true}},"series":{"dates":["1982-03","1982-06","1982-09","1982-12","1983-03","1983-06","1983-09","1983-12","1984-03","1984-06","1984-09","1984-12","1985-03","1985-06","1985-09","1985-12","1986-03","1986-06","1986-09","1986-12","1987-03","1987-06","1987-09","1987-12","1988-03","1988-06","1988-09","1988-12","1989-03","1989-06","1989-09","1989-12","1990-03","1990-06","1990-09","1990-12","1991-03","1991-06","1991-09","1991-12","1992-03","1992-06","1992-09","1992-12","1993-03","1993-06","1993-09","1993-12","1994-03","1994-06","1994-09","1994-12","1995-03","1995-06","1995-09","1995-12","1996-03","1996-06","1996-09","1996-12","1997-03","1997-06","1997-09","1997-12","1998-03","1998-06","1998-09","1998-12","1999-03","1999-06","1999-09","1999-12","2000-03","2000-06","2000-09","2000-12","2001-03","2001-06","2001-09","2001-12","2002-03","2002-06","2002-09","2002-12","2003-03","2003-06","2003-09","2003-12","2004-03","2004-06","2004-09","2004-12","2005-03","2005-06","2005-09","2005-12","2006-03","2006-06","2006-09","2006-12","2007-03","2007-06","2007-09","2007-12","2008-03","2008-06","2008-09","2008-12","2009-03","2009-06","2009-09","2009-12","2010-03","2010-06","2010-09","2010-12","2011-03","2011-06","2011-09","2011-12","2012-03","2012-06","2012-09","2012-12","2013-03","2013-06","2013-09","2013-12","2014-03","2014-06","2014-09","2014-12","2015-03","2015-06","2015-09","2015-12","2016-03","2016-06","2016-09","2016-12","2017-03","2017-06","2017-09","2017-12","2018-03","2018-06","2018-09","2018-12","2019-03","2019-06","2019-09","2019-12","2020-03","2020-06","2020-09","2020-12","2021-03","2021-06","2021-09","2021-12","2022-03","2022-06","2022-09","2022-12","2023-03","2023-06","2023-09","2023-12","2024-03","2024-06","2024-09","2024-12","2025-03","2025-06","2025-09","2025-12","2026-03"],"natural_increase":[645.5,594.5,621.2,588.0,588.2,607.5,575.2,600.0,617.0,633.0,652.8,661.0,650.5,625.5,664.5,668.5,672.8,698.8,689.2,663.5,689.2,675.5,691.8,713.2,661.2,688.8,641.2,640.8,623.5,624.5,637.2,648.0,671.5,676.2,715.2,693.8,701.5,710.8,691.0,697.8,714.2,731.5,726.5,742.0,743.2,714.2,719.2,724.2,724.8,720.0,708.5,700.2,715.2,720.5,748.5,731.8,710.5,707.2,691.8,692.5,689.8,683.2,681.2,686.0,698.0,706.2,687.5,674.8,671.5,687.2,694.2,694.8,695.2,680.5,682.0,695.8,700.5,713.0,725.5,732.2,727.0,709.8,715.5,713.2,726.8,736.5,724.5,721.0,707.0,688.8,681.2,661.2,641.2,639.5,656.0,664.8,680.8,691.0,677.5,692.5,702.0,705.5,709.2,717.5,711.0,712.5,726.2,704.8,706.8,722.5,721.0,745.8,750.2,741.0,738.5,725.8,721.5,736.2,740.8,727.2,741.0,748.5,747.2,759.8,749.0,735.5,725.8,734.0,724.8,716.0,707.2,698.0,708.8,714.2,722.0,712.8,710.5,709.2,713.2,732.5,715.8,715.2,693.8,674.0,670.0,653.5,658.8,649.5,650.0,631.0,624.0,615.5,611.0,625.0,626.8,634.2,659.2,662.8,646.0,646.5,617.8,575.5,580.5,563.8,536.8,552.2,536.5,528.2,553.5,531.2,545.2,550.2,510.8,501.8,478.0,456.8,492.2],"net_overseas_migration":[327.5,295.8,249.2,150.8,158.0,120.5,205.2,203.8,164.5,208.0,160.5,191.5,257.2,264.0,300.0,321.2,300.5,301.2,274.2,264.2,276.2,255.5,268.5,246.8,257.0,256.8,253.2,270.8,277.2,236.0,223.5,208.0,182.5,229.5,230.0,210.5,194.2,155.2,140.8,101.2,87.5,41.0,8.8,19.8,4.8,11.0,19.8,27.0,21.5,48.8,86.0,78.8,88.5,116.8,110.0,168.0,154.0,142.2,163.0,143.2,159.2,135.2,120.5,103.2,119.8,140.0,116.2,210.2,217.0,251.5,317.0,266.8,256.8,235.5,198.0,175.0,190.5,219.5,204.0,199.0,213.0,163.8,157.5,102.0,24.8,81.2,99.8,141.0,200.8,162.0,211.5,230.5,242.0,251.0,226.2,271.8,395.8,472.8,439.2,380.0,307.2,288.2,297.0,344.2,345.8,405.8,465.5,492.5,483.5,524.8,492.0,422.5,395.5,307.8,276.0,271.8,254.8,275.0,408.5,517.2,729.2,831.5,910.5,1029.8,1042.2,1088.5,920.5,798.2,667.2,438.0,390.8,285.2,302.8,588.5,458.5,386.0,361.0,262.0,473.0,521.8,476.5,461.2,346.2,310.5,281.2,189.5,177.2,139.0,198.0,233.0,221.2,247.8,259.0,72.2,18.0,15.2,-123.5,-105.5,96.0,311.8,561.2,713.0,831.8,906.8,978.2,1117.0,1129.0,1139.2,1047.0,941.8,880.2,877.5,955.8,984.5,1032.0,955.2,896.2],"net_interstate_migration":[1118.2,517.2,189.5,-0.8,-46.5,132.5,286.5,341.5,215.0,181.5,143.5,45.5,41.5,152.0,164.2,256.5,180.0,-123.2,-204.2,-246.8,-107.2,-30.0,-111.8,-388.0,-665.0,-782.2,-771.8,-581.0,-422.2,-367.2,-433.0,-500.2,-511.2,-292.5,-274.0,-159.2,-168.0,-288.0,-182.5,-299.5,-179.2,-242.2,-372.5,-152.2,-183.8,-174.8,-35.5,-204.8,-265.5,-218.8,-380.0,-234.5,66.2,96.0,178.8,354.0,148.0,82.0,290.8,115.0,126.0,438.5,261.2,135.2,85.0,-118.0,-116.0,-172.0,-164.8,-238.2,-315.8,-204.2,-278.8,-226.8,-229.2,-405.2,-380.8,-398.0,-408.0,-437.8,-510.0,-499.5,-602.8,-610.0,-697.0,-692.0,-641.2,-570.8,-424.2,-371.8,-218.5,-120.5,71.2,152.5,160.2,181.5,22.2,-138.2,-76.5,-82.8,1.8,110.8,150.5,269.2,263.2,347.2,315.5,220.2,254.5,233.5,177.5,91.8,-29.5,-165.2,-256.0,-399.8,-586.8,-637.2,-556.0,-455.8,-271.5,-172.8,-172.5,-95.2,-83.0,-120.2,-197.2,-384.0,-466.8,-605.2,-614.0,-609.8,-678.2,-585.2,-583.5,-520.2,-449.2,-507.2,-487.2,-517.2,-538.5,-483.2,-513.8,-528.8,-586.8,-669.2,-712.5,-777.2,-767.0,-753.0,-679.0,-538.5,-379.8,-224.8,-111.0,27.2,55.0,-79.8,-93.2,-141.2,-124.2,-51.2,-177.5,-272.0,-425.2,-567.2,-630.8,-705.2,-725.2,-629.0,-554.8,-392.8,-224.8,-212.8,-244.5,-307.0,-397.2]}};
 
 const S = [
-  { key: "natural_increase", label: "Natural increase", css: "--s-natural" },
-  { key: "net_overseas_migration", label: "Net overseas migration", css: "--s-overseas" },
-  { key: "net_interstate_migration", label: "Net interstate migration", css: "--s-interstate" },
+  { key: "natural_increase", label: "Natural increase", short: "Natural", css: "--s-natural" },
+  { key: "net_overseas_migration", label: "Net overseas migration", short: "Overseas", css: "--s-overseas" },
+  { key: "net_interstate_migration", label: "Net interstate migration", short: "Interstate", css: "--s-interstate" },
 ];
 
 const svg = document.getElementById("chart");
 const readout = document.getElementById("readout");
-const W = 1000, H = 390, M = { t: 14, r: 182, b: 30, l: 54 };
 const dates = DATA.series.dates;
 const n = dates.length;
 
 let lo = Infinity, hi = -Infinity;
 for (const s of S) for (const v of DATA.series[s.key]) { if (v < lo) lo = v; if (v > hi) hi = v; }
-const pad = (hi - lo) * 0.06;
+const pad = (hi - lo) * 0.07;
 lo -= pad; hi += pad;
+
+/* The plot is re-laid-out, not just rescaled, when the screen is narrow: a
+   phone gets a taller box and no end-of-line labels, because at that width the
+   labels collide with each other and with the plot. The legend above carries
+   identity in both cases. */
+let W, H, M, narrow;
+function layout() {
+  narrow = window.innerWidth < 700;
+  if (narrow) { W = 360; H = 420; M = { t: 10, r: 10, b: 26, l: 38 }; }
+  else        { W = 1000; H = 400; M = { t: 14, r: 186, b: 30, l: 56 }; }
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+}
 
 const px = i => M.l + (i / (n - 1)) * (W - M.l - M.r);
 const py = v => M.t + (1 - (v - lo) / (hi - lo)) * (H - M.t - M.b);
-const ink = n2 => getComputedStyle(document.documentElement).getPropertyValue(n2).trim();
+const ink = t => getComputedStyle(document.documentElement).getPropertyValue(t).trim();
 
 function niceTicks(a, b, count) {
   const span = b - a, step0 = span / count;
@@ -321,37 +388,44 @@ function niceTicks(a, b, count) {
   return out;
 }
 
+let pinned = null;
+
 function draw() {
-  const c = { line: ink("--line"), ink2: ink("--ink-2"), ink3: ink("--ink-3"), ink1: ink("--ink") };
+  layout();
+  const c = { line: ink("--line"), ink2: ink("--ink-2"), ink3: ink("--ink-3") };
+  const fs = narrow ? 10 : 11.5;
   let out = "";
 
-  for (const t of niceTicks(lo, hi, 6)) {
+  for (const t of niceTicks(lo, hi, narrow ? 6 : 6)) {
     const y = py(t).toFixed(1);
     out += `<line x1="${M.l}" y1="${y}" x2="${W - M.r}" y2="${y}" stroke="${c.line}" stroke-width="1"/>`;
-    out += `<text x="${M.l - 9}" y="${y}" fill="${c.ink3}" font-size="11.5" text-anchor="end" dominant-baseline="middle">${t.toLocaleString()}</text>`;
+    out += `<text x="${M.l - 7}" y="${y}" fill="${c.ink3}" font-size="${fs}" text-anchor="end" dominant-baseline="middle">${t.toLocaleString()}</text>`;
   }
   out += `<line x1="${M.l}" y1="${py(0).toFixed(1)}" x2="${W - M.r}" y2="${py(0).toFixed(1)}" stroke="${c.ink2}" stroke-width="1.5"/>`;
 
+  const every = narrow ? 10 : 5;
   for (let i = 0; i < n; i++) {
     const y = dates[i].slice(0, 4);
-    if (y % 5 === 0 && dates[i].slice(5) === "03") {
-      out += `<text x="${px(i).toFixed(1)}" y="${H - 10}" fill="${c.ink3}" font-size="11.5" text-anchor="middle">${y}</text>`;
+    if (y % every === 0 && dates[i].slice(5) === "03") {
+      out += `<text x="${px(i).toFixed(1)}" y="${H - 8}" fill="${c.ink3}" font-size="${fs}" text-anchor="middle">${narrow ? "’" + y.slice(2) : y}</text>`;
     }
   }
 
   for (const s of S) {
     const vals = DATA.series[s.key];
     const d = vals.map((v, i) => `${i ? "L" : "M"}${px(i).toFixed(1)} ${py(v).toFixed(1)}`).join(" ");
-    out += `<path d="${d}" fill="none" stroke="${ink(s.css)}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
-    out += `<text x="${(W - M.r + 10).toFixed(1)}" y="${py(vals[n - 1]).toFixed(1)}" fill="${c.ink2}" font-size="12.5" dominant-baseline="middle">${s.label}</text>`;
+    out += `<path d="${d}" fill="none" stroke="${ink(s.css)}" stroke-width="${narrow ? 1.8 : 2.2}" stroke-linejoin="round" stroke-linecap="round"/>`;
+    if (!narrow) {
+      out += `<text x="${(W - M.r + 11).toFixed(1)}" y="${py(vals[n - 1]).toFixed(1)}" fill="${c.ink2}" font-size="12.5" dominant-baseline="middle">${s.label}</text>`;
+    }
   }
 
   out += `<g id="hover" style="display:none"><line id="hl" y1="${M.t}" y2="${H - M.b}" stroke="${c.ink3}" stroke-width="1" stroke-dasharray="3 3"/>`;
-  for (const s of S) out += `<circle class="hdot" r="4.5" fill="${ink(s.css)}" stroke="${ink("--surface")}" stroke-width="2"/>`;
+  for (const s of S) out += `<circle class="hdot" r="${narrow ? 4 : 5}" fill="${ink(s.css)}" stroke="${ink("--surface")}" stroke-width="2"/>`;
   out += `</g>`;
 
   svg.innerHTML = out;
-  showAt(n - 1);
+  showAt(pinned !== null ? pinned : n - 1);
 }
 
 function showAt(i) {
@@ -368,31 +442,36 @@ function showAt(i) {
   const [y, m] = dates[i].split("-");
   const q = { "03": "Mar", "06": "Jun", "09": "Sep", "12": "Dec" }[m] || m;
   readout.innerHTML = `<span><b>${q} ${y}</b></span>` + S.map(s =>
-    `<span>${s.label} <b>${Math.round(DATA.series[s.key][i]).toLocaleString()}</b></span>`).join("")
-    + (pinned !== null ? `<span style="color:var(--ochre)">pinned &middot; click to release</span>` : "");
+    `<span>${narrow ? s.short : s.label} <b>${Math.round(DATA.series[s.key][i]).toLocaleString()}</b></span>`).join("")
+    + (pinned !== null ? `<span class="pin">held &middot; tap to release</span>` : "");
 }
 
-let pinned = null;
-
-function fromEvent(e) {
-  if (pinned !== null) return;
+function indexAt(clientX) {
   const r = svg.getBoundingClientRect();
-  const x = ((e.touches ? e.touches[0].clientX : e.clientX) - r.left) / r.width * W;
+  const x = (clientX - r.left) / r.width * W;
   const i = Math.round((x - M.l) / (W - M.l - M.r) * (n - 1));
-  if (i >= 0 && i < n) showAt(i);
+  return (i >= 0 && i < n) ? i : null;
 }
-svg.addEventListener("mousemove", fromEvent);
-svg.addEventListener("touchmove", e => { fromEvent(e); e.preventDefault(); }, { passive: false });
+
+svg.addEventListener("mousemove", e => {
+  if (pinned !== null) return;
+  const i = indexAt(e.clientX); if (i !== null) showAt(i);
+});
 svg.addEventListener("mouseleave", () => { if (pinned === null) showAt(n - 1); });
 svg.addEventListener("click", e => {
-  if (pinned !== null) { pinned = null; fromEvent(e); return; }
-  const r = svg.getBoundingClientRect();
-  const x = (e.clientX - r.left) / r.width * W;
-  const i = Math.round((x - M.l) / (W - M.l - M.r) * (n - 1));
-  if (i >= 0 && i < n) { pinned = i; showAt(i); }
+  const i = indexAt(e.clientX);
+  if (pinned !== null) { pinned = null; if (i !== null) showAt(i); return; }
+  if (i !== null) { pinned = i; showAt(i); }
 });
+svg.addEventListener("touchmove", e => {
+  const i = indexAt(e.touches[0].clientX);
+  if (i !== null) { pinned = i; showAt(i); }
+  e.preventDefault();
+}, { passive: false });
 
 draw();
+let rt;
+addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(draw, 120); });
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
 new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 </script>

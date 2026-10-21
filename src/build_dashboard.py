@@ -18,184 +18,197 @@ OUT = ROOT / "outputs"
 
 REPO = "https://github.com/HendrickDang/nt-population-equation"
 
-TEMPLATE = """<title>Territory Population Equation</title>
-<meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap">
+TEMPLATE = """<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Territory Population Equation</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: a stated headline, the long series, then the three supporting
-   readings, then method. Palette is Territory ground: ochre-biased
-   neutrals, with the three validated series hues carrying all the data. */
+/* Phone first. One column, big numbers, every figure captioned in plain words.
+   The three series hues are the project's validated set and carry all the data;
+   everything else is ink and surface. */
 :root {
-  --bg: #fbfaf7;
+  --bg: #fbfaf8;
   --surface: #ffffff;
-  --line: #e6e2d9;
-  --ink: #1c1a16;
-  --ink-2: #57524a;
-  --ink-3: #8b857a;
-  --ochre: #a8552a;
+  --surface-2: #f4f2ee;
+  --line: #e4e0d8;
+  --ink: #17161300;
+  --ink: #171613;
+  --ink-2: #55504a;
+  --ink-3: #87817a;
+  --accent: #a8552a;
   --s-natural: #2a78d6;
   --s-overseas: #eb6834;
   --s-interstate: #1baf7a;
-  --display: "Fraunces", Georgia, "Times New Roman", serif;
-  --body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --radius: 14px;
+  --body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #15140f;
-    --surface: #1e1c16;
-    --line: #322e25;
-    --ink: #f3f0e8;
-    --ink-2: #c0b9aa;
-    --ink-3: #8b857a;
-    --ochre: #d98a5c;
-    --s-natural: #3987e5;
-    --s-overseas: #ef7c4e;
-    --s-interstate: #22c88b;
+    --bg: #121110; --surface: #1a1916; --surface-2: #232019; --line: #322e27;
+    --ink: #f4f1ea; --ink-2: #bdb6ab; --ink-3: #8b857c; --accent: #e09a6d;
+    --s-natural: #4a90ea; --s-overseas: #e26a35; --s-interstate: #19ad76;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #15140f;
-  --surface: #1e1c16;
-  --line: #322e25;
-  --ink: #f3f0e8;
-  --ink-2: #c0b9aa;
-  --ink-3: #8b857a;
-  --ochre: #d98a5c;
-  --s-natural: #3987e5;
-  --s-overseas: #ef7c4e;
-  --s-interstate: #22c88b;
+  --bg: #121110; --surface: #1a1916; --surface-2: #232019; --line: #322e27;
+  --ink: #f4f1ea; --ink-2: #bdb6ab; --ink-3: #8b857c; --accent: #e09a6d;
+  --s-natural: #4a90ea; --s-overseas: #e26a35; --s-interstate: #19ad76;
   color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
 body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--ink);
-  font-family: var(--body);
-  font-size: 15px;
-  line-height: 1.55;
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--body); font-size: 16px; line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 .wrap {
-  max-width: 1120px;
-  margin: 0 auto;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: 40px 56px;
+  max-width: 1120px; margin: 0 auto;
+  padding: 28px max(16px, env(safe-area-inset-left, 0px)) 64px;
 }
-header { display: flex; flex-direction: column; gap: 6px; margin-bottom: 34px; }
+
+/* ---- header ------------------------------------------------------------ */
 .eyebrow {
-  font-size: 11px; letter-spacing: .13em; text-transform: uppercase;
-  color: var(--ochre); font-weight: 600;
+  font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent); font-weight: 600; margin-bottom: 10px;
 }
 h1 {
-  font-family: var(--display); font-weight: 600;
-  font-size: clamp(30px, 5vw, 46px); line-height: 1.08;
-  margin: 0; text-wrap: balance; letter-spacing: -.015em;
+  font-size: clamp(27px, 7vw, 40px); line-height: 1.12; font-weight: 700;
+  letter-spacing: -.022em; margin: 0 0 10px; text-wrap: balance;
 }
-.sub { color: var(--ink-2); max-width: 62ch; margin: 2px 0 0; }
+.standfirst { color: var(--ink-2); margin: 0; max-width: 58ch; font-size: 15.5px; }
 
-.headline {
-  display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 18px;
-  padding: 22px 0 26px; border-bottom: 1px solid var(--line); margin-bottom: 30px;
-}
-.big {
-  font-family: var(--display); font-size: clamp(54px, 11vw, 84px);
-  line-height: .9; font-weight: 600; color: var(--s-overseas);
-  font-variant-numeric: tabular-nums; letter-spacing: -.03em;
-}
-.big-say { max-width: 46ch; color: var(--ink-2); font-size: 15px; }
-.big-say strong { color: var(--ink); font-weight: 600; }
-
-/* The equation, drawn. Every bar is measured from a shared centre line, so
-   the one component that subtracts points the other way and is impossible to
-   misread. */
-.eq { margin: 4px 0 0; }
-.eq-row {
-  display: grid; grid-template-columns: minmax(130px, 190px) 1fr 92px;
-  align-items: center; gap: 8px 14px; padding: 5px 0;
-}
-.eq-name { font-size: 13.5px; color: var(--ink-2); }
-.eq-track { position: relative; height: 17px; }
-.eq-track::before {
-  content: ""; position: absolute; left: 50%; top: -4px; bottom: -4px;
-  width: 1px; background: var(--line);
-}
-.eq-fill { position: absolute; top: 0; height: 100%; border-radius: 3px; }
-.eq-val {
-  text-align: right; font-variant-numeric: tabular-nums;
-  font-weight: 600; font-size: 14px;
-}
-.eq-row.total { border-top: 1px solid var(--line); margin-top: 6px; padding-top: 11px; }
-.eq-row.total .eq-name, .eq-row.total .eq-val { color: var(--ink); font-weight: 600; }
-.eq-row.total .eq-name { font-size: 14px; }
-.eq-hint { color: var(--ink-3); font-size: 12.5px; margin: 10px 0 0; }
-
-h2 {
-  font-family: var(--display); font-weight: 600; font-size: 21px;
-  margin: 0 0 4px; letter-spacing: -.01em;
-}
-.note { color: var(--ink-3); font-size: 13px; margin: 0 0 16px; max-width: 70ch; }
-section { margin-bottom: 42px; }
-
-.chartcard {
+/* ---- hero -------------------------------------------------------------- */
+.hero {
+  margin: 26px 0 22px; padding: 24px 20px;
   background: var(--surface); border: 1px solid var(--line);
-  border-radius: 10px; padding: 18px 16px 10px;
+  border-radius: var(--radius);
 }
-.legend { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 0 0 10px; }
-.key { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-2); }
-.swatch { width: 15px; height: 3px; border-radius: 2px; flex: none; }
-.plot { width: 100%; overflow-x: auto; }
-svg { display: block; width: 100%; height: auto; }
-.readout {
-  display: flex; flex-wrap: wrap; gap: 4px 20px; min-height: 22px;
-  font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums;
-  padding: 6px 2px 2px;
+.hero-fig {
+  font-size: clamp(56px, 17vw, 86px); line-height: .92; font-weight: 700;
+  letter-spacing: -.045em; color: var(--s-overseas); margin-bottom: 10px;
 }
-.readout b { color: var(--ink); font-weight: 600; }
+.hero-say { font-size: 17px; font-weight: 500; color: var(--ink); max-width: 36ch; }
+.hero-sub { font-size: 14px; color: var(--ink-2); margin-top: 9px; max-width: 48ch; }
+@media (min-width: 740px) {
+  /* Side by side once there is room, so the figure is not marooned beside an
+     empty half of the card. */
+  .hero { display: grid; grid-template-columns: auto 1fr; gap: 6px 36px;
+          align-items: center; padding: 30px 28px; }
+  .hero-fig { margin: 0; grid-row: span 2; }
+  .hero-say { font-size: 19px; align-self: end; }
+  .hero-sub { margin-top: 0; align-self: start; }
+}
 
-.grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(238px, 1fr)); }
+/* ---- stat tiles -------------------------------------------------------- */
+.tiles {
+  display: grid; gap: 10px; margin-bottom: 36px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (min-width: 740px) { .tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; } }
+.tile {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 15px 15px 14px; min-width: 0;
+}
+.tile-lab {
+  font-size: 11.5px; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--ink-3); font-weight: 600; margin-bottom: 7px;
+}
+.tile-val { font-size: 25px; font-weight: 700; letter-spacing: -.03em; line-height: 1.1; }
+.tile-note { font-size: 12.5px; color: var(--ink-2); margin-top: 5px; line-height: 1.35; }
+
+/* ---- sections ---------------------------------------------------------- */
+section { margin-bottom: 38px; }
+h2 { font-size: 20px; font-weight: 700; letter-spacing: -.015em; margin: 0 0 5px; }
+.note { color: var(--ink-2); font-size: 14.5px; margin: 0 0 15px; max-width: 64ch; }
 .card {
   background: var(--surface); border: 1px solid var(--line);
-  border-radius: 10px; padding: 18px; min-width: 0;
+  border-radius: var(--radius); padding: 18px 16px;
 }
+.meaning {
+  font-size: 13px; color: var(--ink-2); margin: 13px 0 0;
+  padding-top: 12px; border-top: 1px solid var(--line); line-height: 1.45;
+}
+
+/* ---- the equation ------------------------------------------------------ */
+.eq-row { padding: 11px 0; border-bottom: 1px solid var(--line); }
+.eq-row:first-child { padding-top: 2px; }
+.eq-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 7px; }
+.eq-name { font-size: 14.5px; color: var(--ink); font-weight: 500; }
+.eq-val { font-size: 16px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.eq-track { position: relative; height: 14px; }
+.eq-track::before {
+  content: ""; position: absolute; left: 50%; top: -2px; bottom: -2px;
+  width: 1px; background: var(--line);
+}
+.eq-fill { position: absolute; top: 0; height: 100%; border-radius: 4px; }
+.eq-total {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: 12px; padding-top: 14px;
+}
+.eq-total .eq-name { font-weight: 700; font-size: 15.5px; }
+.eq-total .eq-val { font-size: 22px; }
+.eq-key { font-size: 12.5px; color: var(--ink-3); margin-top: 4px; }
+
+/* ---- chart ------------------------------------------------------------- */
+.legend { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-bottom: 12px; }
+.key { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-2); }
+.swatch { width: 14px; height: 3px; border-radius: 2px; flex: none; }
+svg { display: block; width: 100%; height: auto; }
+.readout {
+  display: flex; flex-wrap: wrap; gap: 3px 16px; margin-top: 12px;
+  padding-top: 11px; border-top: 1px solid var(--line);
+  font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums;
+}
+.readout b { color: var(--ink); font-weight: 600; }
+.readout .pin { color: var(--accent); }
+
+/* ---- reading cards ----------------------------------------------------- */
+.grid { display: grid; gap: 14px; grid-template-columns: 1fr; }
+@media (min-width: 740px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .card h3 {
-  font-size: 12px; letter-spacing: .09em; text-transform: uppercase;
+  font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase;
   color: var(--ink-3); font-weight: 600; margin: 0 0 14px;
 }
-.row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; margin-bottom: 11px; }
-.row:last-child { margin-bottom: 0; }
-.row .lab { font-size: 13.5px; color: var(--ink-2); min-width: 0; }
-.row .val { font-variant-numeric: tabular-nums; font-weight: 600; font-size: 14px; }
-.bar { grid-column: 1 / -1; height: 5px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.row { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 10px; margin-bottom: 12px; }
+.row:last-of-type { margin-bottom: 0; }
+.row .lab { font-size: 14px; color: var(--ink-2); min-width: 0; }
+.row .val { font-variant-numeric: tabular-nums; font-weight: 700; font-size: 15px; letter-spacing: -.02em; }
+.bar { grid-column: 1 / -1; height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; margin-top: 6px; }
 .bar > i { display: block; height: 100%; border-radius: 3px; }
 
-table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
-th, td { text-align: right; padding: 7px 6px; border-bottom: 1px solid var(--line); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: right; padding: 8px 4px; border-bottom: 1px solid var(--line); }
 th:first-child, td:first-child { text-align: left; }
-th { color: var(--ink-3); font-weight: 600; font-size: 11.5px;
-     letter-spacing: .07em; text-transform: uppercase; }
+th { color: var(--ink-3); font-weight: 600; font-size: 11px; letter-spacing: .07em; text-transform: uppercase; }
 td { font-variant-numeric: tabular-nums; }
-.tablewrap { overflow-x: auto; }
+tr:last-child td { border-bottom: 0; }
 
+/* ---- method ------------------------------------------------------------ */
 .check {
-  display: inline-flex; align-items: center; gap: 8px; font-size: 13px;
+  display: inline-flex; align-items: center; gap: 9px; font-size: 13.5px;
   color: var(--ink-2); background: var(--surface); border: 1px solid var(--line);
-  border-radius: 999px; padding: 7px 14px; font-variant-numeric: tabular-nums;
+  border-radius: 999px; padding: 9px 15px; margin-bottom: 16px;
+  font-variant-numeric: tabular-nums;
 }
-.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--s-interstate); flex: none; }
-
-.method { columns: 2 280px; column-gap: 34px; }
-.method p { margin: 0 0 13px; break-inside: avoid; color: var(--ink-2); font-size: 14px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--s-interstate); flex: none; }
+details { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+summary {
+  cursor: pointer; padding: 15px 16px; font-weight: 600; font-size: 15px;
+  list-style: none; display: flex; justify-content: space-between; align-items: center;
+}
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "+"; color: var(--ink-3); font-weight: 400; font-size: 20px; }
+details[open] summary::after { content: "\2212"; }
+details[open] summary { border-bottom: 1px solid var(--line); }
+.method { padding: 16px; columns: 2 300px; column-gap: 32px; }
+.method p { margin: 0 0 14px; break-inside: avoid; color: var(--ink-2); font-size: 14px; }
 .method strong { color: var(--ink); font-weight: 600; }
 
-footer {
-  border-top: 1px solid var(--line); padding-top: 18px;
-  font-size: 13px; color: var(--ink-3);
-}
-footer a { color: var(--ochre); }
+footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 13px; color: var(--ink-3); line-height: 1.6; }
+footer a { color: var(--accent); }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 
@@ -203,108 +216,151 @@ footer a { color: var(--ochre); }
   <header>
     <div class="eyebrow">CDU IT Code Fair 2026 &middot; Northern Territory</div>
     <h1>The Territory&rsquo;s Population Equation</h1>
-    <p class="sub">Population change has exactly three parts. For the Northern
-    Territory one of them has been negative for __NIM_RUN__ straight quarters, and
-    the Territory grows anyway. This tracks which part makes up the difference,
-    and how steady that part is.</p>
+    <p class="standfirst">Population change has exactly three parts. In the
+      Northern Territory one of them has been negative for __NIM_RUN__ straight
+      quarters, and the population grows anyway. This page shows which part makes
+      up the difference, and how steady that part is.</p>
   </header>
 
-  <div class="headline">
-    <div class="big">__NOM_SHARE__%</div>
-    <div class="big-say">of the Territory&rsquo;s population growth in the year to
-      __REF__ came from <strong>net overseas migration</strong>. Natural increase
-      added __NI__, interstate migration subtracted __NIM_ABS__, and overseas
-      migration added __NOM__, for total growth of __TOTAL__ on a population of
-      __ERP__.</div>
+  <div class="hero">
+    <div class="hero-fig">__NOM_SHARE__%</div>
+    <div class="hero-say">Nine in every ten people added to the Territory last
+      year arrived from overseas.</div>
+    <div class="hero-sub">Net overseas migration supplied __NOM_SHARE__% of all
+      population growth in the year to __REF__. A decade ago the same measure was
+      __DEP10__%.</div>
+  </div>
+
+  <div class="tiles">
+    <div class="tile">
+      <div class="tile-lab">Population</div>
+      <div class="tile-val">__ERP__</div>
+      <div class="tile-note">Estimated residents, __REF__</div>
+    </div>
+    <div class="tile">
+      <div class="tile-lab">Growth, 12 months</div>
+      <div class="tile-val">+__TOTAL__</div>
+      <div class="tile-note">__GROWTH_PCT__% more than a year earlier</div>
+    </div>
+    <div class="tile">
+      <div class="tile-lab">Interstate deficit</div>
+      <div class="tile-val">__NIM_RUN__ qtrs</div>
+      <div class="tile-note">Unbroken since __NIM_LAST__</div>
+    </div>
+    <div class="tile">
+      <div class="tile-lab">Validation</div>
+      <div class="tile-val" style="color:var(--s-interstate)">Passed</div>
+      <div class="tile-note">Parts match the published total exactly</div>
+    </div>
   </div>
 
   <section>
-    <h2>The equation</h2>
-    <p class="note">Where the year&rsquo;s growth came from. Each bar is measured
-      from the centre line, so the component that subtracts points the other way.</p>
+    <h2>Where the growth came from</h2>
+    <p class="note">The year&rsquo;s change, split into its three parts. Bars run
+      from the centre line: to the right a part adds people, to the left it takes
+      them away.</p>
     <div class="card">
-      <div class="eq">__EQUATION__</div>
-      <p class="eq-hint">Read it as arithmetic: the three parts add to the total,
-        and that total matches the figure the ABS publishes separately.</p>
+      __EQUATION__
+      <p class="meaning">Only one part subtracts. Overseas migration is large
+        enough to cover that loss and still leave the Territory growing, which is
+        why the total is positive at all.</p>
     </div>
   </section>
 
   <section>
-    <h2>Forty-five years, three components</h2>
-    <p class="note">Four-quarter rolling average, __START__ to __REF__. Above
-      the zero line a component adds people; below it, the component subtracts
-      them. Hover to read any quarter, or click to pin a quarter in place.</p>
-    <div class="chartcard">
-      <div class="plot"><svg id="chart" viewBox="0 0 1000 390" role="img"
-        aria-label="Northern Territory population change by component, quarterly, 1982 to 2026"></svg></div>
+    <h2>Forty-five years of the same three parts</h2>
+    <p class="note">Four-quarter rolling average, __START__ to __REF__. Above the
+      zero line a part adds people; below it, the part takes them away. Tap or
+      hover the chart to read any quarter, and tap again to hold it.</p>
+    <div class="card">
+      <div class="legend">
+        <span class="key"><span class="swatch" style="background:var(--s-natural)"></span>Natural increase</span>
+        <span class="key"><span class="swatch" style="background:var(--s-overseas)"></span>Net overseas migration</span>
+        <span class="key"><span class="swatch" style="background:var(--s-interstate)"></span>Net interstate migration</span>
+      </div>
+      <svg id="chart" role="img"
+        aria-label="Northern Territory population change by component, quarterly, 1982 to 2026"></svg>
       <div class="readout" id="readout"></div>
+      <p class="meaning">The blue line barely moves: births minus deaths is the
+        Territory&rsquo;s steady part. The other two swing hard, and the green one
+        has spent most of the last forty years below zero.</p>
     </div>
   </section>
 
   <section>
-    <h2>What the series says</h2>
-    <p class="note">Three readings, each computed over the whole series rather
-      than a chosen window.</p>
+    <h2>Three readings</h2>
+    <p class="note">Each computed over the whole series rather than a window
+      chosen to suit the argument.</p>
     <div class="grid">
       <div class="card">
         <h3>Reliance on overseas migration</h3>
         __DEPENDENCY__
+        <p class="meaning">The share is climbing. What was about three quarters of
+          growth over a decade is now nine tenths of it.</p>
       </div>
       <div class="card">
-        <h3>Volatility of each component</h3>
+        <h3>How much each part moves</h3>
         __VOLATILITY__
-        <p class="note" style="margin:14px 0 0">Standard deviation over mean
-          absolute value. Natural increase is steady; both migration components
-          move several times more.</p>
+        <p class="meaning">Standard deviation over mean absolute value. Higher
+          means less predictable. Natural increase is close to flat; both
+          migration parts move several times more, and interstate migration moves
+          most of all.</p>
       </div>
       <div class="card">
-        <h3>Interstate migration, by decade</h3>
-        <div class="tablewrap"><table>
-          <thead><tr><th>Decade</th><th>Quarters positive</th><th>Mean/quarter</th></tr></thead>
+        <h3>Interstate migration by decade</h3>
+        <table>
+          <thead><tr><th>Decade</th><th>Qtrs positive</th><th>Mean/qtr</th></tr></thead>
           <tbody>__DECADES__</tbody>
-        </table></div>
+        </table>
+        <p class="meaning">The Territory used to gain people from other states
+          about half the time. In the 2010s that fell to eight per cent.</p>
       </div>
     </div>
   </section>
 
   <section>
-    <h2>Method</h2>
-    <p class="note">
-      <span class="check"><span class="dot"></span>
-      Reconciliation passed: components sum to __RECON__, matching the change
-      ABS publishes, difference __DIFF__.</span>
-    </p>
-    <div class="method">
-      <p><strong>Decomposition.</strong> Quarterly components for the Northern
-      Territory from ABS table 310102, __START__ to __REF__, __QUARTERS__
-      quarters. Population level from table 310104.</p>
-      <p><strong>Validation before reporting.</strong> Natural increase plus net
-      interstate plus net overseas migration must equal the change ABS publishes
-      for the same period. The pipeline checks this first and refuses to report
-      a pass that is not one.</p>
-      <p><strong>Volatility.</strong> Coefficient of variation against the mean
-      absolute value, because interstate migration is mostly negative and a
-      signed mean would make the measure meaningless.</p>
-      <p><strong>Smoothing.</strong> The chart plots a four-quarter rolling
-      average. Quarterly figures are noisy and the shape is what matters; raw
-      values are in the repository.</p>
-      <p><strong>What the estimates cannot do.</strong> Net overseas migration
-      uses the 12-of-16-month rule, so a person can change category without
-      changing address. Interstate movement is derived from administrative
-      address records, so people who rarely update them are counted late or not
-      at all. Census undercount is higher in the Territory than nationally,
-      especially in remote communities.</p>
-      <p><strong>Scope.</strong> This work is descriptive. It characterises the
-      structure of population change and the uncertainty attached to
-      forecasting it. It makes no policy recommendation.</p>
-    </div>
+    <h2>How these numbers were produced</h2>
+    <span class="check"><span class="dot"></span>
+      Reconciliation passed &middot; parts sum to __RECON__ against a published
+      __RECON__ &middot; difference __DIFF__</span>
+    <details>
+      <summary>Method, limitations and scope</summary>
+      <div class="method">
+        <p><strong>Decomposition.</strong> Quarterly components for the Northern
+        Territory from ABS table 310102, __START__ to __REF__, __QUARTERS__
+        quarters. Population level from table 310104.</p>
+        <p><strong>Validation before reporting.</strong> Natural increase plus net
+        interstate plus net overseas migration must equal the change the ABS
+        publishes separately for the same period. The pipeline checks this first
+        and writes nothing at all if it fails.</p>
+        <p><strong>Volatility.</strong> Coefficient of variation against the mean
+        absolute value, because interstate migration is mostly negative and a
+        signed mean would make the measure meaningless.</p>
+        <p><strong>Smoothing.</strong> The chart plots a four-quarter rolling
+        average. Quarterly figures are noisy and the shape is what matters; raw
+        values are in the repository.</p>
+        <p><strong>A break in the series.</strong> The ABS moved net overseas
+        migration to the 12-of-16-months rule from September 2006, so levels
+        either side are not comparable. The volatility ranking is unchanged on the
+        full series, on the period since the change, and on the period before it.</p>
+        <p><strong>What the estimates cannot do.</strong> A person can change
+        category under the 12-of-16-month rule without changing address.
+        Interstate movement comes from administrative address records, so people
+        who rarely update them are counted late or not at all. Census undercount
+        is higher in the Territory than nationally, especially in remote
+        communities.</p>
+        <p><strong>Scope.</strong> This work is descriptive. It characterises the
+        structure of population change and the uncertainty attached to forecasting
+        it. It makes no policy recommendation.</p>
+      </div>
+    </details>
   </section>
 
   <footer>
     Van Hoi (Hendrick) Dang &middot; Ngoc Ngan Le &middot; Phuong Vy Ho &middot; Thi Kim Anh Bui<br>
-    Source: ABS, <i>National, state and territory population</i>, March 2026,
-    tables 310102 and 310104. Code and data:
-    <a href="__REPO__">__REPO_SHORT__</a>
+    Source: ABS, <i>National, state and territory population</i>, __REF__,
+    tables 310102 and 310104.<br>
+    Code and data: <a href="__REPO__">__REPO_SHORT__</a>
   </footer>
 </div>
 
@@ -312,25 +368,36 @@ footer a { color: var(--ochre); }
 const DATA = __DATA__;
 
 const S = [
-  { key: "natural_increase", label: "Natural increase", css: "--s-natural" },
-  { key: "net_overseas_migration", label: "Net overseas migration", css: "--s-overseas" },
-  { key: "net_interstate_migration", label: "Net interstate migration", css: "--s-interstate" },
+  { key: "natural_increase", label: "Natural increase", short: "Natural", css: "--s-natural" },
+  { key: "net_overseas_migration", label: "Net overseas migration", short: "Overseas", css: "--s-overseas" },
+  { key: "net_interstate_migration", label: "Net interstate migration", short: "Interstate", css: "--s-interstate" },
 ];
 
 const svg = document.getElementById("chart");
 const readout = document.getElementById("readout");
-const W = 1000, H = 390, M = { t: 14, r: 182, b: 30, l: 54 };
 const dates = DATA.series.dates;
 const n = dates.length;
 
 let lo = Infinity, hi = -Infinity;
 for (const s of S) for (const v of DATA.series[s.key]) { if (v < lo) lo = v; if (v > hi) hi = v; }
-const pad = (hi - lo) * 0.06;
+const pad = (hi - lo) * 0.07;
 lo -= pad; hi += pad;
+
+/* The plot is re-laid-out, not just rescaled, when the screen is narrow: a
+   phone gets a taller box and no end-of-line labels, because at that width the
+   labels collide with each other and with the plot. The legend above carries
+   identity in both cases. */
+let W, H, M, narrow;
+function layout() {
+  narrow = window.innerWidth < 700;
+  if (narrow) { W = 360; H = 420; M = { t: 10, r: 10, b: 26, l: 38 }; }
+  else        { W = 1000; H = 400; M = { t: 14, r: 186, b: 30, l: 56 }; }
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+}
 
 const px = i => M.l + (i / (n - 1)) * (W - M.l - M.r);
 const py = v => M.t + (1 - (v - lo) / (hi - lo)) * (H - M.t - M.b);
-const ink = n2 => getComputedStyle(document.documentElement).getPropertyValue(n2).trim();
+const ink = t => getComputedStyle(document.documentElement).getPropertyValue(t).trim();
 
 function niceTicks(a, b, count) {
   const span = b - a, step0 = span / count;
@@ -341,37 +408,44 @@ function niceTicks(a, b, count) {
   return out;
 }
 
+let pinned = null;
+
 function draw() {
-  const c = { line: ink("--line"), ink2: ink("--ink-2"), ink3: ink("--ink-3"), ink1: ink("--ink") };
+  layout();
+  const c = { line: ink("--line"), ink2: ink("--ink-2"), ink3: ink("--ink-3") };
+  const fs = narrow ? 10 : 11.5;
   let out = "";
 
-  for (const t of niceTicks(lo, hi, 6)) {
+  for (const t of niceTicks(lo, hi, narrow ? 6 : 6)) {
     const y = py(t).toFixed(1);
     out += `<line x1="${M.l}" y1="${y}" x2="${W - M.r}" y2="${y}" stroke="${c.line}" stroke-width="1"/>`;
-    out += `<text x="${M.l - 9}" y="${y}" fill="${c.ink3}" font-size="11.5" text-anchor="end" dominant-baseline="middle">${t.toLocaleString()}</text>`;
+    out += `<text x="${M.l - 7}" y="${y}" fill="${c.ink3}" font-size="${fs}" text-anchor="end" dominant-baseline="middle">${t.toLocaleString()}</text>`;
   }
   out += `<line x1="${M.l}" y1="${py(0).toFixed(1)}" x2="${W - M.r}" y2="${py(0).toFixed(1)}" stroke="${c.ink2}" stroke-width="1.5"/>`;
 
+  const every = narrow ? 10 : 5;
   for (let i = 0; i < n; i++) {
     const y = dates[i].slice(0, 4);
-    if (y % 5 === 0 && dates[i].slice(5) === "03") {
-      out += `<text x="${px(i).toFixed(1)}" y="${H - 10}" fill="${c.ink3}" font-size="11.5" text-anchor="middle">${y}</text>`;
+    if (y % every === 0 && dates[i].slice(5) === "03") {
+      out += `<text x="${px(i).toFixed(1)}" y="${H - 8}" fill="${c.ink3}" font-size="${fs}" text-anchor="middle">${narrow ? "’" + y.slice(2) : y}</text>`;
     }
   }
 
   for (const s of S) {
     const vals = DATA.series[s.key];
     const d = vals.map((v, i) => `${i ? "L" : "M"}${px(i).toFixed(1)} ${py(v).toFixed(1)}`).join(" ");
-    out += `<path d="${d}" fill="none" stroke="${ink(s.css)}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
-    out += `<text x="${(W - M.r + 10).toFixed(1)}" y="${py(vals[n - 1]).toFixed(1)}" fill="${c.ink2}" font-size="12.5" dominant-baseline="middle">${s.label}</text>`;
+    out += `<path d="${d}" fill="none" stroke="${ink(s.css)}" stroke-width="${narrow ? 1.8 : 2.2}" stroke-linejoin="round" stroke-linecap="round"/>`;
+    if (!narrow) {
+      out += `<text x="${(W - M.r + 11).toFixed(1)}" y="${py(vals[n - 1]).toFixed(1)}" fill="${c.ink2}" font-size="12.5" dominant-baseline="middle">${s.label}</text>`;
+    }
   }
 
   out += `<g id="hover" style="display:none"><line id="hl" y1="${M.t}" y2="${H - M.b}" stroke="${c.ink3}" stroke-width="1" stroke-dasharray="3 3"/>`;
-  for (const s of S) out += `<circle class="hdot" r="4.5" fill="${ink(s.css)}" stroke="${ink("--surface")}" stroke-width="2"/>`;
+  for (const s of S) out += `<circle class="hdot" r="${narrow ? 4 : 5}" fill="${ink(s.css)}" stroke="${ink("--surface")}" stroke-width="2"/>`;
   out += `</g>`;
 
   svg.innerHTML = out;
-  showAt(n - 1);
+  showAt(pinned !== null ? pinned : n - 1);
 }
 
 function showAt(i) {
@@ -388,31 +462,36 @@ function showAt(i) {
   const [y, m] = dates[i].split("-");
   const q = { "03": "Mar", "06": "Jun", "09": "Sep", "12": "Dec" }[m] || m;
   readout.innerHTML = `<span><b>${q} ${y}</b></span>` + S.map(s =>
-    `<span>${s.label} <b>${Math.round(DATA.series[s.key][i]).toLocaleString()}</b></span>`).join("")
-    + (pinned !== null ? `<span style="color:var(--ochre)">pinned &middot; click to release</span>` : "");
+    `<span>${narrow ? s.short : s.label} <b>${Math.round(DATA.series[s.key][i]).toLocaleString()}</b></span>`).join("")
+    + (pinned !== null ? `<span class="pin">held &middot; tap to release</span>` : "");
 }
 
-let pinned = null;
-
-function fromEvent(e) {
-  if (pinned !== null) return;
+function indexAt(clientX) {
   const r = svg.getBoundingClientRect();
-  const x = ((e.touches ? e.touches[0].clientX : e.clientX) - r.left) / r.width * W;
+  const x = (clientX - r.left) / r.width * W;
   const i = Math.round((x - M.l) / (W - M.l - M.r) * (n - 1));
-  if (i >= 0 && i < n) showAt(i);
+  return (i >= 0 && i < n) ? i : null;
 }
-svg.addEventListener("mousemove", fromEvent);
-svg.addEventListener("touchmove", e => { fromEvent(e); e.preventDefault(); }, { passive: false });
+
+svg.addEventListener("mousemove", e => {
+  if (pinned !== null) return;
+  const i = indexAt(e.clientX); if (i !== null) showAt(i);
+});
 svg.addEventListener("mouseleave", () => { if (pinned === null) showAt(n - 1); });
 svg.addEventListener("click", e => {
-  if (pinned !== null) { pinned = null; fromEvent(e); return; }
-  const r = svg.getBoundingClientRect();
-  const x = (e.clientX - r.left) / r.width * W;
-  const i = Math.round((x - M.l) / (W - M.l - M.r) * (n - 1));
-  if (i >= 0 && i < n) { pinned = i; showAt(i); }
+  const i = indexAt(e.clientX);
+  if (pinned !== null) { pinned = null; if (i !== null) showAt(i); return; }
+  if (i !== null) { pinned = i; showAt(i); }
 });
+svg.addEventListener("touchmove", e => {
+  const i = indexAt(e.touches[0].clientX);
+  if (i !== null) { pinned = i; showAt(i); }
+  e.preventDefault();
+}, { passive: false });
 
 draw();
+let rt;
+addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(draw, 120); });
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
 new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 </script>
@@ -446,9 +525,9 @@ def main() -> None:
         for k, v in sorted(vol.items(), key=lambda kv: -kv[1])
     )
 
-    # The equation as a centre-origin bar chart: every component is measured
-    # against the largest absolute contribution, so the single negative one
-    # reads as a subtraction rather than just a minus sign.
+    # The equation as a centre-origin bar chart. Label and value sit above the
+    # bar rather than beside it, so the row survives a phone's width without
+    # squeezing the bar into nothing.
     parts = [
         ("Natural increase", f["natural_increase_12m"], "--s-natural"),
         ("Net overseas migration", f["net_overseas_migration_12m"], "--s-overseas"),
@@ -460,15 +539,17 @@ def main() -> None:
         pct = abs(value) / scale * 50
         side = f"left:50%;width:{pct:.1f}%" if value >= 0 else f"right:50%;width:{pct:.1f}%"
         rows.append(
-            f'<div class="eq-row"><span class="eq-name">{label}</span>'
-            f'<span class="eq-track"><i class="eq-fill" style="{side};'
-            f'background:var({hue})"></i></span>'
-            f'<span class="eq-val">{value:+,}</span></div>'
+            f'<div class="eq-row">'
+            f'<div class="eq-top"><span class="eq-name">{label}</span>'
+            f'<span class="eq-val" style="color:var({hue})">{value:+,}</span></div>'
+            f'<div class="eq-track"><i class="eq-fill" style="{side};'
+            f'background:var({hue})"></i></div></div>'
         )
     rows.append(
-        f'<div class="eq-row total"><span class="eq-name">Total growth</span>'
-        f'<span class="eq-track"></span>'
+        f'<div class="eq-total"><span class="eq-name">Total growth</span>'
         f'<span class="eq-val">{f["total_growth_12m"]:+,}</span></div>'
+        f'<div class="eq-key">Matches the change the ABS publishes separately, '
+        f'to the person.</div>'
     )
     equation = "".join(rows)
 
@@ -490,6 +571,9 @@ def main() -> None:
         "__TOTAL__": f"{f['total_growth_12m']:,}",
         "__ERP__": f"{f['erp_latest']:,}",
         "__NIM_RUN__": f"{f['nim_consecutive_negative']}",
+        "__NIM_LAST__": f["nim_last_positive"],
+        "__GROWTH_PCT__": f"{f['annual_growth_pct']:+.1f}",
+        "__DEP10__": f"{f['overseas_dependency']['10y']}",
         "__RECON__": f"{f['reconciliation']['components_sum']:,}",
         "__DIFF__": f"{f['reconciliation']['difference']:g}",
         "__EQUATION__": equation,
