@@ -112,6 +112,42 @@ python src/interstate_flows.py      # supporting analysis, needs pipeline first
 Run `pipeline.py` first: the next two read `outputs/figures.json`. `housing.py`
 is independent of all three.
 
+## Keeping it current without anyone touching it
+
+The ABS publishes this release quarterly. `.github/workflows/update-from-abs.yml`
+checks for a new one every Monday, and can also be run on demand from the
+Actions tab.
+
+When a new release appears, the workflow downloads the four workbooks, re-runs
+the analysis, regenerates the dashboard and publishes it. Someone in a
+department refreshes the page and sees the new quarter. Nobody opens a
+spreadsheet.
+
+**It publishes only if the figures reconcile.** The three components must sum
+to the change the ABS publishes separately. If they do not, `pipeline.py` exits
+non-zero, the workflow fails, and the live dashboard keeps showing the last
+figures that did reconcile. An automated pipeline that publishes whatever it
+downloads is worse than no pipeline; the gate is what makes an unattended run
+safe.
+
+`src/fetch_abs.py` does the download, and it is deliberately cautious. Files go
+to a temporary directory first, and each one is opened and checked for the
+Northern Territory column it is supposed to contain before anything in
+`data/raw` is touched. A truncated download, an error page served as HTML, or
+an ABS layout change all stop there with a message naming what changed.
+
+```bash
+python src/fetch_abs.py --check    # is there a new release?
+python src/fetch_abs.py            # download it if so
+python src/fetch_abs.py --force    # download regardless
+```
+
+`data/raw/RELEASE` records which release the committed workbooks came from.
+
+This is scheduled automation, not a model. The forecasting layer would sit on
+top of it, and the volatility figures above are what tell you which component
+such a model would struggle with.
+
 ## Supporting analysis: arrivals and departures
 
 Table 310102 reports net interstate migration: one number per quarter, the

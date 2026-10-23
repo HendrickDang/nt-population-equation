@@ -1,0 +1,88 @@
+# Checks the ABS for a new quarterly release, re-runs the analysis, and
+# publishes the regenerated dashboard.
+#
+# Nothing is published unless the pipeline's reconciliation gate passes: the
+# three components must sum to the change the ABS publishes separately. If they
+# do not, pipeline.py exits non-zero, this job fails, and the live dashboard is
+# left showing the last figures that did reconcile. That is the intended
+# behaviour. An automated pipeline that publishes whatever it downloads is
+# worse than no pipeline.
+
+name: Update from ABS
+
+on:
+  schedule:
+    - cron: "0 1 * * 1"        # Mondays, 01:00 UTC (about 10:30 Darwin time)
+  workflow_dispatch:            # and a manual "Run workflow" button
+    inputs:
+      force:
+        description: "Re-download even if the release looks unchanged"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Fetch the latest ABS release
+        run: |
+          python src/fetch_abs.py ${{ inputs.force && '--force' || '' }}
+
+      - name: Stop early if nothing changed
+        id: changed
+        run: |
+          if git diff --quiet -- data/raw; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No new data. Leaving the published dashboard as it is."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run the analysis
+        if: steps.changed.outputs.changed == 'true'
+        run: |
+          python src/pipeline.py
+          python src/build_poster_figures.py
+          python src/build_dashboard.py
+          python src/interstate_flows.py
+
+      - name: Show the headline figures
+        if: steps.changed.outputs.changed == 'true'
+        run: |
+          python - <<'PY'
+          import json
+          f = json.load(open("outputs/figures.json"))
+          r = f["reconciliation"]
+          print(f"Reference period : {f['reference_period']}")
+          print(f"Total growth     : {f['total_growth_12m']:,}")
+          print(f"Overseas share   : {f['nom_share_of_growth_pct']}%")
+          print(f"Reconciliation   : {r['components_sum']:,} vs "
+                f"{r['abs_published_change']:,}, difference {r['difference']}")
+          PY
+
+      - name: Commit and publish
+        if: steps.changed.outputs.changed == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          RELEASE=$(cat data/raw/RELEASE)
+          git commit -m "Update to the ABS ${RELEASE} release
+
+          Downloaded by the scheduled workflow, re-analysed, and published only
+          after the components reconciled against the change the ABS publishes
+          separately."
+          git push

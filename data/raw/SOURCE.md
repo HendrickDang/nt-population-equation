@@ -65,6 +65,13 @@ https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/total-valu
 Australian Bureau of Statistics. (2026). *Wage price index, Australia*
 [Data set]. https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/wage-price-index-australia/latest-release
 
+## Which release these came from
+
+`RELEASE` in this folder records the ABS release the workbooks were downloaded
+from, as the ABS labels it in the download path. The scheduled workflow reads
+that file to decide whether a newer release exists, and rewrites it after a
+successful update.
+
 ## Attribution
 
 All files are Australian Bureau of Statistics data, licensed under
