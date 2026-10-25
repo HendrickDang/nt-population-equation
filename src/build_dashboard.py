@@ -171,17 +171,24 @@ svg { display: block; width: 100%; height: auto; }
 .readout .pin { color: var(--accent); }
 
 /* ---- turnover ---------------------------------------------------------- */
-.flowrow { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 10px; padding: 9px 0; }
-.flowrow + .flowrow { border-top: 1px solid var(--line); }
-.flowrow .lab { font-size: 14.5px; color: var(--ink-2); }
-.flowrow .val { font-size: 19px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-.flownet { border-top: 2px solid var(--line); margin-top: 4px; padding-top: 12px; }
-.flownet .lab, .flownet .val { color: var(--ink); font-weight: 700; }
-.churn {
-  margin-top: 16px; padding: 15px; border-radius: 11px; background: var(--surface-2);
+.flow3 {
+  display: grid; gap: 16px 22px; grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding-bottom: 16px; border-bottom: 1px solid var(--line);
 }
-.churn-fig { font-size: 30px; font-weight: 700; letter-spacing: -.03em; line-height: 1.05; }
-.churn-say { font-size: 14px; color: var(--ink-2); margin-top: 5px; }
+@media (min-width: 740px) { .flow3 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.f-lab {
+  font-size: 11.5px; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--ink-3); font-weight: 600; margin-bottom: 5px;
+}
+.f-val { font-size: 24px; font-weight: 700; letter-spacing: -.03em; line-height: 1.1; }
+.f-sub { font-size: 12.5px; color: var(--ink-2); margin-top: 4px; line-height: 1.35; }
+
+.lim { border: 0; background: none; margin-top: 12px; }
+.lim summary { padding: 8px 0; font-size: 13px; color: var(--cited-ink); }
+.lim summary::after { font-size: 17px; }
+.lim[open] summary { border-bottom: 0; }
+.lim ul { margin: 2px 0 4px; padding-left: 17px; font-size: 12.5px; color: var(--ink-2); }
+.lim li { margin-bottom: 5px; }
 
 /* ---- cited evidence: a different class of data, and it must look it ---- */
 .cited {
@@ -306,22 +313,18 @@ footer a { color: var(--accent); }
 
   <section>
     <h2>Where the growth came from</h2>
-    <p class="note">The year&rsquo;s change, split into its three parts. Bars run
-      from the centre line: to the right a part adds people, to the left it takes
-      them away.</p>
+    <p class="note">Bars run from the centre line. Right adds people, left takes
+      them away, and only one part goes left.</p>
     <div class="card">
       __EQUATION__
-      <p class="meaning">Only one part subtracts. Overseas migration is large
-        enough to cover that loss and still leave the Territory growing, which is
-        why the total is positive at all.</p>
+
     </div>
   </section>
 
   <section>
     <h2>Forty-five years of the same three parts</h2>
-    <p class="note">Four-quarter rolling average, __START__ to __REF__. Above the
-      zero line a part adds people; below it, the part takes them away. Tap or
-      hover the chart to read any quarter, and tap again to hold it.</p>
+    <p class="note">Four-quarter rolling average, __START__ to __REF__. Hover to
+      read a quarter, click to hold it.</p>
     <div class="card">
       <div class="legend">
         <span class="key"><span class="swatch" style="background:var(--s-natural)"></span>Natural increase</span>
@@ -331,52 +334,44 @@ footer a { color: var(--accent); }
       <svg id="chart" role="img"
         aria-label="Northern Territory population change by component, quarterly, 1982 to 2026"></svg>
       <div class="readout" id="readout"></div>
-      <p class="meaning">The blue line barely moves: births minus deaths is the
-        Territory&rsquo;s steady part. The other two swing hard, and the green one
-        has spent most of the last forty years below zero.</p>
+      <p class="meaning">Births minus deaths barely moves. The other two swing
+        hard, and interstate migration has spent most of forty years below zero.</p>
     </div>
   </section>
 
   <section>
     <h2>The two flows behind that one line</h2>
-    <p class="note">Table 310102 reports only the net. A loss of __NIM_ABS__ does not say
-      whether fewer people arrived or more left, and those call for different
-      responses. These come from ABS tables 16A and 16B.</p>
+    <p class="note">A net loss of __NIM_ABS__ does not say whether fewer arrived or
+      more left. ABS tables 16A and 16B.</p>
     <div class="card">
-      <div class="flowrow"><span class="lab">Arrived from other states</span>
-        <span class="val" style="color:var(--s-interstate)">__ARR__</span></div>
-      <div class="flowrow"><span class="lab">Left for other states</span>
-        <span class="val" style="color:var(--s-overseas)">__DEP__</span></div>
-      <div class="flowrow flownet"><span class="lab">Net</span>
-        <span class="val">__NETF__</span></div>
-
-      <div class="churn">
-        <div class="churn-fig">__CHURN__ moves</div>
-        <div class="churn-say">That is __CHURN_PCT__% of the population moving in or out in
-          one year, about one Territorian in nine. The net figure is the small
-          residue of a very large exchange.</div>
+      <div class="flow3">
+        <div><div class="f-lab">Arrived</div>
+          <div class="f-val" style="color:var(--s-interstate)">__ARR__</div></div>
+        <div><div class="f-lab">Left</div>
+          <div class="f-val" style="color:var(--s-overseas)">__DEP__</div></div>
+        <div><div class="f-lab">Net</div>
+          <div class="f-val">__NETF__</div></div>
+        <div><div class="f-lab">Gross moves</div>
+          <div class="f-val">__CHURN__</div>
+          <div class="f-sub">__CHURN_PCT__% of the population, one in nine</div></div>
       </div>
 
       <svg id="flows" role="img" style="margin-top:18px"
         aria-label="Northern Territory interstate arrivals and departures, quarterly"></svg>
       <div class="readout" id="flowsout"></div>
 
-      <p class="meaning">Against the previous decade's average, arrivals are down
-        __ARR_CHG__% and departures down __DEP_CHG__%, almost identically. The
-        deficit is not driven by either side alone: the whole exchange is slowing
-        while the imbalance persists.<br><br>
-        <b>Validated:</b> arrivals minus departures must equal the net interstate
-        migration published in table 310102. Across all __FLOWQ__ quarters the
-        largest difference is __FLOWDIFF__.</p>
+      <p class="meaning">Against the previous decade, arrivals are down __ARR_CHG__%
+        and departures down __DEP_CHG__%. Neither side alone explains the deficit:
+        the whole exchange is slowing. <b>Validated</b> against the published net
+        across all __FLOWQ__ quarters, largest difference __FLOWDIFF__.</p>
     </div>
   </section>
 
   <section>
     <h2>Who intends to stay</h2>
-    <p class="note">Population data says how many people arrive and leave. It cannot
-      say who plans to stay. For that we cite survey evidence, and we label it
-      clearly, because it is not produced by this pipeline and the validation gate
-      does not apply to it.</p>
+    <p class="note">Population data cannot say who plans to stay. This is cited
+      survey evidence, not pipeline output, and the validation gate does not
+      apply to it.</p>
     <div class="cited">
       <span class="cited-badge">Cited evidence &middot; not computed here</span>
 
@@ -399,30 +394,28 @@ footer a { color: var(--accent); }
         <b>Measure.</b> __MEASURE__<br>
         <b>Base.</b> __BASE__ __RESP__ people completed the survey; __RESP_CUR__ were
         current Territory residents.<br>
-        <b>Limitations.</b>
-        <ul>__LIMITS__</ul>
       </p>
+      <details class="lim"><summary>Limitations</summary>
+        <ul>__LIMITS__</ul>
+      </details>
     </div>
   </section>
 
   <section>
     <h2>Three readings</h2>
-    <p class="note">Each computed over the whole series rather than a window
-      chosen to suit the argument.</p>
+    <p class="note">Each computed over the whole series, not a chosen window.</p>
     <div class="grid">
       <div class="card">
         <h3>Reliance on overseas migration</h3>
         __DEPENDENCY__
-        <p class="meaning">The share is climbing. What was about three quarters of
-          growth over a decade is now nine tenths of it.</p>
+        <p class="meaning">Three quarters of growth over a decade, nine tenths of
+          it last year.</p>
       </div>
       <div class="card">
         <h3>How much each part moves</h3>
         __VOLATILITY__
         <p class="meaning">Standard deviation over mean absolute value. Higher
-          means less predictable. Natural increase is close to flat; both
-          migration parts move several times more, and interstate migration moves
-          most of all.</p>
+          means less predictable.</p>
       </div>
       <div class="card">
         <h3>Interstate migration by decade</h3>
@@ -430,8 +423,8 @@ footer a { color: var(--accent); }
           <thead><tr><th>Decade</th><th>Qtrs positive</th><th>Mean/qtr</th></tr></thead>
           <tbody>__DECADES__</tbody>
         </table>
-        <p class="meaning">The Territory used to gain people from other states
-          about half the time. In the 2010s that fell to eight per cent.</p>
+        <p class="meaning">Half the quarters in the 1980s. Eight per cent in the
+          2010s.</p>
       </div>
     </div>
   </section>

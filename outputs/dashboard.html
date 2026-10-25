@@ -151,17 +151,24 @@ svg { display: block; width: 100%; height: auto; }
 .readout .pin { color: var(--accent); }
 
 /* ---- turnover ---------------------------------------------------------- */
-.flowrow { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 10px; padding: 9px 0; }
-.flowrow + .flowrow { border-top: 1px solid var(--line); }
-.flowrow .lab { font-size: 14.5px; color: var(--ink-2); }
-.flowrow .val { font-size: 19px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-.flownet { border-top: 2px solid var(--line); margin-top: 4px; padding-top: 12px; }
-.flownet .lab, .flownet .val { color: var(--ink); font-weight: 700; }
-.churn {
-  margin-top: 16px; padding: 15px; border-radius: 11px; background: var(--surface-2);
+.flow3 {
+  display: grid; gap: 16px 22px; grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding-bottom: 16px; border-bottom: 1px solid var(--line);
 }
-.churn-fig { font-size: 30px; font-weight: 700; letter-spacing: -.03em; line-height: 1.05; }
-.churn-say { font-size: 14px; color: var(--ink-2); margin-top: 5px; }
+@media (min-width: 740px) { .flow3 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.f-lab {
+  font-size: 11.5px; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--ink-3); font-weight: 600; margin-bottom: 5px;
+}
+.f-val { font-size: 24px; font-weight: 700; letter-spacing: -.03em; line-height: 1.1; }
+.f-sub { font-size: 12.5px; color: var(--ink-2); margin-top: 4px; line-height: 1.35; }
+
+.lim { border: 0; background: none; margin-top: 12px; }
+.lim summary { padding: 8px 0; font-size: 13px; color: var(--cited-ink); }
+.lim summary::after { font-size: 17px; }
+.lim[open] summary { border-bottom: 0; }
+.lim ul { margin: 2px 0 4px; padding-left: 17px; font-size: 12.5px; color: var(--ink-2); }
+.lim li { margin-bottom: 5px; }
 
 /* ---- cited evidence: a different class of data, and it must look it ---- */
 .cited {
@@ -286,22 +293,18 @@ footer a { color: var(--accent); }
 
   <section>
     <h2>Where the growth came from</h2>
-    <p class="note">The year&rsquo;s change, split into its three parts. Bars run
-      from the centre line: to the right a part adds people, to the left it takes
-      them away.</p>
+    <p class="note">Bars run from the centre line. Right adds people, left takes
+      them away, and only one part goes left.</p>
     <div class="card">
       <div class="eq-row"><div class="eq-top"><span class="eq-name">Natural increase</span><span class="eq-val" style="color:var(--s-natural)">+1,969</span></div><div class="eq-track"><i class="eq-fill" style="left:50%;width:27.5%;background:var(--s-natural)"></i></div></div><div class="eq-row"><div class="eq-top"><span class="eq-name">Net overseas migration</span><span class="eq-val" style="color:var(--s-overseas)">+3,585</span></div><div class="eq-track"><i class="eq-fill" style="left:50%;width:50.0%;background:var(--s-overseas)"></i></div></div><div class="eq-row"><div class="eq-top"><span class="eq-name">Net interstate migration</span><span class="eq-val" style="color:var(--s-interstate)">-1,589</span></div><div class="eq-track"><i class="eq-fill" style="right:50%;width:22.2%;background:var(--s-interstate)"></i></div></div><div class="eq-total"><span class="eq-name">Total growth</span><span class="eq-val">+3,965</span></div><div class="eq-key">Matches the change the ABS publishes separately, to the person.</div>
-      <p class="meaning">Only one part subtracts. Overseas migration is large
-        enough to cover that loss and still leave the Territory growing, which is
-        why the total is positive at all.</p>
+
     </div>
   </section>
 
   <section>
     <h2>Forty-five years of the same three parts</h2>
-    <p class="note">Four-quarter rolling average, June 1981 to March 2026. Above the
-      zero line a part adds people; below it, the part takes them away. Tap or
-      hover the chart to read any quarter, and tap again to hold it.</p>
+    <p class="note">Four-quarter rolling average, June 1981 to March 2026. Hover to
+      read a quarter, click to hold it.</p>
     <div class="card">
       <div class="legend">
         <span class="key"><span class="swatch" style="background:var(--s-natural)"></span>Natural increase</span>
@@ -311,52 +314,44 @@ footer a { color: var(--accent); }
       <svg id="chart" role="img"
         aria-label="Northern Territory population change by component, quarterly, 1982 to 2026"></svg>
       <div class="readout" id="readout"></div>
-      <p class="meaning">The blue line barely moves: births minus deaths is the
-        Territory&rsquo;s steady part. The other two swing hard, and the green one
-        has spent most of the last forty years below zero.</p>
+      <p class="meaning">Births minus deaths barely moves. The other two swing
+        hard, and interstate migration has spent most of forty years below zero.</p>
     </div>
   </section>
 
   <section>
     <h2>The two flows behind that one line</h2>
-    <p class="note">Table 310102 reports only the net. A loss of 1,589 does not say
-      whether fewer people arrived or more left, and those call for different
-      responses. These come from ABS tables 16A and 16B.</p>
+    <p class="note">A net loss of 1,589 does not say whether fewer arrived or
+      more left. ABS tables 16A and 16B.</p>
     <div class="card">
-      <div class="flowrow"><span class="lab">Arrived from other states</span>
-        <span class="val" style="color:var(--s-interstate)">14,290</span></div>
-      <div class="flowrow"><span class="lab">Left for other states</span>
-        <span class="val" style="color:var(--s-overseas)">15,879</span></div>
-      <div class="flowrow flownet"><span class="lab">Net</span>
-        <span class="val">-1,589</span></div>
-
-      <div class="churn">
-        <div class="churn-fig">30,169 moves</div>
-        <div class="churn-say">That is 11.2% of the population moving in or out in
-          one year, about one Territorian in nine. The net figure is the small
-          residue of a very large exchange.</div>
+      <div class="flow3">
+        <div><div class="f-lab">Arrived</div>
+          <div class="f-val" style="color:var(--s-interstate)">14,290</div></div>
+        <div><div class="f-lab">Left</div>
+          <div class="f-val" style="color:var(--s-overseas)">15,879</div></div>
+        <div><div class="f-lab">Net</div>
+          <div class="f-val">-1,589</div></div>
+        <div><div class="f-lab">Gross moves</div>
+          <div class="f-val">30,169</div>
+          <div class="f-sub">11.2% of the population, one in nine</div></div>
       </div>
 
       <svg id="flows" role="img" style="margin-top:18px"
         aria-label="Northern Territory interstate arrivals and departures, quarterly"></svg>
       <div class="readout" id="flowsout"></div>
 
-      <p class="meaning">Against the previous decade's average, arrivals are down
-        12.8% and departures down 12.1%, almost identically. The
-        deficit is not driven by either side alone: the whole exchange is slowing
-        while the imbalance persists.<br><br>
-        <b>Validated:</b> arrivals minus departures must equal the net interstate
-        migration published in table 310102. Across all 180 quarters the
-        largest difference is 0.</p>
+      <p class="meaning">Against the previous decade, arrivals are down 12.8%
+        and departures down 12.1%. Neither side alone explains the deficit:
+        the whole exchange is slowing. <b>Validated</b> against the published net
+        across all 180 quarters, largest difference 0.</p>
     </div>
   </section>
 
   <section>
     <h2>Who intends to stay</h2>
-    <p class="note">Population data says how many people arrive and leave. It cannot
-      say who plans to stay. For that we cite survey evidence, and we label it
-      clearly, because it is not produced by this pipeline and the validation gate
-      does not apply to it.</p>
+    <p class="note">Population data cannot say who plans to stay. This is cited
+      survey evidence, not pipeline output, and the validation gate does not
+      apply to it.</p>
     <div class="cited">
       <span class="cited-badge">Cited evidence &middot; not computed here</span>
 
@@ -379,30 +374,28 @@ footer a { color: var(--accent); }
         <b>Measure.</b> Share intending to still be living in the Territory in two years.<br>
         <b>Base.</b> Current Territory residents who had decided whether to stay or leave. Undecided respondents are excluded. 5,255 people completed the survey; 3,748 were
         current Territory residents.<br>
-        <b>Limitations.</b>
-        <ul><li>Stated intentions, not observed behaviour. Nobody followed up to see who actually stayed.</li><li>The report publishes no subgroup sample sizes, so the number of people behind each bar is unknown.</li><li>Self-selected online sample. The report notes it under-represents people aged 18 to 34 and over 75.</li><li>Birthplace and home ownership are each a single-variable split, so the groups overlap and the two findings cannot be separated from each other.</li><li>An association with intending to stay is not evidence that home ownership causes retention. The relationship could run either way.</li></ul>
       </p>
+      <details class="lim"><summary>Limitations</summary>
+        <ul><li>Stated intentions, not observed behaviour. Nobody followed up to see who actually stayed.</li><li>The report publishes no subgroup sample sizes, so the number of people behind each bar is unknown.</li><li>Self-selected online sample. The report notes it under-represents people aged 18 to 34 and over 75.</li><li>Birthplace and home ownership are each a single-variable split, so the groups overlap and the two findings cannot be separated from each other.</li><li>An association with intending to stay is not evidence that home ownership causes retention. The relationship could run either way.</li></ul>
+      </details>
     </div>
   </section>
 
   <section>
     <h2>Three readings</h2>
-    <p class="note">Each computed over the whole series rather than a window
-      chosen to suit the argument.</p>
+    <p class="note">Each computed over the whole series, not a chosen window.</p>
     <div class="grid">
       <div class="card">
         <h3>Reliance on overseas migration</h3>
         <div class="row"><span class="lab">Last 10 years</span><span class="val">74.4%</span><span class="bar"><i style="width:74.4%;background:var(--s-overseas)"></i></span></div><div class="row"><span class="lab">Last 5 years</span><span class="val">84.5%</span><span class="bar"><i style="width:84.5%;background:var(--s-overseas)"></i></span></div><div class="row"><span class="lab">Last 12 months</span><span class="val">90.4%</span><span class="bar"><i style="width:90.4%;background:var(--s-overseas)"></i></span></div>
-        <p class="meaning">The share is climbing. What was about three quarters of
-          growth over a decade is now nine tenths of it.</p>
+        <p class="meaning">Three quarters of growth over a decade, nine tenths of
+          it last year.</p>
       </div>
       <div class="card">
         <h3>How much each part moves</h3>
         <div class="row"><span class="lab">Net interstate migration</span><span class="val">1.14</span><span class="bar"><i style="width:100%;background:var(--s-interstate)"></i></span></div><div class="row"><span class="lab">Net overseas migration</span><span class="val">0.96</span><span class="bar"><i style="width:84%;background:var(--s-overseas)"></i></span></div><div class="row"><span class="lab">Natural increase</span><span class="val">0.12</span><span class="bar"><i style="width:11%;background:var(--s-natural)"></i></span></div>
         <p class="meaning">Standard deviation over mean absolute value. Higher
-          means less predictable. Natural increase is close to flat; both
-          migration parts move several times more, and interstate migration moves
-          most of all.</p>
+          means less predictable.</p>
       </div>
       <div class="card">
         <h3>Interstate migration by decade</h3>
@@ -410,8 +403,8 @@ footer a { color: var(--accent); }
           <thead><tr><th>Decade</th><th>Qtrs positive</th><th>Mean/qtr</th></tr></thead>
           <tbody><tr><td>1980s</td><td>49%</td><td>-8</td></tr><tr><td>1990s</td><td>30%</td><td>-82</td></tr><tr><td>2000s</td><td>40%</td><td>-146</td></tr><tr><td>2010s</td><td>8%</td><td>-483</td></tr><tr><td>2020s</td><td>16%</td><td>-305</td></tr></tbody>
         </table>
-        <p class="meaning">The Territory used to gain people from other states
-          about half the time. In the 2010s that fell to eight per cent.</p>
+        <p class="meaning">Half the quarters in the 1980s. Eight per cent in the
+          2010s.</p>
       </div>
     </div>
   </section>
