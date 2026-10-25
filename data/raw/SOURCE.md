@@ -72,6 +72,14 @@ from, as the ABS labels it in the download path. The scheduled workflow reads
 that file to decide whether a newer release exists, and rewrites it after a
 successful update.
 
+## Cited evidence, not source data
+
+`data/reference/ttam_2019.json` holds survey figures transcribed from a published
+report, not ABS data. It is kept outside `data/raw` deliberately: nothing in this
+pipeline computes or validates it, and the dashboard renders it in a separate
+labelled section for the same reason. That file records its own citation,
+measure, base, precision and limitations.
+
 ## Attribution
 
 All files are Australian Bureau of Statistics data, licensed under

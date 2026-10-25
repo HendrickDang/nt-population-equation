@@ -20,6 +20,9 @@
   --s-overseas: #eb6834;
   --s-interstate: #1baf7a;
   --radius: 14px;
+  --cited-bg: #f6f3ec;
+  --cited-line: #ddd3c0;
+  --cited-ink: #7a5d2e;
   --body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 @media (prefers-color-scheme: dark) {
@@ -27,6 +30,7 @@
     --bg: #121110; --surface: #1a1916; --surface-2: #232019; --line: #322e27;
     --ink: #f4f1ea; --ink-2: #bdb6ab; --ink-3: #8b857c; --accent: #e09a6d;
     --s-natural: #4a90ea; --s-overseas: #e26a35; --s-interstate: #19ad76;
+    --cited-bg: #221e17; --cited-line: #3d3527; --cited-ink: #c9a66b;
     color-scheme: dark;
   }
 }
@@ -34,6 +38,7 @@
   --bg: #121110; --surface: #1a1916; --surface-2: #232019; --line: #322e27;
   --ink: #f4f1ea; --ink-2: #bdb6ab; --ink-3: #8b857c; --accent: #e09a6d;
   --s-natural: #4a90ea; --s-overseas: #e26a35; --s-interstate: #19ad76;
+  --cited-bg: #221e17; --cited-line: #3d3527; --cited-ink: #c9a66b;
   color-scheme: dark;
 }
 
@@ -144,6 +149,51 @@ svg { display: block; width: 100%; height: auto; }
 }
 .readout b { color: var(--ink); font-weight: 600; }
 .readout .pin { color: var(--accent); }
+
+/* ---- turnover ---------------------------------------------------------- */
+.flowrow { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 10px; padding: 9px 0; }
+.flowrow + .flowrow { border-top: 1px solid var(--line); }
+.flowrow .lab { font-size: 14.5px; color: var(--ink-2); }
+.flowrow .val { font-size: 19px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.flownet { border-top: 2px solid var(--line); margin-top: 4px; padding-top: 12px; }
+.flownet .lab, .flownet .val { color: var(--ink); font-weight: 700; }
+.churn {
+  margin-top: 16px; padding: 15px; border-radius: 11px; background: var(--surface-2);
+}
+.churn-fig { font-size: 30px; font-weight: 700; letter-spacing: -.03em; line-height: 1.05; }
+.churn-say { font-size: 14px; color: var(--ink-2); margin-top: 5px; }
+
+/* ---- cited evidence: a different class of data, and it must look it ---- */
+.cited {
+  border: 1px solid var(--cited-line); border-radius: var(--radius);
+  background: var(--cited-bg); padding: 18px 16px;
+}
+.cited-badge {
+  display: inline-flex; align-items: center; gap: 7px; font-size: 11px;
+  letter-spacing: .08em; text-transform: uppercase; font-weight: 600;
+  color: var(--cited-ink); margin-bottom: 14px;
+}
+.cited-badge::before {
+  content: ""; width: 7px; height: 7px; border-radius: 2px;
+  background: var(--cited-ink); flex: none;
+}
+.cited h3 { color: var(--cited-ink); }
+.bars { display: grid; gap: 13px; margin-top: 4px; }
+.barpair { display: grid; grid-template-columns: 74px 1fr; gap: 10px; align-items: center; }
+.barpair .age { font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.barset { display: grid; gap: 4px; }
+.barline { display: grid; grid-template-columns: 1fr 38px; gap: 8px; align-items: center; }
+.barline .track { height: 13px; border-radius: 3px; background: var(--surface-2); overflow: hidden; }
+.barline .track > i { display: block; height: 100%; border-radius: 3px; }
+.barline .pct { font-size: 12.5px; font-variant-numeric: tabular-nums; color: var(--ink-2); text-align: right; }
+.barkey { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 2px 0 14px; }
+.cite {
+  font-size: 12.5px; color: var(--ink-2); line-height: 1.5;
+  margin: 15px 0 0; padding-top: 13px; border-top: 1px solid var(--cited-line);
+}
+.cite b { color: var(--ink); font-weight: 600; }
+.cite ul { margin: 7px 0 0; padding-left: 17px; }
+.cite li { margin-bottom: 4px; }
 
 /* ---- reading cards ----------------------------------------------------- */
 .grid { display: grid; gap: 14px; grid-template-columns: 1fr; }
@@ -268,6 +318,74 @@ footer a { color: var(--accent); }
   </section>
 
   <section>
+    <h2>The two flows behind that one line</h2>
+    <p class="note">Table 310102 reports only the net. A loss of 1,589 does not say
+      whether fewer people arrived or more left, and those call for different
+      responses. These come from ABS tables 16A and 16B.</p>
+    <div class="card">
+      <div class="flowrow"><span class="lab">Arrived from other states</span>
+        <span class="val" style="color:var(--s-interstate)">14,290</span></div>
+      <div class="flowrow"><span class="lab">Left for other states</span>
+        <span class="val" style="color:var(--s-overseas)">15,879</span></div>
+      <div class="flowrow flownet"><span class="lab">Net</span>
+        <span class="val">-1,589</span></div>
+
+      <div class="churn">
+        <div class="churn-fig">30,169 moves</div>
+        <div class="churn-say">That is 11.2% of the population moving in or out in
+          one year, about one Territorian in nine. The net figure is the small
+          residue of a very large exchange.</div>
+      </div>
+
+      <svg id="flows" role="img" style="margin-top:18px"
+        aria-label="Northern Territory interstate arrivals and departures, quarterly"></svg>
+      <div class="readout" id="flowsout"></div>
+
+      <p class="meaning">Against the previous decade's average, arrivals are down
+        12.8% and departures down 12.1%, almost identically. The
+        deficit is not driven by either side alone: the whole exchange is slowing
+        while the imbalance persists.<br><br>
+        <b>Validated:</b> arrivals minus departures must equal the net interstate
+        migration published in table 310102. Across all 180 quarters the
+        largest difference is 0.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Who intends to stay</h2>
+    <p class="note">Population data says how many people arrive and leave. It cannot
+      say who plans to stay. For that we cite survey evidence, and we label it
+      clearly, because it is not produced by this pipeline and the validation gate
+      does not apply to it.</p>
+    <div class="cited">
+      <span class="cited-badge">Cited evidence &middot; not computed here</span>
+
+      <h3>Intending to stay, by home ownership &middot; age 18-29</h3>
+      <div class="barkey">
+        <span class="key"><span class="swatch" style="background:var(--s-natural)"></span>Own or purchasing</span>
+        <span class="key"><span class="swatch" style="background:var(--ink-3)"></span>Do not own</span>
+      </div>
+      <div class="bars"><div class="barpair"><span class="age">18-29</span><div class="barset"><div class="barline"><span class="track"><i style="width:76%;background:var(--s-natural)"></i></span><span class="pct">76%</span></div><div class="barline"><span class="track"><i style="width:53%;background:var(--ink-3)"></i></span><span class="pct">53%</span></div></div></div></div>
+
+      <h3 style="margin-top:22px">Intending to stay, by country of birth</h3>
+      <div class="barkey">
+        <span class="key"><span class="swatch" style="background:var(--s-overseas)"></span>Born overseas</span>
+        <span class="key"><span class="swatch" style="background:var(--s-natural)"></span>Born in Australia</span>
+      </div>
+      <div class="bars"><div class="barpair"><span class="age">18-29</span><div class="barset"><div class="barline"><span class="track"><i style="width:74%;background:var(--s-overseas)"></i></span><span class="pct">74%</span></div><div class="barline"><span class="track"><i style="width:51%;background:var(--s-natural)"></i></span><span class="pct">51%</span></div></div></div><div class="barpair"><span class="age">30-49</span><div class="barset"><div class="barline"><span class="track"><i style="width:73%;background:var(--s-overseas)"></i></span><span class="pct">73%</span></div><div class="barline"><span class="track"><i style="width:68%;background:var(--s-natural)"></i></span><span class="pct">68%</span></div></div></div><div class="barpair"><span class="age">50-59</span><div class="barset"><div class="barline"><span class="track"><i style="width:77%;background:var(--s-overseas)"></i></span><span class="pct">77%</span></div><div class="barline"><span class="track"><i style="width:74%;background:var(--s-natural)"></i></span><span class="pct">74%</span></div></div></div><div class="barpair"><span class="age">60+</span><div class="barset"><div class="barline"><span class="track"><i style="width:84%;background:var(--s-overseas)"></i></span><span class="pct">84%</span></div><div class="barline"><span class="track"><i style="width:81%;background:var(--s-natural)"></i></span><span class="pct">81%</span></div></div></div></div>
+
+      <p class="cite">
+        <b>Source.</b> Taylor, A., Dyrting, S., & Shalley, F. (2020). The Territory and Me Survey: A summary of results. Darwin, NT: Northern Institute, Charles Darwin University.<br>
+        <b>Measure.</b> Share intending to still be living in the Territory in two years.<br>
+        <b>Base.</b> Current Territory residents who had decided whether to stay or leave. Undecided respondents are excluded. 5,255 people completed the survey; 3,748 were
+        current Territory residents.<br>
+        <b>Limitations.</b>
+        <ul><li>Stated intentions, not observed behaviour. Nobody followed up to see who actually stayed.</li><li>The report publishes no subgroup sample sizes, so the number of people behind each bar is unknown.</li><li>Self-selected online sample. The report notes it under-represents people aged 18 to 34 and over 75.</li><li>Birthplace and home ownership are each a single-variable split, so the groups overlap and the two findings cannot be separated from each other.</li><li>An association with intending to stay is not evidence that home ownership causes retention. The relationship could run either way.</li></ul>
+      </p>
+    </div>
+  </section>
+
+  <section>
     <h2>Three readings</h2>
     <p class="note">Each computed over the whole series rather than a window
       chosen to suit the argument.</p>
@@ -345,7 +463,7 @@ footer a { color: var(--accent); }
 </div>
 
 <script>
-const DATA = {"figures":{"reference_period":"March 2026","series_start":"June 1981","quarters_in_series":180,"natural_increase_12m":1969,"net_interstate_migration_12m":-1589,"net_overseas_migration_12m":3585,"total_growth_12m":3965,"nom_share_of_growth_pct":90.4,"erp_latest":268899,"annual_growth_pct":1.5,"quarters_nim_positive":52,"quarters_nim_negative":128,"quarters_nim_positive_pct":28.9,"nim_last_positive":"September 2021","nim_consecutive_negative":18,"nim_by_decade":{"1980":{"quarters":35,"positive_pct":49,"mean_per_quarter":-8},"1990":{"quarters":40,"positive_pct":30,"mean_per_quarter":-82},"2000":{"quarters":40,"positive_pct":40,"mean_per_quarter":-146},"2010":{"quarters":40,"positive_pct":8,"mean_per_quarter":-483},"2020":{"quarters":25,"positive_pct":16,"mean_per_quarter":-305}},"overseas_dependency":{"1y":90.4,"5y":84.5,"10y":74.4},"volatility":{"natural_increase":0.125,"net_overseas_migration":0.959,"net_interstate_migration":1.143},"most_volatile":"net_interstate_migration","robustness_post_2006":{"note":"ABS moved net overseas migration to the 12-of-16-months rule from the September quarter of 2006. Levels either side of that date are not comparable.","quarters":79,"window_start":"September 2006","volatility":{"natural_increase":0.148,"net_overseas_migration":0.773,"net_interstate_migration":0.942},"ranking_full_series":["net_interstate_migration","net_overseas_migration","natural_increase"],"ranking_post_2006":["net_interstate_migration","net_overseas_migration","natural_increase"],"ranking_unchanged":true,"nom_mean_abs_pre":207.0,"nom_mean_abs_post":571.4},"reconciliation":{"components_sum":3965,"abs_published_change":3965,"difference":0.0,"passes":true}},"series":{"dates":["1982-03","1982-06","1982-09","1982-12","1983-03","1983-06","1983-09","1983-12","1984-03","1984-06","1984-09","1984-12","1985-03","1985-06","1985-09","1985-12","1986-03","1986-06","1986-09","1986-12","1987-03","1987-06","1987-09","1987-12","1988-03","1988-06","1988-09","1988-12","1989-03","1989-06","1989-09","1989-12","1990-03","1990-06","1990-09","1990-12","1991-03","1991-06","1991-09","1991-12","1992-03","1992-06","1992-09","1992-12","1993-03","1993-06","1993-09","1993-12","1994-03","1994-06","1994-09","1994-12","1995-03","1995-06","1995-09","1995-12","1996-03","1996-06","1996-09","1996-12","1997-03","1997-06","1997-09","1997-12","1998-03","1998-06","1998-09","1998-12","1999-03","1999-06","1999-09","1999-12","2000-03","2000-06","2000-09","2000-12","2001-03","2001-06","2001-09","2001-12","2002-03","2002-06","2002-09","2002-12","2003-03","2003-06","2003-09","2003-12","2004-03","2004-06","2004-09","2004-12","2005-03","2005-06","2005-09","2005-12","2006-03","2006-06","2006-09","2006-12","2007-03","2007-06","2007-09","2007-12","2008-03","2008-06","2008-09","2008-12","2009-03","2009-06","2009-09","2009-12","2010-03","2010-06","2010-09","2010-12","2011-03","2011-06","2011-09","2011-12","2012-03","2012-06","2012-09","2012-12","2013-03","2013-06","2013-09","2013-12","2014-03","2014-06","2014-09","2014-12","2015-03","2015-06","2015-09","2015-12","2016-03","2016-06","2016-09","2016-12","2017-03","2017-06","2017-09","2017-12","2018-03","2018-06","2018-09","2018-12","2019-03","2019-06","2019-09","2019-12","2020-03","2020-06","2020-09","2020-12","2021-03","2021-06","2021-09","2021-12","2022-03","2022-06","2022-09","2022-12","2023-03","2023-06","2023-09","2023-12","2024-03","2024-06","2024-09","2024-12","2025-03","2025-06","2025-09","2025-12","2026-03"],"natural_increase":[645.5,594.5,621.2,588.0,588.2,607.5,575.2,600.0,617.0,633.0,652.8,661.0,650.5,625.5,664.5,668.5,672.8,698.8,689.2,663.5,689.2,675.5,691.8,713.2,661.2,688.8,641.2,640.8,623.5,624.5,637.2,648.0,671.5,676.2,715.2,693.8,701.5,710.8,691.0,697.8,714.2,731.5,726.5,742.0,743.2,714.2,719.2,724.2,724.8,720.0,708.5,700.2,715.2,720.5,748.5,731.8,710.5,707.2,691.8,692.5,689.8,683.2,681.2,686.0,698.0,706.2,687.5,674.8,671.5,687.2,694.2,694.8,695.2,680.5,682.0,695.8,700.5,713.0,725.5,732.2,727.0,709.8,715.5,713.2,726.8,736.5,724.5,721.0,707.0,688.8,681.2,661.2,641.2,639.5,656.0,664.8,680.8,691.0,677.5,692.5,702.0,705.5,709.2,717.5,711.0,712.5,726.2,704.8,706.8,722.5,721.0,745.8,750.2,741.0,738.5,725.8,721.5,736.2,740.8,727.2,741.0,748.5,747.2,759.8,749.0,735.5,725.8,734.0,724.8,716.0,707.2,698.0,708.8,714.2,722.0,712.8,710.5,709.2,713.2,732.5,715.8,715.2,693.8,674.0,670.0,653.5,658.8,649.5,650.0,631.0,624.0,615.5,611.0,625.0,626.8,634.2,659.2,662.8,646.0,646.5,617.8,575.5,580.5,563.8,536.8,552.2,536.5,528.2,553.5,531.2,545.2,550.2,510.8,501.8,478.0,456.8,492.2],"net_overseas_migration":[327.5,295.8,249.2,150.8,158.0,120.5,205.2,203.8,164.5,208.0,160.5,191.5,257.2,264.0,300.0,321.2,300.5,301.2,274.2,264.2,276.2,255.5,268.5,246.8,257.0,256.8,253.2,270.8,277.2,236.0,223.5,208.0,182.5,229.5,230.0,210.5,194.2,155.2,140.8,101.2,87.5,41.0,8.8,19.8,4.8,11.0,19.8,27.0,21.5,48.8,86.0,78.8,88.5,116.8,110.0,168.0,154.0,142.2,163.0,143.2,159.2,135.2,120.5,103.2,119.8,140.0,116.2,210.2,217.0,251.5,317.0,266.8,256.8,235.5,198.0,175.0,190.5,219.5,204.0,199.0,213.0,163.8,157.5,102.0,24.8,81.2,99.8,141.0,200.8,162.0,211.5,230.5,242.0,251.0,226.2,271.8,395.8,472.8,439.2,380.0,307.2,288.2,297.0,344.2,345.8,405.8,465.5,492.5,483.5,524.8,492.0,422.5,395.5,307.8,276.0,271.8,254.8,275.0,408.5,517.2,729.2,831.5,910.5,1029.8,1042.2,1088.5,920.5,798.2,667.2,438.0,390.8,285.2,302.8,588.5,458.5,386.0,361.0,262.0,473.0,521.8,476.5,461.2,346.2,310.5,281.2,189.5,177.2,139.0,198.0,233.0,221.2,247.8,259.0,72.2,18.0,15.2,-123.5,-105.5,96.0,311.8,561.2,713.0,831.8,906.8,978.2,1117.0,1129.0,1139.2,1047.0,941.8,880.2,877.5,955.8,984.5,1032.0,955.2,896.2],"net_interstate_migration":[1118.2,517.2,189.5,-0.8,-46.5,132.5,286.5,341.5,215.0,181.5,143.5,45.5,41.5,152.0,164.2,256.5,180.0,-123.2,-204.2,-246.8,-107.2,-30.0,-111.8,-388.0,-665.0,-782.2,-771.8,-581.0,-422.2,-367.2,-433.0,-500.2,-511.2,-292.5,-274.0,-159.2,-168.0,-288.0,-182.5,-299.5,-179.2,-242.2,-372.5,-152.2,-183.8,-174.8,-35.5,-204.8,-265.5,-218.8,-380.0,-234.5,66.2,96.0,178.8,354.0,148.0,82.0,290.8,115.0,126.0,438.5,261.2,135.2,85.0,-118.0,-116.0,-172.0,-164.8,-238.2,-315.8,-204.2,-278.8,-226.8,-229.2,-405.2,-380.8,-398.0,-408.0,-437.8,-510.0,-499.5,-602.8,-610.0,-697.0,-692.0,-641.2,-570.8,-424.2,-371.8,-218.5,-120.5,71.2,152.5,160.2,181.5,22.2,-138.2,-76.5,-82.8,1.8,110.8,150.5,269.2,263.2,347.2,315.5,220.2,254.5,233.5,177.5,91.8,-29.5,-165.2,-256.0,-399.8,-586.8,-637.2,-556.0,-455.8,-271.5,-172.8,-172.5,-95.2,-83.0,-120.2,-197.2,-384.0,-466.8,-605.2,-614.0,-609.8,-678.2,-585.2,-583.5,-520.2,-449.2,-507.2,-487.2,-517.2,-538.5,-483.2,-513.8,-528.8,-586.8,-669.2,-712.5,-777.2,-767.0,-753.0,-679.0,-538.5,-379.8,-224.8,-111.0,27.2,55.0,-79.8,-93.2,-141.2,-124.2,-51.2,-177.5,-272.0,-425.2,-567.2,-630.8,-705.2,-725.2,-629.0,-554.8,-392.8,-224.8,-212.8,-244.5,-307.0,-397.2]}};
+const DATA = {"figures":{"reference_period":"March 2026","series_start":"June 1981","quarters_in_series":180,"natural_increase_12m":1969,"net_interstate_migration_12m":-1589,"net_overseas_migration_12m":3585,"total_growth_12m":3965,"nom_share_of_growth_pct":90.4,"erp_latest":268899,"annual_growth_pct":1.5,"quarters_nim_positive":52,"quarters_nim_negative":128,"quarters_nim_positive_pct":28.9,"nim_last_positive":"September 2021","nim_consecutive_negative":18,"nim_by_decade":{"1980":{"quarters":35,"positive_pct":49,"mean_per_quarter":-8},"1990":{"quarters":40,"positive_pct":30,"mean_per_quarter":-82},"2000":{"quarters":40,"positive_pct":40,"mean_per_quarter":-146},"2010":{"quarters":40,"positive_pct":8,"mean_per_quarter":-483},"2020":{"quarters":25,"positive_pct":16,"mean_per_quarter":-305}},"overseas_dependency":{"1y":90.4,"5y":84.5,"10y":74.4},"volatility":{"natural_increase":0.125,"net_overseas_migration":0.959,"net_interstate_migration":1.143},"most_volatile":"net_interstate_migration","robustness_post_2006":{"note":"ABS moved net overseas migration to the 12-of-16-months rule from the September quarter of 2006. Levels either side of that date are not comparable.","quarters":79,"window_start":"September 2006","volatility":{"natural_increase":0.148,"net_overseas_migration":0.773,"net_interstate_migration":0.942},"ranking_full_series":["net_interstate_migration","net_overseas_migration","natural_increase"],"ranking_post_2006":["net_interstate_migration","net_overseas_migration","natural_increase"],"ranking_unchanged":true,"nom_mean_abs_pre":207.0,"nom_mean_abs_post":571.4},"reconciliation":{"components_sum":3965,"abs_published_change":3965,"difference":0.0,"passes":true}},"series":{"dates":["1982-03","1982-06","1982-09","1982-12","1983-03","1983-06","1983-09","1983-12","1984-03","1984-06","1984-09","1984-12","1985-03","1985-06","1985-09","1985-12","1986-03","1986-06","1986-09","1986-12","1987-03","1987-06","1987-09","1987-12","1988-03","1988-06","1988-09","1988-12","1989-03","1989-06","1989-09","1989-12","1990-03","1990-06","1990-09","1990-12","1991-03","1991-06","1991-09","1991-12","1992-03","1992-06","1992-09","1992-12","1993-03","1993-06","1993-09","1993-12","1994-03","1994-06","1994-09","1994-12","1995-03","1995-06","1995-09","1995-12","1996-03","1996-06","1996-09","1996-12","1997-03","1997-06","1997-09","1997-12","1998-03","1998-06","1998-09","1998-12","1999-03","1999-06","1999-09","1999-12","2000-03","2000-06","2000-09","2000-12","2001-03","2001-06","2001-09","2001-12","2002-03","2002-06","2002-09","2002-12","2003-03","2003-06","2003-09","2003-12","2004-03","2004-06","2004-09","2004-12","2005-03","2005-06","2005-09","2005-12","2006-03","2006-06","2006-09","2006-12","2007-03","2007-06","2007-09","2007-12","2008-03","2008-06","2008-09","2008-12","2009-03","2009-06","2009-09","2009-12","2010-03","2010-06","2010-09","2010-12","2011-03","2011-06","2011-09","2011-12","2012-03","2012-06","2012-09","2012-12","2013-03","2013-06","2013-09","2013-12","2014-03","2014-06","2014-09","2014-12","2015-03","2015-06","2015-09","2015-12","2016-03","2016-06","2016-09","2016-12","2017-03","2017-06","2017-09","2017-12","2018-03","2018-06","2018-09","2018-12","2019-03","2019-06","2019-09","2019-12","2020-03","2020-06","2020-09","2020-12","2021-03","2021-06","2021-09","2021-12","2022-03","2022-06","2022-09","2022-12","2023-03","2023-06","2023-09","2023-12","2024-03","2024-06","2024-09","2024-12","2025-03","2025-06","2025-09","2025-12","2026-03"],"natural_increase":[645.5,594.5,621.2,588.0,588.2,607.5,575.2,600.0,617.0,633.0,652.8,661.0,650.5,625.5,664.5,668.5,672.8,698.8,689.2,663.5,689.2,675.5,691.8,713.2,661.2,688.8,641.2,640.8,623.5,624.5,637.2,648.0,671.5,676.2,715.2,693.8,701.5,710.8,691.0,697.8,714.2,731.5,726.5,742.0,743.2,714.2,719.2,724.2,724.8,720.0,708.5,700.2,715.2,720.5,748.5,731.8,710.5,707.2,691.8,692.5,689.8,683.2,681.2,686.0,698.0,706.2,687.5,674.8,671.5,687.2,694.2,694.8,695.2,680.5,682.0,695.8,700.5,713.0,725.5,732.2,727.0,709.8,715.5,713.2,726.8,736.5,724.5,721.0,707.0,688.8,681.2,661.2,641.2,639.5,656.0,664.8,680.8,691.0,677.5,692.5,702.0,705.5,709.2,717.5,711.0,712.5,726.2,704.8,706.8,722.5,721.0,745.8,750.2,741.0,738.5,725.8,721.5,736.2,740.8,727.2,741.0,748.5,747.2,759.8,749.0,735.5,725.8,734.0,724.8,716.0,707.2,698.0,708.8,714.2,722.0,712.8,710.5,709.2,713.2,732.5,715.8,715.2,693.8,674.0,670.0,653.5,658.8,649.5,650.0,631.0,624.0,615.5,611.0,625.0,626.8,634.2,659.2,662.8,646.0,646.5,617.8,575.5,580.5,563.8,536.8,552.2,536.5,528.2,553.5,531.2,545.2,550.2,510.8,501.8,478.0,456.8,492.2],"net_overseas_migration":[327.5,295.8,249.2,150.8,158.0,120.5,205.2,203.8,164.5,208.0,160.5,191.5,257.2,264.0,300.0,321.2,300.5,301.2,274.2,264.2,276.2,255.5,268.5,246.8,257.0,256.8,253.2,270.8,277.2,236.0,223.5,208.0,182.5,229.5,230.0,210.5,194.2,155.2,140.8,101.2,87.5,41.0,8.8,19.8,4.8,11.0,19.8,27.0,21.5,48.8,86.0,78.8,88.5,116.8,110.0,168.0,154.0,142.2,163.0,143.2,159.2,135.2,120.5,103.2,119.8,140.0,116.2,210.2,217.0,251.5,317.0,266.8,256.8,235.5,198.0,175.0,190.5,219.5,204.0,199.0,213.0,163.8,157.5,102.0,24.8,81.2,99.8,141.0,200.8,162.0,211.5,230.5,242.0,251.0,226.2,271.8,395.8,472.8,439.2,380.0,307.2,288.2,297.0,344.2,345.8,405.8,465.5,492.5,483.5,524.8,492.0,422.5,395.5,307.8,276.0,271.8,254.8,275.0,408.5,517.2,729.2,831.5,910.5,1029.8,1042.2,1088.5,920.5,798.2,667.2,438.0,390.8,285.2,302.8,588.5,458.5,386.0,361.0,262.0,473.0,521.8,476.5,461.2,346.2,310.5,281.2,189.5,177.2,139.0,198.0,233.0,221.2,247.8,259.0,72.2,18.0,15.2,-123.5,-105.5,96.0,311.8,561.2,713.0,831.8,906.8,978.2,1117.0,1129.0,1139.2,1047.0,941.8,880.2,877.5,955.8,984.5,1032.0,955.2,896.2],"net_interstate_migration":[1118.2,517.2,189.5,-0.8,-46.5,132.5,286.5,341.5,215.0,181.5,143.5,45.5,41.5,152.0,164.2,256.5,180.0,-123.2,-204.2,-246.8,-107.2,-30.0,-111.8,-388.0,-665.0,-782.2,-771.8,-581.0,-422.2,-367.2,-433.0,-500.2,-511.2,-292.5,-274.0,-159.2,-168.0,-288.0,-182.5,-299.5,-179.2,-242.2,-372.5,-152.2,-183.8,-174.8,-35.5,-204.8,-265.5,-218.8,-380.0,-234.5,66.2,96.0,178.8,354.0,148.0,82.0,290.8,115.0,126.0,438.5,261.2,135.2,85.0,-118.0,-116.0,-172.0,-164.8,-238.2,-315.8,-204.2,-278.8,-226.8,-229.2,-405.2,-380.8,-398.0,-408.0,-437.8,-510.0,-499.5,-602.8,-610.0,-697.0,-692.0,-641.2,-570.8,-424.2,-371.8,-218.5,-120.5,71.2,152.5,160.2,181.5,22.2,-138.2,-76.5,-82.8,1.8,110.8,150.5,269.2,263.2,347.2,315.5,220.2,254.5,233.5,177.5,91.8,-29.5,-165.2,-256.0,-399.8,-586.8,-637.2,-556.0,-455.8,-271.5,-172.8,-172.5,-95.2,-83.0,-120.2,-197.2,-384.0,-466.8,-605.2,-614.0,-609.8,-678.2,-585.2,-583.5,-520.2,-449.2,-507.2,-487.2,-517.2,-538.5,-483.2,-513.8,-528.8,-586.8,-669.2,-712.5,-777.2,-767.0,-753.0,-679.0,-538.5,-379.8,-224.8,-111.0,27.2,55.0,-79.8,-93.2,-141.2,-124.2,-51.2,-177.5,-272.0,-425.2,-567.2,-630.8,-705.2,-725.2,-629.0,-554.8,-392.8,-224.8,-212.8,-244.5,-307.0,-397.2]},"flows":{"dates":["1982-03","1982-06","1982-09","1982-12","1983-03","1983-06","1983-09","1983-12","1984-03","1984-06","1984-09","1984-12","1985-03","1985-06","1985-09","1985-12","1986-03","1986-06","1986-09","1986-12","1987-03","1987-06","1987-09","1987-12","1988-03","1988-06","1988-09","1988-12","1989-03","1989-06","1989-09","1989-12","1990-03","1990-06","1990-09","1990-12","1991-03","1991-06","1991-09","1991-12","1992-03","1992-06","1992-09","1992-12","1993-03","1993-06","1993-09","1993-12","1994-03","1994-06","1994-09","1994-12","1995-03","1995-06","1995-09","1995-12","1996-03","1996-06","1996-09","1996-12","1997-03","1997-06","1997-09","1997-12","1998-03","1998-06","1998-09","1998-12","1999-03","1999-06","1999-09","1999-12","2000-03","2000-06","2000-09","2000-12","2001-03","2001-06","2001-09","2001-12","2002-03","2002-06","2002-09","2002-12","2003-03","2003-06","2003-09","2003-12","2004-03","2004-06","2004-09","2004-12","2005-03","2005-06","2005-09","2005-12","2006-03","2006-06","2006-09","2006-12","2007-03","2007-06","2007-09","2007-12","2008-03","2008-06","2008-09","2008-12","2009-03","2009-06","2009-09","2009-12","2010-03","2010-06","2010-09","2010-12","2011-03","2011-06","2011-09","2011-12","2012-03","2012-06","2012-09","2012-12","2013-03","2013-06","2013-09","2013-12","2014-03","2014-06","2014-09","2014-12","2015-03","2015-06","2015-09","2015-12","2016-03","2016-06","2016-09","2016-12","2017-03","2017-06","2017-09","2017-12","2018-03","2018-06","2018-09","2018-12","2019-03","2019-06","2019-09","2019-12","2020-03","2020-06","2020-09","2020-12","2021-03","2021-06","2021-09","2021-12","2022-03","2022-06","2022-09","2022-12","2023-03","2023-06","2023-09","2023-12","2024-03","2024-06","2024-09","2024-12","2025-03","2025-06","2025-09","2025-12","2026-03"],"arrivals":[3542.8,3479.0,3254.8,3004.0,2785.2,2683.5,2714.8,2803.2,2806.5,2713.8,2740.8,2646.5,2711.2,2869.0,3045.0,3390.8,3587.5,3655.5,3693.2,3572.5,3775.0,3686.2,3595.2,3477.2,3413.0,3515.5,3646.0,3911.2,4088.8,4179.2,4126.0,3906.5,3886.2,3932.2,3958.5,4035.5,4063.5,3911.5,3897.0,3882.2,3849.8,3828.5,3931.8,4261.5,4344.2,4351.2,4301.5,3959.8,3884.0,3903.0,3784.0,3912.5,4318.2,4602.2,4575.2,4711.8,4448.5,4237.5,4559.8,4771.5,4470.5,4722.0,4582.0,4519.8,4463.2,4316.8,4237.5,4203.2,4173.2,4058.8,4028.2,3994.8,4010.2,4066.2,4070.2,4103.5,4056.0,4030.8,3932.5,3722.5,3695.8,3718.8,3750.0,3851.2,3818.0,3760.5,3711.0,3762.2,3879.2,3919.5,4009.5,4025.5,4088.8,4110.5,4074.8,4109.0,4050.8,3972.5,4056.8,4040.8,4098.2,4227.2,4250.0,4304.5,4341.8,4332.8,4326.0,4284.0,4203.2,4209.8,4153.2,3995.0,3985.5,3944.0,3904.0,3926.8,3848.8,3782.0,3861.2,3945.0,4057.2,4103.8,4022.2,3839.5,3845.5,3914.2,3886.0,3931.2,3941.8,3778.0,3705.5,3694.8,3564.0,3643.2,3700.5,3714.5,3788.0,3840.8,3952.2,4134.5,4206.5,4255.2,4281.2,4302.5,4305.2,4285.8,4297.8,4397.5,4499.5,4610.2,4684.5,4689.2,4508.5,4281.5,3995.8,3648.2,3562.5,3874.0,4278.2,4524.8,4673.8,4390.0,4002.5,3941.5,3885.0,3834.5,3913.0,3773.5,3722.8,3718.8,3688.5,3796.5,3836.2,3777.8,3716.0,3564.5,3572.5],"departures":[2424.5,2961.8,3065.2,3004.8,2831.8,2551.0,2428.2,2461.8,2591.5,2532.2,2597.2,2601.0,2669.8,2717.0,2880.8,3134.2,3407.5,3778.8,3897.5,3819.2,3882.2,3716.2,3707.0,3865.2,4078.0,4297.8,4417.8,4492.2,4511.0,4546.5,4559.0,4406.8,4397.5,4224.8,4232.5,4194.8,4231.5,4199.5,4079.5,4181.8,4029.0,4070.8,4304.2,4413.8,4528.0,4526.0,4337.0,4164.5,4149.5,4121.8,4164.0,4147.0,4252.0,4506.2,4396.5,4357.8,4300.5,4155.5,4269.0,4656.5,4344.5,4283.5,4320.8,4384.5,4378.2,4434.8,4353.5,4375.2,4338.0,4297.0,4344.0,4199.0,4289.0,4293.0,4299.5,4508.8,4436.8,4428.8,4340.5,4160.2,4205.8,4218.2,4352.8,4461.2,4515.0,4452.5,4352.2,4333.0,4303.5,4291.2,4228.0,4146.0,4017.5,3958.0,3914.5,3927.5,4028.5,4110.8,4133.2,4123.5,4096.5,4116.5,4099.5,4035.2,4078.5,3985.5,4010.5,4063.8,3948.8,3976.2,3975.8,3903.2,4015.0,4109.2,4160.0,4326.5,4435.5,4419.2,4417.2,4400.8,4328.8,4276.5,4194.8,3934.8,3928.5,4034.5,4083.2,4315.2,4408.5,4383.2,4319.5,4304.5,4242.2,4228.5,4284.0,4234.8,4237.2,4348.0,4439.5,4651.8,4745.0,4738.5,4795.0,4831.2,4892.0,4955.0,5010.2,5174.8,5266.5,5363.2,5363.5,5227.8,4888.2,4506.2,4106.8,3621.0,3507.5,3953.8,4371.5,4666.0,4798.0,4441.2,4180.0,4213.5,4310.2,4401.8,4543.8,4478.8,4448.0,4347.8,4243.2,4189.2,4061.0,3990.5,3960.5,3871.5,3969.8]}};
 
 const S = [
   { key: "natural_increase", label: "Natural increase", short: "Natural", css: "--s-natural" },
@@ -469,9 +587,79 @@ svg.addEventListener("touchmove", e => {
   e.preventDefault();
 }, { passive: false });
 
-draw();
+/* The turnover chart. Same layout rules as the component chart, two series,
+   and the gap between them shaded so the net reads as an area rather than a
+   number you have to work out. */
+const FSVG = document.getElementById("flows");
+const FOUT = document.getElementById("flowsout");
+const F = DATA.flows;
+
+let fW, fH, fM;
+function flayout() {
+  if (narrow) { fW = 360; fH = 300; fM = { t: 10, r: 10, b: 26, l: 42 }; }
+  else        { fW = 1000; fH = 320; fM = { t: 14, r: 100, b: 30, l: 56 }; }
+  FSVG.setAttribute("viewBox", `0 0 ${fW} ${fH}`);
+}
+let flo = Infinity, fhi = -Infinity;
+for (const k of ["arrivals", "departures"])
+  for (const v of F[k]) { if (v < flo) flo = v; if (v > fhi) fhi = v; }
+const fpadv = (fhi - flo) * 0.08; flo -= fpadv; fhi += fpadv;
+const fn = F.dates.length;
+const fpx = i => fM.l + (i / (fn - 1)) * (fW - fM.l - fM.r);
+const fpy = v => fM.t + (1 - (v - flo) / (fhi - flo)) * (fH - fM.t - fM.b);
+
+function fdraw() {
+  flayout();
+  const c = { line: ink("--line"), ink2: ink("--ink-2"), ink3: ink("--ink-3") };
+  const fs = narrow ? 10 : 11.5;
+  let out = "";
+  for (const tk of niceTicks(flo, fhi, narrow ? 4 : 5)) {
+    const y = fpy(tk).toFixed(1);
+    out += `<line x1="${fM.l}" y1="${y}" x2="${fW - fM.r}" y2="${y}" stroke="${c.line}" stroke-width="1"/>`;
+    out += `<text x="${fM.l - 7}" y="${y}" fill="${c.ink3}" font-size="${fs}" text-anchor="end" dominant-baseline="middle">${tk.toLocaleString()}</text>`;
+  }
+  const every = narrow ? 10 : 5;
+  for (let i = 0; i < fn; i++) {
+    const y = F.dates[i].slice(0, 4);
+    if (y % every === 0 && F.dates[i].slice(5) === "03")
+      out += `<text x="${fpx(i).toFixed(1)}" y="${fH - 8}" fill="${c.ink3}" font-size="${fs}" text-anchor="middle">${narrow ? "’" + y.slice(2) : y}</text>`;
+  }
+  // the gap, shaded in the colour of whichever flow is on top
+  const up = [], dn = [];
+  for (let i = 0; i < fn; i++) {
+    up.push(`${fpx(i).toFixed(1)} ${fpy(F.arrivals[i]).toFixed(1)}`);
+    dn.push(`${fpx(i).toFixed(1)} ${fpy(F.departures[i]).toFixed(1)}`);
+  }
+  out += `<path d="M${up.join(" L")} L${dn.reverse().join(" L")} Z" fill="${ink("--s-overseas")}" opacity="0.13"/>`;
+  for (const [k, hue, label] of [["arrivals", "--s-interstate", "Arrivals"],
+                                 ["departures", "--s-overseas", "Departures"]]) {
+    const d = F[k].map((v, i) => `${i ? "L" : "M"}${fpx(i).toFixed(1)} ${fpy(v).toFixed(1)}`).join(" ");
+    out += `<path d="${d}" fill="none" stroke="${ink(hue)}" stroke-width="${narrow ? 1.8 : 2.2}" stroke-linejoin="round"/>`;
+    if (!narrow)
+      out += `<text x="${(fW - fM.r + 10).toFixed(1)}" y="${fpy(F[k][fn - 1]).toFixed(1)}" fill="${c.ink2}" font-size="12.5" dominant-baseline="middle">${label}</text>`;
+  }
+  FSVG.innerHTML = out;
+  fshow(fn - 1);
+}
+function fshow(i) {
+  const [y, m] = F.dates[i].split("-");
+  const q = { "03": "Mar", "06": "Jun", "09": "Sep", "12": "Dec" }[m] || m;
+  FOUT.innerHTML = `<span><b>${q} ${y}</b></span>`
+    + `<span>Arrived <b>${Math.round(F.arrivals[i]).toLocaleString()}</b></span>`
+    + `<span>Left <b>${Math.round(F.departures[i]).toLocaleString()}</b></span>`
+    + `<span>Net <b>${Math.round(F.arrivals[i] - F.departures[i]).toLocaleString()}</b></span>`;
+}
+FSVG.addEventListener("mousemove", e => {
+  const r = FSVG.getBoundingClientRect();
+  const x = (e.clientX - r.left) / r.width * fW;
+  const i = Math.round((x - fM.l) / (fW - fM.l - fM.r) * (fn - 1));
+  if (i >= 0 && i < fn) fshow(i);
+});
+FSVG.addEventListener("mouseleave", () => fshow(fn - 1));
+
+draw(); fdraw();
 let rt;
-addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(draw, 120); });
-matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
-new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { draw(); fdraw(); }, 120); });
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { draw(); fdraw(); });
+new MutationObserver(() => { draw(); fdraw(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 </script>

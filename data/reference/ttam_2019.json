@@ -1,0 +1,45 @@
+{
+  "_comment": "Cited evidence, not computed output. Every other number in this project is derived from an ABS workbook and validated by the pipeline. These figures are transcribed from a published report and the validation gate does not apply to them, which is why the dashboard renders them in a separate, labelled section.",
+
+  "survey": "The Territory and Me (TTaM)",
+  "fielded": 2019,
+  "citation": "Taylor, A., Dyrting, S., & Shalley, F. (2020). The Territory and Me Survey: A summary of results. Darwin, NT: Northern Institute, Charles Darwin University.",
+  "url": "https://researchers.cdu.edu.au/en/publications/the-territory-and-me-survey-a-summary-of-results",
+
+  "respondents_total": 5255,
+  "respondents_current_residents": 3748,
+  "base": "Current Territory residents who had decided whether to stay or leave. Undecided respondents are excluded.",
+  "measure": "Share intending to still be living in the Territory in two years.",
+
+  "life_stages": ["18-29", "30-49", "50-59", "60+"],
+  "life_stage_labels": ["Early-career", "Mid-career", "Pre-retiree", "Retiree"],
+
+  "by_birthplace": {
+    "figure": "Figure 6, Two-year Retention Rate by Country of Birth",
+    "born_overseas": [74, 73, 77, 84],
+    "born_in_australia": [51, 68, 74, 81]
+  },
+
+  "by_home_ownership": {
+    "figure": "Figure 9, Two-year Retention Rate by Home Ownership",
+    "note": "Only the 18-29 pair is reported here. The report's own text singles out this life stage, and the two values are the ones confirmed numerically rather than read from the bar chart.",
+    "life_stage": "18-29",
+    "own_or_purchasing": 76,
+    "do_not_own": 53
+  },
+
+  "context": {
+    "overall_retention_early_career": 57,
+    "overall_retention_retiree": 82
+  },
+
+  "precision": "Values marked as read from a figure are taken from the published bar charts and are accurate to about a percentage point. 84 and 81 are stated numerically in the report text, as is 76 in the 2020 follow-up summary.",
+
+  "limitations": [
+    "Stated intentions, not observed behaviour. Nobody followed up to see who actually stayed.",
+    "The report publishes no subgroup sample sizes, so the number of people behind each bar is unknown.",
+    "Self-selected online sample. The report notes it under-represents people aged 18 to 34 and over 75.",
+    "Birthplace and home ownership are each a single-variable split, so the groups overlap and the two findings cannot be separated from each other.",
+    "An association with intending to stay is not evidence that home ownership causes retention. The relationship could run either way."
+  ]
+}

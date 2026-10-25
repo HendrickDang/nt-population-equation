@@ -177,6 +177,30 @@ the largest difference is zero. The three tables are produced separately by the
 ABS, so agreement is evidence the right columns and jurisdiction were read. On
 failure it exits 1 and writes nothing.
 
+## What the dashboard now shows
+
+Four panels, in the order a planner would read them.
+
+1. **Where the growth came from.** The three components as a centre-origin bar
+   chart, with the total matching the ABS published change.
+2. **Forty-five years of the same three parts.** The long series, hover or tap
+   to read any quarter.
+3. **The two flows behind that one line.** Arrivals and departures separately,
+   the gross churn, and the reconciliation against the published net. Written by
+   `interstate_flows.py`, so `build_dashboard.py` now requires it to have run.
+4. **Who intends to stay.** Cited survey evidence on retention intentions.
+
+Panel 4 is the only part of the page this pipeline did not produce. Its figures
+are transcribed from a published report, the validation gate does not apply to
+them, and the page says so: the section carries a "cited evidence" badge, sits on
+its own surface, and prints the source, measure, base and limitations beside the
+figures rather than hiding them in a method note. The underlying values live in
+`data/reference/ttam_2019.json`, with provenance for each one.
+
+Keeping that distinction visible is the point. A page that mixes validated output
+with transcribed figures and presents both identically is making a claim it cannot
+support.
+
 ## Supporting analysis: house prices against wages
 
 The presentation argues where growth comes from and which component is least

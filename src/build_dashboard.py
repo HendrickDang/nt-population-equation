@@ -40,6 +40,9 @@ TEMPLATE = """<meta charset="utf-8">
   --s-overseas: #eb6834;
   --s-interstate: #1baf7a;
   --radius: 14px;
+  --cited-bg: #f6f3ec;
+  --cited-line: #ddd3c0;
+  --cited-ink: #7a5d2e;
   --body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 @media (prefers-color-scheme: dark) {
@@ -47,6 +50,7 @@ TEMPLATE = """<meta charset="utf-8">
     --bg: #121110; --surface: #1a1916; --surface-2: #232019; --line: #322e27;
     --ink: #f4f1ea; --ink-2: #bdb6ab; --ink-3: #8b857c; --accent: #e09a6d;
     --s-natural: #4a90ea; --s-overseas: #e26a35; --s-interstate: #19ad76;
+    --cited-bg: #221e17; --cited-line: #3d3527; --cited-ink: #c9a66b;
     color-scheme: dark;
   }
 }
@@ -54,6 +58,7 @@ TEMPLATE = """<meta charset="utf-8">
   --bg: #121110; --surface: #1a1916; --surface-2: #232019; --line: #322e27;
   --ink: #f4f1ea; --ink-2: #bdb6ab; --ink-3: #8b857c; --accent: #e09a6d;
   --s-natural: #4a90ea; --s-overseas: #e26a35; --s-interstate: #19ad76;
+  --cited-bg: #221e17; --cited-line: #3d3527; --cited-ink: #c9a66b;
   color-scheme: dark;
 }
 
@@ -164,6 +169,51 @@ svg { display: block; width: 100%; height: auto; }
 }
 .readout b { color: var(--ink); font-weight: 600; }
 .readout .pin { color: var(--accent); }
+
+/* ---- turnover ---------------------------------------------------------- */
+.flowrow { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 10px; padding: 9px 0; }
+.flowrow + .flowrow { border-top: 1px solid var(--line); }
+.flowrow .lab { font-size: 14.5px; color: var(--ink-2); }
+.flowrow .val { font-size: 19px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.flownet { border-top: 2px solid var(--line); margin-top: 4px; padding-top: 12px; }
+.flownet .lab, .flownet .val { color: var(--ink); font-weight: 700; }
+.churn {
+  margin-top: 16px; padding: 15px; border-radius: 11px; background: var(--surface-2);
+}
+.churn-fig { font-size: 30px; font-weight: 700; letter-spacing: -.03em; line-height: 1.05; }
+.churn-say { font-size: 14px; color: var(--ink-2); margin-top: 5px; }
+
+/* ---- cited evidence: a different class of data, and it must look it ---- */
+.cited {
+  border: 1px solid var(--cited-line); border-radius: var(--radius);
+  background: var(--cited-bg); padding: 18px 16px;
+}
+.cited-badge {
+  display: inline-flex; align-items: center; gap: 7px; font-size: 11px;
+  letter-spacing: .08em; text-transform: uppercase; font-weight: 600;
+  color: var(--cited-ink); margin-bottom: 14px;
+}
+.cited-badge::before {
+  content: ""; width: 7px; height: 7px; border-radius: 2px;
+  background: var(--cited-ink); flex: none;
+}
+.cited h3 { color: var(--cited-ink); }
+.bars { display: grid; gap: 13px; margin-top: 4px; }
+.barpair { display: grid; grid-template-columns: 74px 1fr; gap: 10px; align-items: center; }
+.barpair .age { font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.barset { display: grid; gap: 4px; }
+.barline { display: grid; grid-template-columns: 1fr 38px; gap: 8px; align-items: center; }
+.barline .track { height: 13px; border-radius: 3px; background: var(--surface-2); overflow: hidden; }
+.barline .track > i { display: block; height: 100%; border-radius: 3px; }
+.barline .pct { font-size: 12.5px; font-variant-numeric: tabular-nums; color: var(--ink-2); text-align: right; }
+.barkey { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 2px 0 14px; }
+.cite {
+  font-size: 12.5px; color: var(--ink-2); line-height: 1.5;
+  margin: 15px 0 0; padding-top: 13px; border-top: 1px solid var(--cited-line);
+}
+.cite b { color: var(--ink); font-weight: 600; }
+.cite ul { margin: 7px 0 0; padding-left: 17px; }
+.cite li { margin-bottom: 4px; }
 
 /* ---- reading cards ----------------------------------------------------- */
 .grid { display: grid; gap: 14px; grid-template-columns: 1fr; }
@@ -284,6 +334,74 @@ footer a { color: var(--accent); }
       <p class="meaning">The blue line barely moves: births minus deaths is the
         Territory&rsquo;s steady part. The other two swing hard, and the green one
         has spent most of the last forty years below zero.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>The two flows behind that one line</h2>
+    <p class="note">Table 310102 reports only the net. A loss of __NIM_ABS__ does not say
+      whether fewer people arrived or more left, and those call for different
+      responses. These come from ABS tables 16A and 16B.</p>
+    <div class="card">
+      <div class="flowrow"><span class="lab">Arrived from other states</span>
+        <span class="val" style="color:var(--s-interstate)">__ARR__</span></div>
+      <div class="flowrow"><span class="lab">Left for other states</span>
+        <span class="val" style="color:var(--s-overseas)">__DEP__</span></div>
+      <div class="flowrow flownet"><span class="lab">Net</span>
+        <span class="val">__NETF__</span></div>
+
+      <div class="churn">
+        <div class="churn-fig">__CHURN__ moves</div>
+        <div class="churn-say">That is __CHURN_PCT__% of the population moving in or out in
+          one year, about one Territorian in nine. The net figure is the small
+          residue of a very large exchange.</div>
+      </div>
+
+      <svg id="flows" role="img" style="margin-top:18px"
+        aria-label="Northern Territory interstate arrivals and departures, quarterly"></svg>
+      <div class="readout" id="flowsout"></div>
+
+      <p class="meaning">Against the previous decade's average, arrivals are down
+        __ARR_CHG__% and departures down __DEP_CHG__%, almost identically. The
+        deficit is not driven by either side alone: the whole exchange is slowing
+        while the imbalance persists.<br><br>
+        <b>Validated:</b> arrivals minus departures must equal the net interstate
+        migration published in table 310102. Across all __FLOWQ__ quarters the
+        largest difference is __FLOWDIFF__.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Who intends to stay</h2>
+    <p class="note">Population data says how many people arrive and leave. It cannot
+      say who plans to stay. For that we cite survey evidence, and we label it
+      clearly, because it is not produced by this pipeline and the validation gate
+      does not apply to it.</p>
+    <div class="cited">
+      <span class="cited-badge">Cited evidence &middot; not computed here</span>
+
+      <h3>Intending to stay, by home ownership &middot; age __OWN_AGE__</h3>
+      <div class="barkey">
+        <span class="key"><span class="swatch" style="background:var(--s-natural)"></span>Own or purchasing</span>
+        <span class="key"><span class="swatch" style="background:var(--ink-3)"></span>Do not own</span>
+      </div>
+      __OWNBARS__
+
+      <h3 style="margin-top:22px">Intending to stay, by country of birth</h3>
+      <div class="barkey">
+        <span class="key"><span class="swatch" style="background:var(--s-overseas)"></span>Born overseas</span>
+        <span class="key"><span class="swatch" style="background:var(--s-natural)"></span>Born in Australia</span>
+      </div>
+      __BIRTHBARS__
+
+      <p class="cite">
+        <b>Source.</b> __CITATION__<br>
+        <b>Measure.</b> __MEASURE__<br>
+        <b>Base.</b> __BASE__ __RESP__ people completed the survey; __RESP_CUR__ were
+        current Territory residents.<br>
+        <b>Limitations.</b>
+        <ul>__LIMITS__</ul>
+      </p>
     </div>
   </section>
 
@@ -489,18 +607,145 @@ svg.addEventListener("touchmove", e => {
   e.preventDefault();
 }, { passive: false });
 
-draw();
+/* The turnover chart. Same layout rules as the component chart, two series,
+   and the gap between them shaded so the net reads as an area rather than a
+   number you have to work out. */
+const FSVG = document.getElementById("flows");
+const FOUT = document.getElementById("flowsout");
+const F = DATA.flows;
+
+let fW, fH, fM;
+function flayout() {
+  if (narrow) { fW = 360; fH = 300; fM = { t: 10, r: 10, b: 26, l: 42 }; }
+  else        { fW = 1000; fH = 320; fM = { t: 14, r: 100, b: 30, l: 56 }; }
+  FSVG.setAttribute("viewBox", `0 0 ${fW} ${fH}`);
+}
+let flo = Infinity, fhi = -Infinity;
+for (const k of ["arrivals", "departures"])
+  for (const v of F[k]) { if (v < flo) flo = v; if (v > fhi) fhi = v; }
+const fpadv = (fhi - flo) * 0.08; flo -= fpadv; fhi += fpadv;
+const fn = F.dates.length;
+const fpx = i => fM.l + (i / (fn - 1)) * (fW - fM.l - fM.r);
+const fpy = v => fM.t + (1 - (v - flo) / (fhi - flo)) * (fH - fM.t - fM.b);
+
+function fdraw() {
+  flayout();
+  const c = { line: ink("--line"), ink2: ink("--ink-2"), ink3: ink("--ink-3") };
+  const fs = narrow ? 10 : 11.5;
+  let out = "";
+  for (const tk of niceTicks(flo, fhi, narrow ? 4 : 5)) {
+    const y = fpy(tk).toFixed(1);
+    out += `<line x1="${fM.l}" y1="${y}" x2="${fW - fM.r}" y2="${y}" stroke="${c.line}" stroke-width="1"/>`;
+    out += `<text x="${fM.l - 7}" y="${y}" fill="${c.ink3}" font-size="${fs}" text-anchor="end" dominant-baseline="middle">${tk.toLocaleString()}</text>`;
+  }
+  const every = narrow ? 10 : 5;
+  for (let i = 0; i < fn; i++) {
+    const y = F.dates[i].slice(0, 4);
+    if (y % every === 0 && F.dates[i].slice(5) === "03")
+      out += `<text x="${fpx(i).toFixed(1)}" y="${fH - 8}" fill="${c.ink3}" font-size="${fs}" text-anchor="middle">${narrow ? "\u2019" + y.slice(2) : y}</text>`;
+  }
+  // the gap, shaded in the colour of whichever flow is on top
+  const up = [], dn = [];
+  for (let i = 0; i < fn; i++) {
+    up.push(`${fpx(i).toFixed(1)} ${fpy(F.arrivals[i]).toFixed(1)}`);
+    dn.push(`${fpx(i).toFixed(1)} ${fpy(F.departures[i]).toFixed(1)}`);
+  }
+  out += `<path d="M${up.join(" L")} L${dn.reverse().join(" L")} Z" fill="${ink("--s-overseas")}" opacity="0.13"/>`;
+  for (const [k, hue, label] of [["arrivals", "--s-interstate", "Arrivals"],
+                                 ["departures", "--s-overseas", "Departures"]]) {
+    const d = F[k].map((v, i) => `${i ? "L" : "M"}${fpx(i).toFixed(1)} ${fpy(v).toFixed(1)}`).join(" ");
+    out += `<path d="${d}" fill="none" stroke="${ink(hue)}" stroke-width="${narrow ? 1.8 : 2.2}" stroke-linejoin="round"/>`;
+    if (!narrow)
+      out += `<text x="${(fW - fM.r + 10).toFixed(1)}" y="${fpy(F[k][fn - 1]).toFixed(1)}" fill="${c.ink2}" font-size="12.5" dominant-baseline="middle">${label}</text>`;
+  }
+  FSVG.innerHTML = out;
+  fshow(fn - 1);
+}
+function fshow(i) {
+  const [y, m] = F.dates[i].split("-");
+  const q = { "03": "Mar", "06": "Jun", "09": "Sep", "12": "Dec" }[m] || m;
+  FOUT.innerHTML = `<span><b>${q} ${y}</b></span>`
+    + `<span>Arrived <b>${Math.round(F.arrivals[i]).toLocaleString()}</b></span>`
+    + `<span>Left <b>${Math.round(F.departures[i]).toLocaleString()}</b></span>`
+    + `<span>Net <b>${Math.round(F.arrivals[i] - F.departures[i]).toLocaleString()}</b></span>`;
+}
+FSVG.addEventListener("mousemove", e => {
+  const r = FSVG.getBoundingClientRect();
+  const x = (e.clientX - r.left) / r.width * fW;
+  const i = Math.round((x - fM.l) / (fW - fM.l - fM.r) * (fn - 1));
+  if (i >= 0 && i < fn) fshow(i);
+});
+FSVG.addEventListener("mouseleave", () => fshow(fn - 1));
+
+draw(); fdraw();
 let rt;
-addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(draw, 120); });
-matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
-new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { draw(); fdraw(); }, 120); });
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { draw(); fdraw(); });
+new MutationObserver(() => { draw(); fdraw(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 </script>
 """
+
+
+def _bar(label, value, hue):
+    return (f'<div class="barline"><span class="track">'
+            f'<i style="width:{value}%;background:var({hue})"></i></span>'
+            f'<span class="pct">{value}%</span></div>')
 
 
 def main() -> None:
     f = json.loads((OUT / "figures.json").read_text())
     data = json.loads((OUT / "dashboard_data.json").read_text())
+
+    # The turnover analysis and the cited survey evidence. Both are optional:
+    # if either file is absent the page still builds, it just omits nothing
+    # silently, because the tokens would show. So require them explicitly and
+    # say what is missing.
+    flow_path = OUT / "interstate_figures.json"
+    if not flow_path.exists():
+        raise SystemExit(
+            "Missing outputs/interstate_figures.json\n"
+            "Run `python src/interstate_flows.py` first; the dashboard now "
+            "reports the arrivals and departures it produces."
+        )
+    flows = json.loads(flow_path.read_text())
+
+    ttam_path = ROOT / "data" / "reference" / "ttam_2019.json"
+    if not ttam_path.exists():
+        raise SystemExit(f"Missing {ttam_path}")
+    ttam = json.loads(ttam_path.read_text())
+
+    # Four-quarter rolling averages, so the turnover chart reads the same way
+    # as the component chart above it.
+    import csv
+    rows = list(csv.DictReader((OUT / "interstate_flows.csv").open()))
+    def roll(key):
+        vals = [float(r[key]) for r in rows]
+        return [round(sum(vals[i - 3:i + 1]) / 4, 1) for i in range(3, len(vals))]
+    data["flows"] = {
+        "dates": [r["date"][:7] for r in rows[3:]],
+        "arrivals": roll("arrivals"),
+        "departures": roll("departures"),
+    }
+
+    own = ttam["by_home_ownership"]
+    ownbars = (
+        '<div class="bars"><div class="barpair"><span class="age">'
+        + own["life_stage"] + '</span><div class="barset">'
+        + _bar("Own or purchasing", own["own_or_purchasing"], "--s-natural")
+        + _bar("Do not own", own["do_not_own"], "--ink-3")
+        + '</div></div></div>'
+    )
+
+    bb = ttam["by_birthplace"]
+    birthbars = '<div class="bars">' + "".join(
+        f'<div class="barpair"><span class="age">{age}</span><div class="barset">'
+        + _bar("Born overseas", o, "--s-overseas")
+        + _bar("Born in Australia", a, "--s-natural")
+        + '</div></div>'
+        for age, o, a in zip(ttam["life_stages"], bb["born_overseas"], bb["born_in_australia"])
+    ) + '</div>'
+
+    limits = "".join(f"<li>{x}</li>" for x in ttam["limitations"])
 
     dependency = "".join(
         f'<div class="row"><span class="lab">Last {lab}</span>'
@@ -577,6 +822,24 @@ def main() -> None:
         "__RECON__": f"{f['reconciliation']['components_sum']:,}",
         "__DIFF__": f"{f['reconciliation']['difference']:g}",
         "__EQUATION__": equation,
+        "__ARR__": f"{flows['arrivals_12m']:,}",
+        "__DEP__": f"{flows['departures_12m']:,}",
+        "__NETF__": f"{flows['net_12m']:+,}",
+        "__CHURN__": f"{flows['churn_12m']:,}",
+        "__CHURN_PCT__": f"{flows['churn_share_of_population_pct']}",
+        "__ARR_CHG__": f"{abs(flows['arrivals_vs_prior_decade_pct'])}",
+        "__DEP_CHG__": f"{abs(flows['departures_vs_prior_decade_pct'])}",
+        "__FLOWQ__": f"{flows['validation']['quarters_checked']}",
+        "__FLOWDIFF__": f"{flows['validation']['largest_difference']:g}",
+        "__OWN_AGE__": own["life_stage"],
+        "__OWNBARS__": ownbars,
+        "__BIRTHBARS__": birthbars,
+        "__CITATION__": ttam["citation"],
+        "__MEASURE__": ttam["measure"],
+        "__BASE__": ttam["base"],
+        "__RESP__": f"{ttam['respondents_total']:,}",
+        "__RESP_CUR__": f"{ttam['respondents_current_residents']:,}",
+        "__LIMITS__": limits,
         "__DEPENDENCY__": dependency,
         "__VOLATILITY__": volatility,
         "__DECADES__": decades,
