@@ -215,8 +215,8 @@ section { margin-bottom: 38px; }
   .top {
     display: grid; grid-template-columns: minmax(330px, 0.80fr) 1.20fr;
     grid-template-areas: "hero chart" "stats chart";
-    grid-template-rows: auto 1fr;
-    gap: 14px 34px; align-content: start; margin-bottom: 34px;
+    grid-template-rows: auto auto;
+    gap: 14px 34px; align-content: start; margin-bottom: 14px;
   }
   /* Named areas rather than source order: the stats sit under the hero here,
      but they come after the chart in the markup so that the stacked layout on
@@ -230,7 +230,6 @@ section { margin-bottom: 38px; }
   /* The four tiles go to four across at 740px and up. The column they now sit
      in is narrower than that even on a wide screen, so they go back to two. */
   .top-stats .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-  .top-stats .live { margin-bottom: 0; }
   /* The hero goes side by side at 740px and up. In a column this narrow it
      has to stack again, so that rule is undone here. */
   .top-l .hero { display: block; margin: 22px 0 0; padding: 24px 22px; }
@@ -550,15 +549,15 @@ footer a { color: var(--accent); }
       </div>
       </div>
 
-      <div class="live">
-      <span class="dot"></span>
-      <span><b>ABS __RELEASE__</b> &middot; rebuilt from the source workbooks on
-        __BUILT__ &middot; published only because the three components reconciled
-        against the change the ABS publishes separately</span>
-      </div>
+    </div>
+  </div>
 
-  </div>
-  </div>
+    <div class="live">
+    <span class="dot"></span>
+    <span><b>ABS __RELEASE__</b> &middot; rebuilt from the source workbooks on
+      __BUILT__ &middot; published only because the three components reconciled
+      against the change the ABS publishes separately</span>
+    </div>
 
   <section>
     <h2 data-n="02">Where the growth came from</h2>
