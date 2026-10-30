@@ -215,25 +215,87 @@ h2 { font-size: 20px; font-weight: 700; letter-spacing: -.015em; margin: 0 0 5px
   padding-top: 12px; border-top: 1px solid var(--line); line-height: 1.45;
 }
 
-/* ---- the equation ------------------------------------------------------ */
-.eq-row { padding: 11px 0; border-bottom: 1px solid var(--line); }
-.eq-row:first-child { padding-top: 2px; }
-.eq-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 7px; }
-.eq-name { font-size: 14.5px; color: var(--ink); font-weight: 500; }
-.eq-val { font-size: 16px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-.eq-track { position: relative; height: 14px; }
-.eq-track::before {
-  content: ""; position: absolute; left: 50%; top: -2px; bottom: -2px;
-  width: 1px; background: var(--line);
+/* ---- the equation, as a waterfall --------------------------------------
+   Each column starts where the one before it finished, so the running total
+   is the shape itself. The only column that descends is the only component
+   that takes people away, which is the whole finding in one picture. */
+.wf { display: flex; align-items: flex-end; gap: 6px; height: 232px; margin: 4px 0 0; }
+@media (min-width: 560px) { .wf { gap: 14px; height: 268px; } }
+.wf-col { flex: 1 1 0; min-width: 0; height: 100%; position: relative; }
+.wf-bar { position: absolute; left: 0; right: 0; border-radius: 4px; }
+.wf-num {
+  position: absolute; left: 0; right: 0; text-align: center;
+  font-size: 12.5px; font-weight: 700; letter-spacing: -.02em;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
 }
-.eq-fill { position: absolute; top: 0; height: 100%; border-radius: 4px; }
-.eq-total {
-  display: flex; justify-content: space-between; align-items: baseline;
-  gap: 12px; padding-top: 14px;
+@media (min-width: 560px) { .wf-num { font-size: 15px; } }
+/* The dashed carry line from one column's finish to the next one's start. */
+.wf-link {
+  position: absolute; left: 50%; width: calc(100% + 6px); height: 0;
+  border-top: 1px dashed var(--ink-3); opacity: .5;
 }
-.eq-total .eq-name { font-weight: 700; font-size: 15.5px; }
-.eq-total .eq-val { font-size: 22px; }
-.eq-key { font-size: 12.5px; color: var(--ink-3); margin-top: 4px; }
+@media (min-width: 560px) { .wf-link { width: calc(100% + 14px); } }
+.wf-base {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  background: var(--line);
+}
+.wf-labs { display: flex; gap: 6px; margin-top: 9px; }
+@media (min-width: 560px) { .wf-labs { gap: 14px; } }
+.wf-labs > div {
+  flex: 1 1 0; min-width: 0; text-align: center; font-size: 11.5px;
+  line-height: 1.3; color: var(--ink-2);
+}
+.wf-labs b { display: block; color: var(--ink); font-weight: 600; }
+@media (min-width: 560px) { .wf-labs > div { font-size: 13px; } }
+.wf-peak {
+  margin-top: 16px; padding-top: 13px; border-top: 1px solid var(--line);
+  font-size: 13.5px; color: var(--ink-2); line-height: 1.5;
+}
+.wf-peak b { color: var(--ink); font-weight: 600; }
+
+/* ---- decade strip ------------------------------------------------------ */
+.decs { display: flex; gap: 6px; }
+.dc { flex: 1 1 0; min-width: 0; text-align: center; }
+.dc-cell {
+  position: relative; height: 54px; border-radius: 5px;
+  background: var(--surface-2); overflow: hidden;
+}
+.dc-cell i {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  background: var(--s-interstate);
+}
+.dc-val {
+  margin-top: 7px; font-size: 14px; font-weight: 700; letter-spacing: -.02em;
+  font-variant-numeric: tabular-nums;
+}
+.dc-lab { font-size: 11.5px; color: var(--ink-2); margin-top: 1px; }
+.dc-sub { font-size: 11px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+/* ---- nine in ten -------------------------------------------------------- */
+.dots { display: flex; gap: 5px; margin: 12px 0 0; }
+.dots i {
+  width: 11px; height: 11px; border-radius: 50%;
+  background: var(--s-overseas);
+}
+.dots i.off { background: var(--line); }
+/* The hero figure sets a large negative letter-spacing in em, which computes
+   against its own 86px and then inherits that pixel value to every child. Left
+   alone it crushes this caption into overlapping letters, so both the spacing
+   and the tight heading line-height are reset here. */
+.dots-cap {
+  font-size: 12px; color: var(--ink-3); margin-top: 7px;
+  letter-spacing: normal; line-height: 1.35; font-weight: 400;
+}
+
+/* ---- section numbering --------------------------------------------------
+   Sits above the heading rather than in a side gutter: the wrap has only a
+   16px outside padding, so a gutter would be clipped at narrow widths and at
+   exactly the max width. The poster numbers its sections the same way. */
+.wrap section > h2::before {
+  content: attr(data-n); display: block; margin-bottom: 4px;
+  font-size: 11.5px; font-weight: 700; letter-spacing: .1em;
+  color: var(--accent);
+}
 
 /* ---- chart ------------------------------------------------------------- */
 .legend { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-bottom: 12px; }
@@ -373,7 +435,13 @@ footer a { color: var(--accent); }
   </header>
 
   <div class="hero">
-    <div class="hero-fig">__NOM_SHARE__%</div>
+    <div class="hero-fig">__NOM_SHARE__%
+      <div class="dots" role="img"
+           aria-label="Nine of ten dots filled, standing for nine in ten people">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="off"></i>
+      </div>
+      <div class="dots-cap">nine people in every ten</div>
+    </div>
     <div class="hero-say">Nine in every ten people added to the Territory last
       year arrived from overseas.</div>
     <div class="hero-sub">Net overseas migration supplied __NOM_SHARE__% of all
@@ -382,7 +450,7 @@ footer a { color: var(--accent); }
   </div>
 
   <section>
-    <h2>Forty-five years of the same three parts</h2>
+    <h2 data-n="01">Forty-five years of the same three parts</h2>
     <p class="note">Every person added or lost belongs to one of three parts.
       Four-quarter rolling average, __START__ to __REF__. Hover to read a
       quarter, click to hold it.</p>
@@ -431,9 +499,10 @@ footer a { color: var(--accent); }
   </div>
 
   <section>
-    <h2>Where the growth came from</h2>
-    <p class="note">The same three parts over the last twelve months. Bars run
-      from the centre line: right adds people, left takes them away.</p>
+    <h2 data-n="02">Where the growth came from</h2>
+    <p class="note">The same three parts over the last twelve months. Each
+      column starts where the one before it finished, so the height is the
+      running total and only one column comes back down.</p>
     <div class="card">
       __EQUATION__
 
@@ -441,7 +510,7 @@ footer a { color: var(--accent); }
   </section>
 
   <section>
-    <h2>The two flows behind net interstate migration</h2>
+    <h2 data-n="03">The two flows behind net interstate migration</h2>
     <p class="note">A net loss of __NIM_ABS__ does not say whether fewer arrived or
       more left. ABS tables 16A and 16B.</p>
     <div class="card">
@@ -469,7 +538,7 @@ footer a { color: var(--accent); }
   </section>
 
   <section>
-    <h2>Who intends to stay</h2>
+    <h2 data-n="04">Who intends to stay</h2>
     <p class="note">Population data cannot say who plans to stay. This is cited
       survey evidence, not pipeline output, and the validation gate does not
       apply to it.</p>
@@ -503,7 +572,7 @@ footer a { color: var(--accent); }
   </section>
 
   <section>
-    <h2>Three readings</h2>
+    <h2 data-n="05">Three readings</h2>
     <p class="note">Each computed over the whole series, not a chosen window.</p>
     <div class="grid">
       <div class="card">
@@ -520,18 +589,16 @@ footer a { color: var(--accent); }
       </div>
       <div class="card">
         <h3>Interstate migration by decade</h3>
-        <table>
-          <thead><tr><th>Decade</th><th>Qtrs positive</th><th>Mean/qtr</th></tr></thead>
-          <tbody>__DECADES__</tbody>
-        </table>
-        <p class="meaning">Half the quarters in the 1980s. Eight per cent in the
-          2010s.</p>
+        <div class="decs">__DECADES__</div>
+        <p class="meaning">Share of that decade's quarters in which interstate
+          migration added people, with the mean per quarter below. Half the
+          quarters in the 1980s. Eight per cent in the 2010s.</p>
       </div>
     </div>
   </section>
 
   <section>
-    <h2>How these numbers were produced</h2>
+    <h2 data-n="06">How these numbers were produced</h2>
     <span class="check"><span class="dot"></span>
       Reconciliation passed &middot; parts sum to __RECON__ against a published
       __RECON__ &middot; difference __DIFF__</span>
@@ -801,6 +868,71 @@ new MutationObserver(() => { draw(); fdraw(); }).observe(document.documentElemen
 """
 
 
+def _waterfall(f: dict) -> str:
+    """The equation drawn as a waterfall.
+
+    Each column starts where the previous one finished, so the height of the
+    picture at any point is the running total. Natural increase and overseas
+    migration climb, interstate migration is the one column that comes back
+    down, and the last column restates the result from zero.
+
+    The peak matters as much as the result. It is everything that came in
+    before anything left, and it is the denominator behind the second share
+    the page quotes, so the caption names it.
+    """
+    nat = f["natural_increase_12m"]
+    nom = f["net_overseas_migration_12m"]
+    nim = f["net_interstate_migration_12m"]
+    total = f["total_growth_12m"]
+
+    # (label under the column, value, bottom, top, hue)
+    steps = [("Natural<b>increase</b>", nat, 0, nat, "--s-natural")]
+    steps.append(("Net overseas<b>migration</b>", nom, nat, nat + nom, "--s-overseas"))
+    steps.append(("Net interstate<b>migration</b>", nim,
+                  min(nat + nom, nat + nom + nim), max(nat + nom, nat + nom + nim),
+                  "--s-interstate"))
+    steps.append(("<b>Total growth</b>", total, 0, total, "--ink-2"))
+
+    # Headroom above the tallest column, so the number printed above it has
+    # somewhere to sit instead of spilling out of the card.
+    top = (max(s[3] for s in steps) or 1) * 1.16
+
+    cols, labs = [], []
+    for i, (label, value, lo, hi, hue) in enumerate(steps):
+        bottom = lo / top * 100
+        height = (hi - lo) / top * 100
+        # The number sits above the column, except on the last one, where the
+        # column reaches high enough that an outside label would clip.
+        cols.append(
+            f'<div class="wf-col">'
+            f'<i class="wf-bar" style="bottom:{bottom:.2f}%;height:{height:.2f}%;'
+            f'background:var({hue})"></i>'
+            # An arrow as well as a sign, so direction does not rest on a
+            # minus sign at a distance or on the colour of the column.
+            f'<span class="wf-num" style="bottom:calc({bottom + height:.2f}% + 7px);'
+            f'color:var({hue})">'
+            + ("" if i == len(steps) - 1 else
+               ("&#9650; " if value >= 0 else "&#9660; "))
+            + f'{value:+,}</span>'
+            + (f'<i class="wf-link" style="bottom:{(hi if value >= 0 else lo) / top * 100:.2f}%">'
+               f'</i>' if i < len(steps) - 2 else "")
+            + (f'<i class="wf-link" style="bottom:{lo / top * 100:.2f}%"></i>'
+               if i == len(steps) - 2 else "")
+            + '</div>'
+        )
+        labs.append(f"<div>{label}</div>")
+
+    peak = (f'<div class="wf-peak">Everything that came in reached '
+            f'<b>{f["inflows_12m"]:,}</b> before interstate migration gave '
+            f'{abs(nim):,} of it back. Against that inflow, overseas migration '
+            f'is <b>{f["nom_share_of_inflows_pct"]}%</b> rather than '
+            f'{f["nom_share_of_growth_pct"]}%. Both are the same year; they '
+            f'differ only in what they divide by.</div>')
+
+    return ('<div class="wf"><span class="wf-base"></span>' + "".join(cols) + "</div>"
+            + '<div class="wf-labs">' + "".join(labs) + "</div>" + peak)
+
+
 def _bar(label, value, hue):
     return (f'<div class="barline"><span class="track">'
             f'<i style="width:{value}%;background:var({hue})"></i></span>'
@@ -885,39 +1017,31 @@ def main() -> None:
         for k, v in sorted(vol.items(), key=lambda kv: -kv[1])
     )
 
-    # The equation as a centre-origin bar chart. Label and value sit above the
-    # bar rather than beside it, so the row survives a phone's width without
-    # squeezing the bar into nothing.
-    parts = [
-        ("Natural increase", f["natural_increase_12m"], "--s-natural"),
-        ("Net overseas migration", f["net_overseas_migration_12m"], "--s-overseas"),
-        ("Net interstate migration", f["net_interstate_migration_12m"], "--s-interstate"),
-    ]
-    scale = max(abs(v) for _, v, _ in parts) or 1
-    rows = []
-    for label, value, hue in parts:
-        pct = abs(value) / scale * 50
-        side = f"left:50%;width:{pct:.1f}%" if value >= 0 else f"right:50%;width:{pct:.1f}%"
-        rows.append(
-            f'<div class="eq-row">'
-            f'<div class="eq-top"><span class="eq-name">{label}</span>'
-            f'<span class="eq-val" style="color:var({hue})">{value:+,}</span></div>'
-            f'<div class="eq-track"><i class="eq-fill" style="{side};'
-            f'background:var({hue})"></i></div></div>'
-        )
-    rows.append(
-        f'<div class="eq-total"><span class="eq-name">Total growth</span>'
-        f'<span class="eq-val">{f["total_growth_12m"]:+,}</span></div>'
-        f'<div class="eq-key">Matches the change the ABS publishes separately, '
-        f'to the person.</div>'
-    )
-    equation = "".join(rows)
+    equation = _waterfall(f)
 
-    decades = "".join(
-        f"<tr><td>{d}s</td><td>{v['positive_pct']}%</td>"
-        f"<td>{v['mean_per_quarter']:,}</td></tr>"
-        for d, v in f["nim_by_decade"].items()
-    )
+    # The decade strip. One hue, light to dark, because the measure is a
+    # magnitude: the share of that decade's quarters in which interstate
+    # migration added people. The 2010s sit almost empty between two darker
+    # blocks, which is the point and is hard to see in a table of numbers.
+    dec = f["nim_by_decade"]
+    hi = max(v["positive_pct"] for v in dec.values()) or 1
+    cells = []
+    for d, v in dec.items():
+        pct = v["positive_pct"]
+        # Height and tint carry the same measure. Doubling the encoding is
+        # deliberate: the block for the 2010s has to read as nearly empty at a
+        # glance, and a tint alone is easy to miss on a projector. The numbers
+        # sit outside the block, so nothing depends on contrast against it.
+        tint = 0.16 + 0.84 * (pct / hi)
+        cells.append(
+            f'<div class="dc">'
+            f'<div class="dc-cell"><i style="height:{12 + 0.88 * pct:.0f}%;'
+            f'opacity:{tint:.2f}"></i></div>'
+            f'<div class="dc-val">{pct}%</div>'
+            f'<div class="dc-lab">{d}s</div>'
+            f'<div class="dc-sub">{v["mean_per_quarter"]:,}</div></div>'
+        )
+    decades = "".join(cells)
 
     html = TEMPLATE
     for token, value in {

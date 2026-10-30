@@ -224,6 +224,13 @@ def compute(df: pd.DataFrame) -> dict:
             "mean_per_quarter": round(float(group["net_interstate_migration"].mean())),
         }
 
+    # Everything that added people over the year, before anything left. Only
+    # the positive components count: a negative one is an outflow, not a
+    # smaller inflow.
+    inflows = sum(v for v in (year["natural_increase"],
+                              year["net_overseas_migration"],
+                              year["net_interstate_migration"]) if v > 0)
+
     positive = df[nim > 0]["date"]
     last_positive = positive.max() if len(positive) else None
     run = int((df["date"] > last_positive).sum()) if last_positive is not None else None
@@ -245,6 +252,15 @@ def compute(df: pd.DataFrame) -> dict:
         "total_growth_12m": round(total),
         "nom_share_of_growth_pct": round(year["net_overseas_migration"] / total * 100, 1)
         if total else None,
+
+        # The same reliance measured a second way. Share of growth divides by a
+        # net figure that interstate migration has already reduced, which is
+        # what makes it reach 90%. Share of inflows divides by everything that
+        # came in before any of it left. Both are true; publishing only the
+        # larger one invites the obvious objection, so the page carries both.
+        "inflows_12m": round(inflows),
+        "nom_share_of_inflows_pct": round(
+            year["net_overseas_migration"] / inflows * 100, 1) if inflows else None,
 
         "erp_latest": round(erp_latest) if erp_latest == erp_latest else None,
         "annual_growth_pct": round(growth_pct, 2) if growth_pct == growth_pct else None,
@@ -331,6 +347,8 @@ def report(f: dict) -> None:
     print("     " + "-" * 34)
     print(f"  D  Total growth              {f['total_growth_12m']:>8,}")
     print(f"\n  E  Overseas share of growth  {f['nom_share_of_growth_pct']}%")
+    print(f"  F  Share of inflows          {f['nom_share_of_inflows_pct']}%"
+          f"   ({f['net_overseas_migration_12m']:,} of {f['inflows_12m']:,} in)")
 
     r = f["reconciliation"]
     print(f"\nReconciliation [{'PASS' if r['passes'] else 'FAIL'}]")
