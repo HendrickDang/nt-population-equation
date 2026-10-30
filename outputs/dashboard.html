@@ -239,6 +239,15 @@ h2 { font-size: 20px; font-weight: 700; letter-spacing: -.015em; margin: 0 0 5px
   background: var(--s-overseas);
 }
 .dots i.off { background: var(--line); }
+
+/* Shown only where a pointer can hover. On a phone the instruction was both
+   clutter and untrue. */
+.hint { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  .hint {
+    display: block; margin: -2px 0 10px; font-size: 12px; color: var(--ink-3);
+  }
+}
 /* The hero figure sets a large negative letter-spacing in em, which computes
    against its own 86px and then inherits that pixel value to every child. Left
    alone it crushes this caption into overlapping letters, so both the spacing
@@ -373,7 +382,7 @@ footer a { color: var(--accent); }
 <div class="wrap">
   <header>
     <div class="topbar">
-      <div class="eyebrow">Northern Territory &middot; Australian Bureau of Statistics</div>
+      <div class="eyebrow">Northern Territory</div>
       <button class="themer" id="themer" type="button" title="Switch theme"
               aria-label="Switch to the dark theme">
         <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -390,9 +399,8 @@ footer a { color: var(--accent); }
       </button>
     </div>
     <h1>The Territory&rsquo;s Population Equation</h1>
-    <p class="standfirst">Population change has exactly three parts. In the
-      Northern Territory one of them has been negative for 18 straight
-      quarters, and the population grows anyway.</p>
+    <p class="standfirst">One part has been negative for 18 straight
+      quarters. The population grows anyway.</p>
   </header>
 
   <div class="hero">
@@ -401,31 +409,29 @@ footer a { color: var(--accent); }
            aria-label="Nine of ten dots filled, standing for nine in ten people">
         <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="off"></i>
       </div>
-      <div class="dots-cap">nine people in every ten</div>
     </div>
-    <div class="hero-say">Nine in every ten people added to the Territory last
-      year arrived from overseas.</div>
-    <div class="hero-sub">Net overseas migration supplied 90.4% of all
-      population growth in the year to March 2026. A decade ago the same measure was
-      74.4%.</div>
+    <div class="hero-say">of the Territory&rsquo;s population growth last year
+      came from overseas migration.</div>
+    <div class="hero-sub">Year to March 2026. A decade ago, 74.4%.</div>
   </div>
 
   <section>
     <h2 data-n="01">Forty-five years of the same three parts</h2>
-    <p class="note">Every person added or lost belongs to one of three parts.
-      Four-quarter rolling average, June 1981 to March 2026. Hover to read a
-      quarter, click to hold it.</p>
+    <p class="note">Every person added or lost belongs to one of three
+      parts.</p>
     <div class="card">
       <div class="legend">
         <span class="key"><span class="swatch" style="background:var(--s-natural)"></span>Natural increase</span>
         <span class="key"><span class="swatch" style="background:var(--s-overseas)"></span>Net overseas migration</span>
         <span class="key"><span class="swatch" style="background:var(--s-interstate)"></span>Net interstate migration</span>
       </div>
+      <p class="hint">Hover any point to read that quarter, click to hold it.</p>
       <svg id="chart" role="img"
         aria-label="Northern Territory population change by component, quarterly, 1982 to 2026"></svg>
       <div class="readout" id="readout"></div>
       <p class="meaning">Births minus deaths barely moves. The other two swing
-        hard, and interstate migration has spent most of forty years below zero.</p>
+        hard, and interstate migration has spent most of forty years below zero.
+        Four-quarter rolling average, June 1981 to March 2026.</p>
     </div>
   </section>
 
