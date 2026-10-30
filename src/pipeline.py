@@ -283,6 +283,38 @@ def compute(df: pd.DataFrame) -> dict:
     }
 
 
+def report_failure(f: dict) -> None:
+    """What a failed run prints instead of the full report.
+
+    A failed reconciliation means the inputs disagree with each other, so every
+    figure derived from them is suspect. Printing the usual report would put a
+    share, a volatility ranking and a dependency percentage on the screen that
+    nobody should quote. This prints only what is needed to find the fault: the
+    three components, their sum, and the change the ABS published for the same
+    period.
+    """
+    r = f["reconciliation"]
+    print("\n" + "=" * 70)
+    print("NT POPULATION EQUATION - RECONCILIATION FAILED")
+    print("=" * 70)
+    print(f"Series     : {f['series_start']} to {f['reference_period']} "
+          f"({f['quarters_in_series']} quarters)")
+
+    print("\nLatest 12 months, as read from the workbooks")
+    print(f"  A  Natural increase          {f['natural_increase_12m']:>8,}")
+    print(f"  B  Net interstate migration  {f['net_interstate_migration_12m']:>8,}")
+    print(f"  C  Net overseas migration    {f['net_overseas_migration_12m']:>8,}")
+    print("     " + "-" * 34)
+    print(f"  D  Components sum            {r['components_sum']:>8,}")
+    print(f"  E  ABS published change      {r['abs_published_change']:>8,}")
+    print(f"  F  Difference                {r['difference']:>8}")
+
+    print("\nNo share, no volatility ranking and no dependency figure are")
+    print("printed. They would all be derived from inputs that disagree with")
+    print("each other, and a number on a screen gets quoted.")
+    print("=" * 70)
+
+
 def report(f: dict) -> None:
     print("\n" + "=" * 70)
     print("NT POPULATION EQUATION")
@@ -422,14 +454,18 @@ def main() -> None:
     df.to_csv(OUT / "nt_components.csv", index=False)
 
     figures = compute(df)
-    report(figures)
 
     # The validation gate. Nothing downstream is written unless the three
     # components reconcile against the change the ABS publishes for the same
     # period. A department that re-runs this after a revised release should get
     # a refusal, not a plausible-looking number nobody checked.
+    #
+    # The gate comes before the report on purpose. A failed run prints the
+    # three components and the difference, and stops there: the headline
+    # figures are never put on the screen at all.
     if not figures["reconciliation"]["passes"]:
         if "--allow-mismatch" not in sys.argv:
+            report_failure(figures)
             sys.exit(
                 "\nSTOPPED: components do not reconcile against the published "
                 "change.\nNo figures, charts or dashboard data were written.\n"
@@ -439,6 +475,8 @@ def main() -> None:
             )
         print("\n--allow-mismatch: writing outputs despite a failed "
               "reconciliation.\nEvery figure below is unverified.\n")
+
+    report(figures)
 
     (OUT / "figures.json").write_text(json.dumps(figures, indent=2))
 

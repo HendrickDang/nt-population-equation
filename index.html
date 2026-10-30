@@ -89,9 +89,29 @@ h1 {
 
 /* ---- stat tiles -------------------------------------------------------- */
 .tiles {
-  display: grid; gap: 10px; margin-bottom: 36px;
+  display: grid; gap: 10px; margin-bottom: 12px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
+/* ---- live status strip ------------------------------------------------- */
+.live {
+  display: flex; align-items: flex-start; gap: 10px;
+  margin-bottom: 36px; padding: 11px 14px;
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font-size: 12.5px; color: var(--ink-2); line-height: 1.45;
+}
+.live b { color: var(--ink); font-weight: 600; }
+.live .dot {
+  flex: none; width: 8px; height: 8px; border-radius: 50%; margin-top: 5px;
+  background: var(--s-interstate);
+  box-shadow: 0 0 0 3px rgba(25, 173, 118, .20);
+  animation: beat 2.6s ease-in-out infinite;
+}
+@keyframes beat {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(25, 173, 118, .20); }
+  50%      { box-shadow: 0 0 0 7px rgba(25, 173, 118, 0); }
+}
+@media (prefers-reduced-motion: reduce) { .live .dot { animation: none; } }
 @media (min-width: 740px) { .tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; } }
 .tile {
   background: var(--surface); border: 1px solid var(--line);
@@ -289,6 +309,13 @@ footer a { color: var(--accent); }
       <div class="tile-val" style="color:var(--s-interstate)">Passed</div>
       <div class="tile-note">Parts match the published total exactly</div>
     </div>
+  </div>
+
+  <div class="live">
+    <span class="dot"></span>
+    <span><b>ABS March 2026</b> &middot; rebuilt from the source workbooks on
+      30 October 2026 &middot; published only because the three components reconciled
+      against the change the ABS publishes separately</span>
   </div>
 
   <section>

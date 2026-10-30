@@ -11,10 +11,29 @@ this after the pipeline whenever a new ABS release is loaded.
 from __future__ import annotations
 
 import json
+from datetime import date
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "outputs"
+RELEASE_FILE = ROOT / "data" / "raw" / "RELEASE"
+
+MONTHS = {"jan": "January", "feb": "February", "mar": "March", "apr": "April",
+          "may": "May", "jun": "June", "jul": "July", "aug": "August",
+          "sep": "September", "oct": "October", "nov": "November",
+          "dec": "December"}
+
+
+def release_label() -> str:
+    """"mar-2026" as the ABS writes it in the download path -> "March 2026"."""
+    try:
+        raw = RELEASE_FILE.read_text().strip().lower()
+        month, year = raw.split("-")
+        return f"{MONTHS[month[:3]]} {year}"
+    except Exception:
+        # The marker is written by src/fetch_abs.py. A missing or unexpected
+        # value should not stop the page being built, so say what is known.
+        return "release not recorded"
 
 REPO = "https://github.com/HendrickDang/nt-population-equation"
 
@@ -109,9 +128,29 @@ h1 {
 
 /* ---- stat tiles -------------------------------------------------------- */
 .tiles {
-  display: grid; gap: 10px; margin-bottom: 36px;
+  display: grid; gap: 10px; margin-bottom: 12px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
+/* ---- live status strip ------------------------------------------------- */
+.live {
+  display: flex; align-items: flex-start; gap: 10px;
+  margin-bottom: 36px; padding: 11px 14px;
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font-size: 12.5px; color: var(--ink-2); line-height: 1.45;
+}
+.live b { color: var(--ink); font-weight: 600; }
+.live .dot {
+  flex: none; width: 8px; height: 8px; border-radius: 50%; margin-top: 5px;
+  background: var(--s-interstate);
+  box-shadow: 0 0 0 3px rgba(25, 173, 118, .20);
+  animation: beat 2.6s ease-in-out infinite;
+}
+@keyframes beat {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(25, 173, 118, .20); }
+  50%      { box-shadow: 0 0 0 7px rgba(25, 173, 118, 0); }
+}
+@media (prefers-reduced-motion: reduce) { .live .dot { animation: none; } }
 @media (min-width: 740px) { .tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; } }
 .tile {
   background: var(--surface); border: 1px solid var(--line);
@@ -309,6 +348,13 @@ footer a { color: var(--accent); }
       <div class="tile-val" style="color:var(--s-interstate)">Passed</div>
       <div class="tile-note">Parts match the published total exactly</div>
     </div>
+  </div>
+
+  <div class="live">
+    <span class="dot"></span>
+    <span><b>ABS __RELEASE__</b> &middot; rebuilt from the source workbooks on
+      __BUILT__ &middot; published only because the three components reconciled
+      against the change the ABS publishes separately</span>
   </div>
 
   <section>
@@ -836,6 +882,8 @@ def main() -> None:
         "__DEPENDENCY__": dependency,
         "__VOLATILITY__": volatility,
         "__DECADES__": decades,
+        "__RELEASE__": release_label(),
+        "__BUILT__": date.today().strftime("%d %B %Y").lstrip("0"),
         "__REPO__": REPO,
         "__REPO_SHORT__": REPO.replace("https://", ""),
         "__DATA__": json.dumps(data, separators=(",", ":")),
