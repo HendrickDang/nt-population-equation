@@ -204,6 +204,36 @@ h1 {
 
 /* ---- sections ---------------------------------------------------------- */
 section { margin-bottom: 38px; }
+
+/* ---- the opening row ----------------------------------------------------
+   Below 1000px this is a plain stack and behaves exactly as it did. Above it
+   the title and the headline figure take the left column and the forty-five
+   year chart takes the right, so a reader meets the number and the picture in
+   one glance instead of scrolling from one to the other. The chart sizes
+   itself from its own column rather than from the window. */
+@media (min-width: 1080px) {
+  .top {
+    display: grid; grid-template-columns: minmax(290px, 0.76fr) 1.24fr;
+    gap: 34px; align-items: start; margin-bottom: 34px;
+  }
+  .top-l, .top-r { min-width: 0; }
+  .top-r { margin-bottom: 0; }
+  .top-l .standfirst { max-width: none; }
+  /* The hero goes side by side at 740px and up. In a column this narrow it
+     has to stack again, so that rule is undone here. */
+  .top-l .hero { display: block; margin: 22px 0 0; padding: 24px 22px; }
+  .top-l .hero-fig {
+    font-size: clamp(54px, 5.2vw, 76px); margin: 0 0 10px; grid-row: auto;
+  }
+  .top-l .hero-say { font-size: 17px; max-width: none; }
+  .top-l .hero-sub { margin-top: 9px; max-width: none; }
+  /* In one column the button sits at the top right of the page. Left in the
+     flow it lands between the title and the chart column, where it reads as
+     though it belongs to the chart. */
+  .top { position: relative; }
+  .top .themer { position: absolute; top: 0; right: 0; margin-top: 0; }
+  .top .topbar { display: block; }
+}
 h2 { font-size: 20px; font-weight: 700; letter-spacing: -.015em; margin: 0 0 5px; }
 .note { color: var(--ink-2); font-size: 14.5px; margin: 0 0 15px; max-width: 64ch; }
 .card {
@@ -419,6 +449,8 @@ footer a { color: var(--accent); }
 </style>
 
 <div class="wrap">
+  <div class="top">
+    <div class="top-l">
   <header>
     <div class="topbar">
       <div class="eyebrow">Northern Territory</div>
@@ -454,7 +486,9 @@ footer a { color: var(--accent); }
     <div class="hero-sub">Year to __REF__. A decade ago, __DEP10__%.</div>
   </div>
 
-  <section>
+    </div>
+
+  <section class="top-r">
     <h2 data-n="01">Forty-five years of the same three parts</h2>
     <p class="note">Every person added or lost belongs to one of three
       parts.</p>
@@ -473,6 +507,7 @@ footer a { color: var(--accent); }
         Four-quarter rolling average, __START__ to __REF__.</p>
     </div>
   </section>
+  </div>
 
   <div class="tiles">
     <div class="tile">
@@ -672,11 +707,20 @@ lo -= pad; hi += pad;
    phone gets a taller box and no end-of-line labels, because at that width the
    labels collide with each other and with the plot. The legend above carries
    identity in both cases. */
-let W, H, M, narrow;
+let W, H, M, narrow, endLabels;
 function layout() {
-  narrow = window.innerWidth < 700;
-  if (narrow) { W = 360; H = 420; M = { t: 10, r: 10, b: 26, l: 38 }; }
-  else        { W = 1000; H = 400; M = { t: 14, r: 186, b: 30, l: 56 }; }
+  /* The viewBox is set to the box the chart actually occupies, so nothing is
+     scaled and every font size below is the size it renders at. The window is
+     the wrong thing to measure once the chart shares a row with the opening
+     text: on a wide screen it can still be a 600px column. */
+  const cw = Math.max(280, Math.round(svg.getBoundingClientRect().width
+                                    || svg.parentElement.clientWidth));
+  narrow = cw < 560;
+  endLabels = cw >= 860;
+  W = cw;
+  H = narrow ? 400 : 380;
+  M = { t: 14, r: endLabels ? 182 : 14, b: 30, l: narrow ? 38 : 54 };
+  if (narrow) M.t = 10;
   svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
 }
 
@@ -720,7 +764,7 @@ function draw() {
     const vals = DATA.series[s.key];
     const d = vals.map((v, i) => `${i ? "L" : "M"}${px(i).toFixed(1)} ${py(v).toFixed(1)}`).join(" ");
     out += `<path d="${d}" fill="none" stroke="${ink(s.css)}" stroke-width="${narrow ? 1.8 : 2.2}" stroke-linejoin="round" stroke-linecap="round"/>`;
-    if (!narrow) {
+    if (endLabels) {
       out += `<text x="${(W - M.r + 11).toFixed(1)}" y="${py(vals[n - 1]).toFixed(1)}" fill="${c.ink2}" font-size="12.5" dominant-baseline="middle">${s.label}</text>`;
     }
   }
@@ -781,10 +825,17 @@ const FSVG = document.getElementById("flows");
 const FOUT = document.getElementById("flowsout");
 const F = DATA.flows;
 
-let fW, fH, fM;
+let fW, fH, fM, fnarrow, fEnd;
 function flayout() {
-  if (narrow) { fW = 360; fH = 300; fM = { t: 10, r: 10, b: 26, l: 42 }; }
-  else        { fW = 1000; fH = 320; fM = { t: 14, r: 100, b: 30, l: 56 }; }
+  /* Measured independently of the chart above: after the split the two live
+     in columns of different widths. */
+  const cw = Math.max(280, Math.round(FSVG.getBoundingClientRect().width
+                                    || FSVG.parentElement.clientWidth));
+  fnarrow = cw < 560;
+  fEnd = cw >= 860;
+  fW = cw;
+  fH = fnarrow ? 300 : 320;
+  fM = { t: fnarrow ? 10 : 14, r: fEnd ? 100 : 14, b: 30, l: fnarrow ? 42 : 54 };
   FSVG.setAttribute("viewBox", `0 0 ${fW} ${fH}`);
 }
 let flo = Infinity, fhi = -Infinity;
@@ -798,18 +849,18 @@ const fpy = v => fM.t + (1 - (v - flo) / (fhi - flo)) * (fH - fM.t - fM.b);
 function fdraw() {
   flayout();
   const c = { line: ink("--line"), ink2: ink("--ink-2"), ink3: ink("--ink-3") };
-  const fs = narrow ? 10 : 11.5;
+  const fs = fnarrow ? 10 : 11.5;
   let out = "";
-  for (const tk of niceTicks(flo, fhi, narrow ? 4 : 5)) {
+  for (const tk of niceTicks(flo, fhi, fnarrow ? 4 : 5)) {
     const y = fpy(tk).toFixed(1);
     out += `<line x1="${fM.l}" y1="${y}" x2="${fW - fM.r}" y2="${y}" stroke="${c.line}" stroke-width="1"/>`;
     out += `<text x="${fM.l - 7}" y="${y}" fill="${c.ink3}" font-size="${fs}" text-anchor="end" dominant-baseline="middle">${tk.toLocaleString()}</text>`;
   }
-  const every = narrow ? 10 : 5;
+  const every = fnarrow ? 10 : 5;
   for (let i = 0; i < fn; i++) {
     const y = F.dates[i].slice(0, 4);
     if (y % every === 0 && F.dates[i].slice(5) === "03")
-      out += `<text x="${fpx(i).toFixed(1)}" y="${fH - 8}" fill="${c.ink3}" font-size="${fs}" text-anchor="middle">${narrow ? "\u2019" + y.slice(2) : y}</text>`;
+      out += `<text x="${fpx(i).toFixed(1)}" y="${fH - 8}" fill="${c.ink3}" font-size="${fs}" text-anchor="middle">${fnarrow ? "\u2019" + y.slice(2) : y}</text>`;
   }
   // the gap, shaded in the colour of whichever flow is on top
   const up = [], dn = [];
@@ -821,8 +872,8 @@ function fdraw() {
   for (const [k, hue, label] of [["arrivals", "--s-interstate", "Arrivals"],
                                  ["departures", "--s-overseas", "Departures"]]) {
     const d = F[k].map((v, i) => `${i ? "L" : "M"}${fpx(i).toFixed(1)} ${fpy(v).toFixed(1)}`).join(" ");
-    out += `<path d="${d}" fill="none" stroke="${ink(hue)}" stroke-width="${narrow ? 1.8 : 2.2}" stroke-linejoin="round"/>`;
-    if (!narrow)
+    out += `<path d="${d}" fill="none" stroke="${ink(hue)}" stroke-width="${fnarrow ? 1.8 : 2.2}" stroke-linejoin="round"/>`;
+    if (fEnd)
       out += `<text x="${(fW - fM.r + 10).toFixed(1)}" y="${fpy(F[k][fn - 1]).toFixed(1)}" fill="${c.ink2}" font-size="12.5" dominant-baseline="middle">${label}</text>`;
   }
   FSVG.innerHTML = out;
