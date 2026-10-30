@@ -41,6 +41,20 @@ TEMPLATE = """<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Territory Population Equation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<script>
+/* Runs before the first paint, so a reader who chose a theme last time does
+   not see the other one flash first. Storage can throw in a private window or
+   with site data blocked, in which case the page just follows the system
+   setting, which is what it did before this control existed. */
+(function () {
+  try {
+    var t = localStorage.getItem("theme");
+    if (t === "dark" || t === "light") {
+      document.documentElement.setAttribute("data-theme", t);
+    }
+  } catch (e) {}
+})();
+</script>
 <style>
 /* Phone first. One column, big numbers, every figure captioned in plain words.
    The three series hues are the project's validated set and carry all the data;
@@ -50,7 +64,6 @@ TEMPLATE = """<meta charset="utf-8">
   --surface: #ffffff;
   --surface-2: #f4f2ee;
   --line: #e4e0d8;
-  --ink: #17161300;
   --ink: #171613;
   --ink-2: #55504a;
   --ink-3: #87817a;
@@ -80,6 +93,32 @@ TEMPLATE = """<meta charset="utf-8">
   --cited-bg: #221e17; --cited-line: #3d3527; --cited-ink: #c9a66b;
   color-scheme: dark;
 }
+
+/* ---- theme control ------------------------------------------------------
+   The button shows the theme it switches TO, so the moon means "go dark".
+   Which icon is visible follows exactly the same cascade as the colours
+   above: system preference unless data-theme overrides it. */
+.topbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.themer {
+  flex: none; width: 38px; height: 38px; margin-top: -7px;
+  display: grid; place-items: center; cursor: pointer;
+  background: var(--surface); color: var(--ink-2);
+  border: 1px solid var(--line); border-radius: 50%;
+  transition: color .15s, border-color .15s;
+}
+.themer:hover { color: var(--ink); border-color: var(--ink-3); }
+.themer:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.themer svg { width: 18px; height: 18px; display: block; }
+.themer .sun { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .themer .moon { display: none; }
+  :root:not([data-theme="light"]) .themer .sun  { display: block; }
+}
+:root[data-theme="dark"]  .themer .moon { display: none; }
+:root[data-theme="dark"]  .themer .sun  { display: block; }
+:root[data-theme="light"] .themer .moon { display: block; }
+:root[data-theme="light"] .themer .sun  { display: none; }
+@media print { .themer { display: none; } }
 
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
@@ -310,7 +349,23 @@ footer a { color: var(--accent); }
 
 <div class="wrap">
   <header>
-    <div class="eyebrow">Northern Territory &middot; Australian Bureau of Statistics</div>
+    <div class="topbar">
+      <div class="eyebrow">Northern Territory &middot; Australian Bureau of Statistics</div>
+      <button class="themer" id="themer" type="button" title="Switch theme"
+              aria-label="Switch to the dark theme">
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true">
+          <path d="M20.5 14.3A8.5 8.5 0 0 1 9.7 3.5a8.5 8.5 0 1 0 10.8 10.8z"/>
+        </svg>
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.3v2.2M12 19.5v2.2M4.1 4.1l1.6 1.6M18.3 18.3l1.6 1.6M2.3 12h2.2M19.5 12h2.2M4.1 19.9l1.6-1.6M18.3 5.7l1.6-1.6"/>
+        </svg>
+      </button>
+    </div>
     <h1>The Territory&rsquo;s Population Equation</h1>
     <p class="standfirst">Population change has exactly three parts. In the
       Northern Territory one of them has been negative for __NIM_RUN__ straight
@@ -715,6 +770,27 @@ FSVG.addEventListener("mousemove", e => {
   if (i >= 0 && i < fn) fshow(i);
 });
 FSVG.addEventListener("mouseleave", () => fshow(fn - 1));
+
+/* The theme control. The charts are drawn from the CSS custom properties, so
+   the MutationObserver below redraws them when data-theme changes. Nothing is
+   stored except the word "dark" or "light", and only for this reader. */
+const themer = document.getElementById("themer");
+function activeTheme() {
+  const set = document.documentElement.getAttribute("data-theme");
+  if (set === "dark" || set === "light") return set;
+  return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+function labelThemer() {
+  themer.setAttribute("aria-label", activeTheme() === "dark"
+    ? "Switch to the light theme" : "Switch to the dark theme");
+}
+themer.addEventListener("click", () => {
+  const next = activeTheme() === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  try { localStorage.setItem("theme", next); } catch (e) {}
+  labelThemer();
+});
+labelThemer();
 
 draw(); fdraw();
 let rt;
