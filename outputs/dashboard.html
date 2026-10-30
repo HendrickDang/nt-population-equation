@@ -330,8 +330,7 @@ footer a { color: var(--accent); }
     <h1>The Territory&rsquo;s Population Equation</h1>
     <p class="standfirst">Population change has exactly three parts. In the
       Northern Territory one of them has been negative for 18 straight
-      quarters, and the population grows anyway. This page shows which part makes
-      up the difference, and how steady that part is.</p>
+      quarters, and the population grows anyway.</p>
   </header>
 
   <div class="hero">
@@ -342,6 +341,25 @@ footer a { color: var(--accent); }
       population growth in the year to March 2026. A decade ago the same measure was
       74.4%.</div>
   </div>
+
+  <section>
+    <h2>Forty-five years of the same three parts</h2>
+    <p class="note">Every person added or lost belongs to one of three parts.
+      Four-quarter rolling average, June 1981 to March 2026. Hover to read a
+      quarter, click to hold it.</p>
+    <div class="card">
+      <div class="legend">
+        <span class="key"><span class="swatch" style="background:var(--s-natural)"></span>Natural increase</span>
+        <span class="key"><span class="swatch" style="background:var(--s-overseas)"></span>Net overseas migration</span>
+        <span class="key"><span class="swatch" style="background:var(--s-interstate)"></span>Net interstate migration</span>
+      </div>
+      <svg id="chart" role="img"
+        aria-label="Northern Territory population change by component, quarterly, 1982 to 2026"></svg>
+      <div class="readout" id="readout"></div>
+      <p class="meaning">Births minus deaths barely moves. The other two swing
+        hard, and interstate migration has spent most of forty years below zero.</p>
+    </div>
+  </section>
 
   <div class="tiles">
     <div class="tile">
@@ -375,8 +393,8 @@ footer a { color: var(--accent); }
 
   <section>
     <h2>Where the growth came from</h2>
-    <p class="note">Bars run from the centre line. Right adds people, left takes
-      them away, and only one part goes left.</p>
+    <p class="note">The same three parts over the last twelve months. Bars run
+      from the centre line: right adds people, left takes them away.</p>
     <div class="card">
       <div class="eq-row"><div class="eq-top"><span class="eq-name">Natural increase</span><span class="eq-val" style="color:var(--s-natural)">+1,969</span></div><div class="eq-track"><i class="eq-fill" style="left:50%;width:27.5%;background:var(--s-natural)"></i></div></div><div class="eq-row"><div class="eq-top"><span class="eq-name">Net overseas migration</span><span class="eq-val" style="color:var(--s-overseas)">+3,585</span></div><div class="eq-track"><i class="eq-fill" style="left:50%;width:50.0%;background:var(--s-overseas)"></i></div></div><div class="eq-row"><div class="eq-top"><span class="eq-name">Net interstate migration</span><span class="eq-val" style="color:var(--s-interstate)">-1,589</span></div><div class="eq-track"><i class="eq-fill" style="right:50%;width:22.2%;background:var(--s-interstate)"></i></div></div><div class="eq-total"><span class="eq-name">Total growth</span><span class="eq-val">+3,965</span></div><div class="eq-key">Matches the change the ABS publishes separately, to the person.</div>
 
@@ -384,25 +402,7 @@ footer a { color: var(--accent); }
   </section>
 
   <section>
-    <h2>Forty-five years of the same three parts</h2>
-    <p class="note">Four-quarter rolling average, June 1981 to March 2026. Hover to
-      read a quarter, click to hold it.</p>
-    <div class="card">
-      <div class="legend">
-        <span class="key"><span class="swatch" style="background:var(--s-natural)"></span>Natural increase</span>
-        <span class="key"><span class="swatch" style="background:var(--s-overseas)"></span>Net overseas migration</span>
-        <span class="key"><span class="swatch" style="background:var(--s-interstate)"></span>Net interstate migration</span>
-      </div>
-      <svg id="chart" role="img"
-        aria-label="Northern Territory population change by component, quarterly, 1982 to 2026"></svg>
-      <div class="readout" id="readout"></div>
-      <p class="meaning">Births minus deaths barely moves. The other two swing
-        hard, and interstate migration has spent most of forty years below zero.</p>
-    </div>
-  </section>
-
-  <section>
-    <h2>The two flows behind that one line</h2>
+    <h2>The two flows behind net interstate migration</h2>
     <p class="note">A net loss of 1,589 does not say whether fewer arrived or
       more left. ABS tables 16A and 16B.</p>
     <div class="card">

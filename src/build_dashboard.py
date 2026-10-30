@@ -369,8 +369,7 @@ footer a { color: var(--accent); }
     <h1>The Territory&rsquo;s Population Equation</h1>
     <p class="standfirst">Population change has exactly three parts. In the
       Northern Territory one of them has been negative for __NIM_RUN__ straight
-      quarters, and the population grows anyway. This page shows which part makes
-      up the difference, and how steady that part is.</p>
+      quarters, and the population grows anyway.</p>
   </header>
 
   <div class="hero">
@@ -381,6 +380,25 @@ footer a { color: var(--accent); }
       population growth in the year to __REF__. A decade ago the same measure was
       __DEP10__%.</div>
   </div>
+
+  <section>
+    <h2>Forty-five years of the same three parts</h2>
+    <p class="note">Every person added or lost belongs to one of three parts.
+      Four-quarter rolling average, __START__ to __REF__. Hover to read a
+      quarter, click to hold it.</p>
+    <div class="card">
+      <div class="legend">
+        <span class="key"><span class="swatch" style="background:var(--s-natural)"></span>Natural increase</span>
+        <span class="key"><span class="swatch" style="background:var(--s-overseas)"></span>Net overseas migration</span>
+        <span class="key"><span class="swatch" style="background:var(--s-interstate)"></span>Net interstate migration</span>
+      </div>
+      <svg id="chart" role="img"
+        aria-label="Northern Territory population change by component, quarterly, 1982 to 2026"></svg>
+      <div class="readout" id="readout"></div>
+      <p class="meaning">Births minus deaths barely moves. The other two swing
+        hard, and interstate migration has spent most of forty years below zero.</p>
+    </div>
+  </section>
 
   <div class="tiles">
     <div class="tile">
@@ -414,8 +432,8 @@ footer a { color: var(--accent); }
 
   <section>
     <h2>Where the growth came from</h2>
-    <p class="note">Bars run from the centre line. Right adds people, left takes
-      them away, and only one part goes left.</p>
+    <p class="note">The same three parts over the last twelve months. Bars run
+      from the centre line: right adds people, left takes them away.</p>
     <div class="card">
       __EQUATION__
 
@@ -423,25 +441,7 @@ footer a { color: var(--accent); }
   </section>
 
   <section>
-    <h2>Forty-five years of the same three parts</h2>
-    <p class="note">Four-quarter rolling average, __START__ to __REF__. Hover to
-      read a quarter, click to hold it.</p>
-    <div class="card">
-      <div class="legend">
-        <span class="key"><span class="swatch" style="background:var(--s-natural)"></span>Natural increase</span>
-        <span class="key"><span class="swatch" style="background:var(--s-overseas)"></span>Net overseas migration</span>
-        <span class="key"><span class="swatch" style="background:var(--s-interstate)"></span>Net interstate migration</span>
-      </div>
-      <svg id="chart" role="img"
-        aria-label="Northern Territory population change by component, quarterly, 1982 to 2026"></svg>
-      <div class="readout" id="readout"></div>
-      <p class="meaning">Births minus deaths barely moves. The other two swing
-        hard, and interstate migration has spent most of forty years below zero.</p>
-    </div>
-  </section>
-
-  <section>
-    <h2>The two flows behind that one line</h2>
+    <h2>The two flows behind net interstate migration</h2>
     <p class="note">A net loss of __NIM_ABS__ does not say whether fewer arrived or
       more left. ABS tables 16A and 16B.</p>
     <div class="card">
