@@ -174,12 +174,24 @@ section { margin-bottom: 38px; }
    itself from its own column rather than from the window. */
 @media (min-width: 1080px) {
   .top {
-    display: grid; grid-template-columns: minmax(290px, 0.76fr) 1.24fr;
-    gap: 34px; align-items: start; margin-bottom: 34px;
+    display: grid; grid-template-columns: minmax(330px, 0.80fr) 1.20fr;
+    grid-template-areas: "hero chart" "stats chart";
+    grid-template-rows: auto 1fr;
+    gap: 14px 34px; align-content: start; margin-bottom: 34px;
   }
-  .top-l, .top-r { min-width: 0; }
+  /* Named areas rather than source order: the stats sit under the hero here,
+     but they come after the chart in the markup so that the stacked layout on
+     a phone still meets the chart before scrolling past four tiles. */
+  .top-l { grid-area: hero; }
+  .top-r { grid-area: chart; }
+  .top-stats { grid-area: stats; }
+  .top-l, .top-r, .top-stats { min-width: 0; }
   .top-r { margin-bottom: 0; }
   .top-l .standfirst { max-width: none; }
+  /* The four tiles go to four across at 740px and up. The column they now sit
+     in is narrower than that even on a wide screen, so they go back to two. */
+  .top-stats .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .top-stats .live { margin-bottom: 0; }
   /* The hero goes side by side at 740px and up. In a column this narrow it
      has to stack again, so that rule is undone here. */
   .top-l .hero { display: block; margin: 22px 0 0; padding: 24px 22px; }
@@ -210,7 +222,13 @@ h2 { font-size: 20px; font-weight: 700; letter-spacing: -.015em; margin: 0 0 5px
    Each column starts where the one before it finished, so the running total
    is the shape itself. The only column that descends is the only component
    that takes people away, which is the whole finding in one picture. */
-.wf { display: flex; align-items: flex-end; gap: 6px; height: 232px; margin: 4px 0 0; }
+/* position: relative is load-bearing. The baseline below is absolutely
+   positioned, and without a positioned ancestor here it resolves against the
+   initial containing block and draws a hairline across the whole page. */
+.wf {
+  position: relative;
+  display: flex; align-items: flex-end; gap: 6px; height: 232px; margin: 4px 0 0;
+}
 @media (min-width: 560px) { .wf { gap: 14px; height: 268px; } }
 .wf-col { flex: 1 1 0; min-width: 0; height: 100%; position: relative; }
 .wf-bar { position: absolute; left: 0; right: 0; border-radius: 4px; }
@@ -468,36 +486,39 @@ footer a { color: var(--accent); }
         Four-quarter rolling average, June 1981 to March 2026.</p>
     </div>
   </section>
-  </div>
 
-  <div class="tiles">
-    <div class="tile">
-      <div class="tile-lab">Population</div>
-      <div class="tile-val">268,899</div>
-      <div class="tile-note">Estimated residents, March 2026</div>
-    </div>
-    <div class="tile">
-      <div class="tile-lab">Growth, 12 months</div>
-      <div class="tile-val">+3,965</div>
-      <div class="tile-note">+1.5% more than a year earlier</div>
-    </div>
-    <div class="tile">
-      <div class="tile-lab">Interstate deficit</div>
-      <div class="tile-val">18 qtrs</div>
-      <div class="tile-note">Unbroken since September 2021</div>
-    </div>
-    <div class="tile">
-      <div class="tile-lab">Validation</div>
-      <div class="tile-val" style="color:var(--s-interstate)">Passed</div>
-      <div class="tile-note">Parts match the published total exactly</div>
-    </div>
-  </div>
+  <div class="top-stats">
+      <div class="tiles">
+      <div class="tile">
+        <div class="tile-lab">Population</div>
+        <div class="tile-val">268,899</div>
+        <div class="tile-note">Estimated residents, March 2026</div>
+      </div>
+      <div class="tile">
+        <div class="tile-lab">Growth, 12 months</div>
+        <div class="tile-val">+3,965</div>
+        <div class="tile-note">+1.5% more than a year earlier</div>
+      </div>
+      <div class="tile">
+        <div class="tile-lab">Interstate deficit</div>
+        <div class="tile-val">18 qtrs</div>
+        <div class="tile-note">Unbroken since September 2021</div>
+      </div>
+      <div class="tile">
+        <div class="tile-lab">Validation</div>
+        <div class="tile-val" style="color:var(--s-interstate)">Passed</div>
+        <div class="tile-note">Parts match the published total exactly</div>
+      </div>
+      </div>
 
-  <div class="live">
-    <span class="dot"></span>
-    <span><b>ABS March 2026</b> &middot; rebuilt from the source workbooks on
-      30 October 2026 &middot; published only because the three components reconciled
-      against the change the ABS publishes separately</span>
+      <div class="live">
+      <span class="dot"></span>
+      <span><b>ABS March 2026</b> &middot; rebuilt from the source workbooks on
+        30 October 2026 &middot; published only because the three components reconciled
+        against the change the ABS publishes separately</span>
+      </div>
+
+  </div>
   </div>
 
   <section>
