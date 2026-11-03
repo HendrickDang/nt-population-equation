@@ -393,6 +393,34 @@ svg { display: block; width: 100%; height: auto; }
 .bar { grid-column: 1 / -1; height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; margin-top: 6px; }
 .bar > i { display: block; height: 100%; border-radius: 3px; }
 
+/* ---- who needs services, and where -------------------------------------
+   Bars here are ink, not the three series hues: age groups and areas are not
+   the three components, and borrowing those colours would say they were. */
+.svc { display: grid; gap: 14px; grid-template-columns: 1fr; }
+@media (min-width: 900px) { .svc { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.svc-lead { font-size: 15px; color: var(--ink-2); margin: -4px 0 16px; line-height: 1.45; }
+.svc-lead b { color: var(--ink); }
+.svc .row .lab b { color: var(--ink); font-weight: 600; }
+.svc .row { row-gap: 0; margin-bottom: 14px; }
+.svc .row .dv, .svc .row .bar { margin-top: 7px; }
+.tag {
+  display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 99px;
+  font-size: 11px; font-weight: 600; letter-spacing: .02em; white-space: nowrap;
+  color: var(--ink-2); background: var(--surface-2); border: 1px solid var(--line);
+  vertical-align: 1px;
+}
+.svc .pct { font-weight: 500; color: var(--ink-3); margin-left: 6px; font-size: 13px; }
+.dv { grid-column: 1 / -1; position: relative; height: 8px; margin-top: 6px;
+      border-radius: 4px; background: var(--surface-2); }
+.dv::before { content: ""; position: absolute; top: -3px; bottom: -3px; width: 1px;
+              left: var(--z); background: var(--ink-3); opacity: .6; }
+.dv > i { position: absolute; top: 0; bottom: 0; border-radius: 4px; background: var(--ink-2); }
+.dv > i.neg { background: var(--ink-3); }
+.svc-foot { margin-top: 16px; padding-top: 13px; border-top: 1px solid var(--line);
+            font-size: 13px; color: var(--ink-2); line-height: 1.5; }
+.svc-foot b { color: var(--ink); font-weight: 600; }
+.svc-note { font-size: 12px; color: var(--ink-3); margin-top: 10px; line-height: 1.45; }
+
 table { border-collapse: collapse; width: 100%; font-size: 14px; }
 th, td { text-align: right; padding: 8px 4px; border-bottom: 1px solid var(--line); }
 th:first-child, td:first-child { text-align: left; }
@@ -516,7 +544,7 @@ footer a { color: var(--accent); }
     <div class="live">
     <span class="dot"></span>
     <span><b>ABS March 2026</b> &middot; rebuilt from the source workbooks on
-      30 October 2026 &middot; published only because the three components reconciled
+      3 November 2026 &middot; published only because the three components reconciled
       against the change the ABS publishes separately</span>
     </div>
 
@@ -560,7 +588,27 @@ footer a { color: var(--accent); }
   </section>
 
   <section>
-    <h2 data-n="04">Who intends to stay</h2>
+    <h2 data-n="04">Who needs services, and where</h2>
+    <p class="note">Schools, clinics and housing all plan from the same two
+      counts: how many people of each age, and where they live.</p>
+    <div class="svc">
+      <div class="card">
+        <h3>By age &middot; June 2020 to June 2025</h3>
+        <div class="svc-lead"><b>65 and over: +24.2%</b> in 5 years, while the Territory as a whole grew 7.5%.</div><div class="row"><span class="lab"><b>Under 5</b><span class="tag">Childcare and early learning</span></span><span class="val">17,467<span class="pct">-2.1%</span></span><span class="dv" style="--z:11.4%"><i class="neg" style="left:3.7%;width:7.7%"></i></span></div><div class="row"><span class="lab"><b>5 to 17</b><span class="tag">Schools</span></span><span class="val">45,937<span class="pct">+3.5%</span></span><span class="dv" style="--z:11.4%"><i class="" style="left:11.4%;width:12.8%"></i></span></div><div class="row"><span class="lab"><b>18 to 24</b></span><span class="val">25,422<span class="pct">+9.1%</span></span><span class="dv" style="--z:11.4%"><i class="" style="left:11.4%;width:33.3%"></i></span></div><div class="row"><span class="lab"><b>25 to 44</b><span class="tag">Housing and jobs</span></span><span class="val">93,445<span class="pct">+11.1%</span></span><span class="dv" style="--z:11.4%"><i class="" style="left:11.4%;width:40.7%"></i></span></div><div class="row"><span class="lab"><b>45 to 64</b></span><span class="val">58,226<span class="pct">+1.7%</span></span><span class="dv" style="--z:11.4%"><i class="" style="left:11.4%;width:6.2%"></i></span></div><div class="row"><span class="lab"><b>65 and over</b><span class="tag">Health and aged care</span></span><span class="val">25,481<span class="pct">+24.2%</span></span><span class="dv" style="--z:11.4%"><i class="" style="left:11.4%;width:88.6%"></i></span></div><div class="svc-foot">Inside school age, <b>12 to 17</b> grew +6.9% and <b>5 to 11</b> +0.9%. <b>85 and over</b> grew +48.1%.</div><p class="svc-note">ABS table 3101057, estimated resident population by single year of age, at 30 June. Percentages are change since June 2020.</p>
+      </div>
+      <div class="card">
+        <h3>By area &middot; people added, June 2020 to June 2025</h3>
+        <div class="svc-lead">Greater Darwin took <b>68%</b> of the 17,128 people the Territory added.</div><div class="row"><span class="lab"><b>Palmerston - South</b> &middot; Palmerston</span><span class="val">+2,873<span class="pct">+46.4%</span></span><span class="bar"><i style="width:100.0%;background:var(--ink-2)"></i></span></div><div class="row"><span class="lab"><b>Lyons (NT)</b> &middot; Darwin Suburbs</span><span class="val">+1,260<span class="pct">+20.4%</span></span><span class="bar"><i style="width:43.9%;background:var(--ink-2)"></i></span></div><div class="row"><span class="lab"><b>Berrimah</b> &middot; Darwin Suburbs</span><span class="val">+1,162<span class="pct">+68.0%</span></span><span class="bar"><i style="width:40.4%;background:var(--ink-2)"></i></span></div><div class="row"><span class="lab"><b>Darwin City</b> &middot; Darwin City</span><span class="val">+985<span class="pct">+12.9%</span></span><span class="bar"><i style="width:34.3%;background:var(--ink-2)"></i></span></div><div class="row"><span class="lab"><b>Mount Johns</b> &middot; Alice Springs</span><span class="val">+769<span class="pct">+17.9%</span></span><span class="bar"><i style="width:26.8%;background:var(--ink-2)"></i></span></div><div class="row"><span class="lab"><b>East Side</b> &middot; Alice Springs</span><span class="val">+691<span class="pct">+11.8%</span></span><span class="bar"><i style="width:24.1%;background:var(--ink-2)"></i></span></div><div class="svc-foot">Fastest last year: <b>Berrimah</b>, +22.5% in twelve months. Losing people: Brinkin - Nakara (-159), Karama (-159), Yuendumu - Anmatjere (-71).</div><p class="svc-note">ABS, Regional population, 2024-25, estimated resident population by Statistical Area Level 2. This release puts the Territory at 264,556 in June 2025; the later national release revised that to 265,978. Areas update with the next regional release.</p>
+      </div>
+    </div>
+    <p class="meaning"><b>Validated:</b> the age groups add up to the published
+      Territory population in all 45 Junes since 1981, and the
+      68 areas add up to the Territory total in all 25 years
+      since 2001. Largest difference in either: zero.</p>
+  </section>
+
+  <section>
+    <h2 data-n="05">Who intends to stay</h2>
     <p class="note">Population data cannot say who plans to stay. This is cited
       survey evidence, not pipeline output, and the validation gate does not
       apply to it.</p>
@@ -594,7 +642,7 @@ footer a { color: var(--accent); }
   </section>
 
   <section>
-    <h2 data-n="05">Three readings</h2>
+    <h2 data-n="06">Three readings</h2>
     <p class="note">Each computed over the whole series, not a chosen window.</p>
     <div class="grid">
       <div class="card">
@@ -620,7 +668,7 @@ footer a { color: var(--accent); }
   </section>
 
   <section>
-    <h2 data-n="06">How these numbers were produced</h2>
+    <h2 data-n="07">How these numbers were produced</h2>
     <span class="check"><span class="dot"></span>
       Reconciliation passed &middot; parts sum to 3,965 against a published
       3,965 &middot; difference 0</span>
@@ -660,7 +708,8 @@ footer a { color: var(--accent); }
   <footer>
     Van Hoi (Hendrick) Dang &middot; Ngoc Ngan Le &middot; Phuong Vy Ho &middot; Thi Kim Anh Bui<br>
     Source: ABS, <i>National, state and territory population</i>, March 2026,
-    tables 310102 and 310104.<br>
+    tables 310102, 310104, 16A, 16B and 3101057; ABS, <i>Regional population,
+    2024-25</i>.<br>
     Code and data: <a href="https://github.com/HendrickDang/nt-population-equation">github.com/HendrickDang/nt-population-equation</a>
   </footer>
 </div>

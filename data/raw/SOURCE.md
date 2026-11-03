@@ -65,7 +65,31 @@ https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/total-valu
 Australian Bureau of Statistics. (2026). *Wage price index, Australia*
 [Data set]. https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/wage-price-index-australia/latest-release
 
+## Age and areas, the services analysis
+
+Read by `src/services.py`.
+
+| File | ABS source | What it holds |
+|---|---|---|
+| `3101057.xlsx` | National, state and territory population, March 2026, table 57 | Estimated resident population by single year of age, Northern Territory, at 30 June |
+| `32180DS0003_2001-25.xlsx` | Regional population, 2024-25 | Estimated resident population by SA2 and above, 30 June 2001 to 2025 |
+
+**Downloaded:** 3 November 2026
+
+The age table comes from the same release as the population tables above, and
+its age groups sum to table 310104 exactly at every June. The regional table is
+a separate annual release (released 31 March 2026, next due March 2027), so its
+June 2025 total predates the national release's revision of that June. See the
+services section of the README.
+
+Australian Bureau of Statistics. (2026). *Regional population, 2024-25
+financial year* [Data set].
+https://www.abs.gov.au/statistics/people/population/regional-population/latest-release
+
 ## Which release these came from
+
+`RELEASE_REGIONAL` does the same for the regional table, which follows its own
+annual timetable.
 
 `RELEASE` in this folder records the ABS release the workbooks were downloaded
 from, as the ABS labels it in the download path. The scheduled workflow reads

@@ -1,5 +1,5 @@
-# Checks the ABS for a new quarterly release, re-runs the analysis, and
-# publishes the regenerated dashboard.
+# Checks the ABS for a new quarterly release, and for the annual regional
+# release, re-runs the analysis, and publishes the regenerated dashboard.
 #
 # Nothing is published unless the pipeline's reconciliation gate passes: the
 # three components must sum to the change the ABS publishes separately. If they
@@ -57,6 +57,7 @@ jobs:
           python src/pipeline.py
           python src/build_poster_figures.py
           python src/interstate_flows.py
+          python src/services.py
           python src/build_dashboard.py
 
       - name: Show the headline figures

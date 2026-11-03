@@ -432,6 +432,34 @@ svg { display: block; width: 100%; height: auto; }
 .bar { grid-column: 1 / -1; height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; margin-top: 6px; }
 .bar > i { display: block; height: 100%; border-radius: 3px; }
 
+/* ---- who needs services, and where -------------------------------------
+   Bars here are ink, not the three series hues: age groups and areas are not
+   the three components, and borrowing those colours would say they were. */
+.svc { display: grid; gap: 14px; grid-template-columns: 1fr; }
+@media (min-width: 900px) { .svc { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.svc-lead { font-size: 15px; color: var(--ink-2); margin: -4px 0 16px; line-height: 1.45; }
+.svc-lead b { color: var(--ink); }
+.svc .row .lab b { color: var(--ink); font-weight: 600; }
+.svc .row { row-gap: 0; margin-bottom: 14px; }
+.svc .row .dv, .svc .row .bar { margin-top: 7px; }
+.tag {
+  display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 99px;
+  font-size: 11px; font-weight: 600; letter-spacing: .02em; white-space: nowrap;
+  color: var(--ink-2); background: var(--surface-2); border: 1px solid var(--line);
+  vertical-align: 1px;
+}
+.svc .pct { font-weight: 500; color: var(--ink-3); margin-left: 6px; font-size: 13px; }
+.dv { grid-column: 1 / -1; position: relative; height: 8px; margin-top: 6px;
+      border-radius: 4px; background: var(--surface-2); }
+.dv::before { content: ""; position: absolute; top: -3px; bottom: -3px; width: 1px;
+              left: var(--z); background: var(--ink-3); opacity: .6; }
+.dv > i { position: absolute; top: 0; bottom: 0; border-radius: 4px; background: var(--ink-2); }
+.dv > i.neg { background: var(--ink-3); }
+.svc-foot { margin-top: 16px; padding-top: 13px; border-top: 1px solid var(--line);
+            font-size: 13px; color: var(--ink-2); line-height: 1.5; }
+.svc-foot b { color: var(--ink); font-weight: 600; }
+.svc-note { font-size: 12px; color: var(--ink-3); margin-top: 10px; line-height: 1.45; }
+
 table { border-collapse: collapse; width: 100%; font-size: 14px; }
 th, td { text-align: right; padding: 8px 4px; border-bottom: 1px solid var(--line); }
 th:first-child, td:first-child { text-align: left; }
@@ -599,7 +627,27 @@ footer a { color: var(--accent); }
   </section>
 
   <section>
-    <h2 data-n="04">Who intends to stay</h2>
+    <h2 data-n="04">Who needs services, and where</h2>
+    <p class="note">Schools, clinics and housing all plan from the same two
+      counts: how many people of each age, and where they live.</p>
+    <div class="svc">
+      <div class="card">
+        <h3>By age &middot; __AGE_BASE__ to __AGE_REF__</h3>
+        __AGE_ROWS__
+      </div>
+      <div class="card">
+        <h3>By area &middot; people added, __AREA_BASE__ to __AREA_REF__</h3>
+        __AREA_ROWS__
+      </div>
+    </div>
+    <p class="meaning"><b>Validated:</b> the age groups add up to the published
+      Territory population in all __AGE_JUNES__ Junes since __AGE_FIRST__, and the
+      __SA2_COUNT__ areas add up to the Territory total in all __AREA_YEARS__ years
+      since __AREA_FIRST__. Largest difference in either: zero.</p>
+  </section>
+
+  <section>
+    <h2 data-n="05">Who intends to stay</h2>
     <p class="note">Population data cannot say who plans to stay. This is cited
       survey evidence, not pipeline output, and the validation gate does not
       apply to it.</p>
@@ -633,7 +681,7 @@ footer a { color: var(--accent); }
   </section>
 
   <section>
-    <h2 data-n="05">Three readings</h2>
+    <h2 data-n="06">Three readings</h2>
     <p class="note">Each computed over the whole series, not a chosen window.</p>
     <div class="grid">
       <div class="card">
@@ -659,7 +707,7 @@ footer a { color: var(--accent); }
   </section>
 
   <section>
-    <h2 data-n="06">How these numbers were produced</h2>
+    <h2 data-n="07">How these numbers were produced</h2>
     <span class="check"><span class="dot"></span>
       Reconciliation passed &middot; parts sum to __RECON__ against a published
       __RECON__ &middot; difference __DIFF__</span>
@@ -699,7 +747,8 @@ footer a { color: var(--accent); }
   <footer>
     Van Hoi (Hendrick) Dang &middot; Ngoc Ngan Le &middot; Phuong Vy Ho &middot; Thi Kim Anh Bui<br>
     Source: ABS, <i>National, state and territory population</i>, __REF__,
-    tables 310102 and 310104.<br>
+    tables 310102, 310104, 16A, 16B and 3101057; ABS, <i>Regional population,
+    2024-25</i>.<br>
     Code and data: <a href="__REPO__">__REPO_SHORT__</a>
   </footer>
 </div>
@@ -945,6 +994,85 @@ new MutationObserver(() => { draw(); fdraw(); }).observe(document.documentElemen
 """
 
 
+def _signed(n: float, unit: str = "") -> str:
+    """+1,234 or -1,234, with a plain hyphen-minus like the rest of the page."""
+    return f"{'+' if n >= 0 else '-'}{abs(n):,}{unit}"
+
+
+def _services(s: dict) -> dict:
+    """Markup for the age and area cards, from outputs/services_figures.json."""
+    age, area = s["age"], s["areas"]
+
+    # Age: one row per group, a bar for the percentage change measured from a
+    # zero line, so the one group that is shrinking visibly goes the other way.
+    pcts = [b["pct"] for b in age["bands"]]
+    lo, hi = min(0.0, min(pcts)) - 1.0, max(0.0, max(pcts))
+    zero = -lo / (hi - lo) * 100
+    fastest = max(age["bands"], key=lambda b: b["pct"])
+    rows = [f'<div class="svc-lead"><b>{fastest["label"]}: {_signed(fastest["pct"], "%")}</b> '
+            f'in {age["years"]} years, while the Territory as a whole grew '
+            f'{age["total_pct"]}%.</div>']
+    for b in age["bands"]:
+        left = zero if b["pct"] >= 0 else zero + b["pct"] / (hi - lo) * 100
+        width = abs(b["pct"]) / (hi - lo) * 100
+        tag = f'<span class="tag">{b["service"]}</span>' if b["service"] else ""
+        rows.append(
+            f'<div class="row"><span class="lab"><b>{b["label"]}</b>{tag}</span>'
+            f'<span class="val">{b["now"]:,}<span class="pct">{_signed(b["pct"], "%")}</span></span>'
+            f'<span class="dv" style="--z:{zero:.1f}%"><i class="{"neg" if b["pct"] < 0 else ""}" '
+            f'style="left:{left:.1f}%;width:{width:.1f}%"></i></span></div>')
+    d = age["detail"]
+    rows.append(
+        f'<div class="svc-foot">Inside school age, <b>12 to 17</b> grew '
+        f'{_signed(d["secondary_12_17"]["pct"], "%")} and <b>5 to 11</b> '
+        f'{_signed(d["primary_5_11"]["pct"], "%")}. <b>85 and over</b> grew '
+        f'{_signed(d["aged_85_plus"]["pct"], "%")}.</div>'
+        f'<p class="svc-note">ABS table 3101057, estimated resident population by '
+        f'single year of age, at 30 June. Percentages are change since '
+        f'{age["base"]}.</p>')
+    age_rows = "".join(rows)
+
+    # Areas: the six that added the most people, then the fastest and the ones
+    # going backwards, because a planner needs both directions.
+    top = max(r["change"] for r in area["top"]) or 1
+    rows = [f'<div class="svc-lead">Greater Darwin took '
+            f'<b>{area["greater_darwin_share_pct"]:.0f}%</b> of the '
+            f'{area["growth"]:,} people the Territory added.</div>']
+    for r in area["top"]:
+        rows.append(
+            f'<div class="row"><span class="lab"><b>{r["name"]}</b> &middot; {r["region"]}</span>'
+            f'<span class="val">{_signed(r["change"])}<span class="pct">{_signed(r["pct"], "%")}</span></span>'
+            f'<span class="bar"><i style="width:{r["change"] / top * 100:.1f}%;'
+            f'background:var(--ink-2)"></i></span></div>')
+    fa = area["fastest_1y"]
+    falling = ", ".join(f'{r["name"]} ({_signed(r["change"])})' for r in area["falling"])
+    note = ""
+    if area.get("vintage_difference"):
+        note = (f' This release puts the Territory at {area["nt_total"]:,} in '
+                f'{area["reference"]}; the later national release revised that to '
+                f'{area["national_release_same_june"]:,}. Areas update with the next '
+                f'regional release.')
+    rows.append(
+        f'<div class="svc-foot">Fastest last year: <b>{fa["name"]}</b>, '
+        f'{_signed(fa["pct_1y"], "%")} in twelve months. '
+        f'Losing people: {falling}.</div>'
+        f'<p class="svc-note">ABS, {area["release"]}, estimated resident population '
+        f'by Statistical Area Level 2.{note}</p>')
+    area_rows = "".join(rows)
+
+    va, vr = s["validation"]["age"], s["validation"]["areas"]
+    return {
+        "__AGE_BASE__": age["base"], "__AGE_REF__": age["reference"],
+        "__AREA_BASE__": area["base"], "__AREA_REF__": area["reference"],
+        "__AGE_ROWS__": age_rows, "__AREA_ROWS__": area_rows,
+        "__AGE_JUNES__": str(va["junes_compared"]),
+        "__AGE_FIRST__": va["first"].split()[-1],
+        "__SA2_COUNT__": str(vr["sa2_count"]),
+        "__AREA_YEARS__": str(vr["years_compared"]),
+        "__AREA_FIRST__": str(vr["first"]),
+    }
+
+
 def _waterfall(f: dict) -> str:
     """The equation drawn as a waterfall.
 
@@ -1037,6 +1165,15 @@ def main() -> None:
     if not ttam_path.exists():
         raise SystemExit(f"Missing {ttam_path}")
     ttam = json.loads(ttam_path.read_text())
+
+    svc_path = OUT / "services_figures.json"
+    if not svc_path.exists():
+        raise SystemExit(
+            "Missing outputs/services_figures.json\n"
+            "Run `python src/services.py` first; the dashboard reports the age "
+            "and area counts it produces."
+        )
+    services = _services(json.loads(svc_path.read_text()))
 
     # Four-quarter rolling averages, so the turnover chart reads the same way
     # as the component chart above it.
@@ -1159,6 +1296,7 @@ def main() -> None:
         "__DEPENDENCY__": dependency,
         "__VOLATILITY__": volatility,
         "__DECADES__": decades,
+        **services,
         "__RELEASE__": release_label(),
         "__BUILT__": date.today().strftime("%d %B %Y").lstrip("0"),
         "__REPO__": REPO,

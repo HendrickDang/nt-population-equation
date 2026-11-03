@@ -107,10 +107,12 @@ python src/build_dashboard.py       # the interactive page
 
 python src/housing.py               # supporting analysis, stands alone
 python src/interstate_flows.py      # supporting analysis, needs pipeline first
+python src/services.py              # age groups and areas, stands alone
 ```
 
-Run `pipeline.py` first: the next two read `outputs/figures.json`. `housing.py`
-is independent of all three.
+Run `pipeline.py` first: the next two read `outputs/figures.json`.
+`build_dashboard.py` also needs `interstate_flows.py` and `services.py` to have
+run. `housing.py` is independent of all of them.
 
 ## Keeping it current without anyone touching it
 
@@ -118,7 +120,7 @@ The ABS publishes this release quarterly. `.github/workflows/update-from-abs.yml
 checks for a new one every Monday, and can also be run on demand from the
 Actions tab.
 
-When a new release appears, the workflow downloads the four workbooks, re-runs
+When a new release appears, the workflow downloads the five workbooks, re-runs
 the analysis, regenerates the dashboard and publishes it. Someone in a
 department refreshes the page and sees the new quarter. Nobody opens a
 spreadsheet.
@@ -143,6 +145,12 @@ python src/fetch_abs.py --force    # download regardless
 ```
 
 `data/raw/RELEASE` records which release the committed workbooks came from.
+
+The same run also checks the ABS regional population release, which comes out
+once a year on its own timetable. `data/raw/RELEASE_REGIONAL` records which one
+is committed. That check is never fatal: if the regional page cannot be reached
+or its workbook looks wrong, the run says so and carries on, because a problem
+with an annual table must not hold up the quarterly update.
 
 This is scheduled automation, not a model. The forecasting layer would sit on
 top of it, and the volatility figures above are what tell you which component
@@ -177,20 +185,70 @@ the largest difference is zero. The three tables are produced separately by the
 ABS, so agreement is evidence the right columns and jurisdiction were read. On
 failure it exits 1 and writes nothing.
 
+## Supporting analysis: who needs services, and where
+
+A department that plans a school, a clinic or a housing release needs two
+counts before anything else: how many people of each age, and where they live.
+`src/services.py` produces both, from two more ABS tables.
+
+**By age** (table 3101057, same release as the main analysis), June 2020 to
+June 2025, while the Territory grew 7.5%:
+
+| Age group | June 2025 | Change | Plans for |
+|---|---:|---:|---|
+| Under 5 | 17,467 | -2.1% | Childcare and early learning |
+| 5 to 17 | 45,937 | +3.5% | Schools |
+| 18 to 24 | 25,422 | +9.1% | |
+| 25 to 44 | 93,445 | +11.1% | Housing and jobs |
+| 45 to 64 | 58,226 | +1.7% | |
+| 65 and over | 25,481 | +24.2% | Health and aged care |
+
+Inside school age, 12 to 17 grew 6.9% and 5 to 11 grew 0.9%. The 85 and over
+group grew 48.1%.
+
+**By area** (Regional population 2024-25, Statistical Areas Level 2), Greater
+Darwin took 68% of the 17,128 people the Territory added between June 2020 and
+June 2025. Palmerston - South added the most, 2,873 people (+46.4%). Berrimah
+grew fastest in the latest year, 22.5%. Brinkin - Nakara, Karama and Yuendumu -
+Anmatjere lost people.
+
+Both are gated, and nothing is written unless both pass:
+
+- the 101 single-year age groups must sum to the Territory population in table
+  310104 at every June the two share: 45 Junes, 1981 to 2025, largest
+  difference zero;
+- the 68 SA2s must sum to the Territory total in the same workbook in every
+  year: 25 years, 2001 to 2025, largest difference zero.
+
+The regional release came out in March 2026 and puts the Territory at 264,556
+at June 2025. The national release of September 2026 revised that June to
+265,978. That is release timing, not an error, and the page states it beside
+the area figures rather than mixing the two vintages.
+
+This gives the counts a plan starts from. It does not say where to build:
+that needs age by area, which is a further ABS release and the obvious next
+step.
+
 ## What the dashboard now shows
 
-Four panels, in the order a planner would read them.
+Seven numbered sections, after the headline figure and four summary tiles.
 
-1. **Where the growth came from.** The three components as a centre-origin bar
-   chart, with the total matching the ABS published change.
-2. **Forty-five years of the same three parts.** The long series, hover or tap
+1. **Forty-five years of the same three parts.** The long series, hover or tap
    to read any quarter.
-3. **The two flows behind that one line.** Arrivals and departures separately,
-   the gross churn, and the reconciliation against the published net. Written by
-   `interstate_flows.py`, so `build_dashboard.py` now requires it to have run.
-4. **Who intends to stay.** Cited survey evidence on retention intentions.
+2. **Where the growth came from.** The three components as a waterfall, with
+   the total matching the ABS published change and the inflow share beside the
+   net share.
+3. **The two flows behind net interstate migration.** Arrivals and departures
+   separately, the gross churn, and the reconciliation against the published
+   net. Written by `interstate_flows.py`.
+4. **Who needs services, and where.** Age groups and areas. Written by
+   `services.py`.
+5. **Who intends to stay.** Cited survey evidence on retention intentions.
+6. **Three readings.** Reliance on overseas migration, volatility, and the
+   interstate record by decade.
+7. **How these numbers were produced.** The reconciliation result and method.
 
-Panel 4 is the only part of the page this pipeline did not produce. Its figures
+Section 5 is the only part of the page this pipeline did not produce. Its figures
 are transcribed from a published report, the validation gate does not apply to
 them, and the page says so: the section carries a "cited evidence" badge, sits on
 its own surface, and prints the source, measure, base and limitations beside the

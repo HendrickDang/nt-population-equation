@@ -1,0 +1,221 @@
+{
+  "age": {
+    "reference": "June 2025",
+    "base": "June 2020",
+    "years": 5,
+    "total_then": 247428,
+    "total_now": 265978,
+    "total_pct": 7.5,
+    "bands": [
+      {
+        "key": "0-4",
+        "label": "Under 5",
+        "service": "Childcare and early learning",
+        "then": 17847,
+        "now": 17467,
+        "change": -380,
+        "pct": -2.1,
+        "share_now": 6.6
+      },
+      {
+        "key": "5-17",
+        "label": "5 to 17",
+        "service": "Schools",
+        "then": 44382,
+        "now": 45937,
+        "change": 1555,
+        "pct": 3.5,
+        "share_now": 17.3
+      },
+      {
+        "key": "18-24",
+        "label": "18 to 24",
+        "service": null,
+        "then": 23302,
+        "now": 25422,
+        "change": 2120,
+        "pct": 9.1,
+        "share_now": 9.6
+      },
+      {
+        "key": "25-44",
+        "label": "25 to 44",
+        "service": "Housing and jobs",
+        "then": 84108,
+        "now": 93445,
+        "change": 9337,
+        "pct": 11.1,
+        "share_now": 35.1
+      },
+      {
+        "key": "45-64",
+        "label": "45 to 64",
+        "service": null,
+        "then": 57267,
+        "now": 58226,
+        "change": 959,
+        "pct": 1.7,
+        "share_now": 21.9
+      },
+      {
+        "key": "65+",
+        "label": "65 and over",
+        "service": "Health and aged care",
+        "then": 20522,
+        "now": 25481,
+        "change": 4959,
+        "pct": 24.2,
+        "share_now": 9.6
+      }
+    ],
+    "detail": {
+      "primary_5_11": {
+        "then": 25087,
+        "now": 25301,
+        "pct": 0.9
+      },
+      "secondary_12_17": {
+        "then": 19295,
+        "now": 20636,
+        "pct": 6.9
+      },
+      "aged_85_plus": {
+        "then": 1126,
+        "now": 1668,
+        "pct": 48.1
+      }
+    }
+  },
+  "areas": {
+    "release": "Regional population, 2024-25",
+    "reference": "June 2025",
+    "base": "June 2020",
+    "years": 5,
+    "nt_total": 264556,
+    "growth": 17128,
+    "greater_darwin_share_pct": 68.0,
+    "top": [
+      {
+        "name": "Palmerston - South",
+        "region": "Palmerston",
+        "then": 6197,
+        "now": 9070,
+        "change": 2873,
+        "pct": 46.4,
+        "change_1y": 344,
+        "pct_1y": 3.9
+      },
+      {
+        "name": "Lyons (NT)",
+        "region": "Darwin Suburbs",
+        "then": 6182,
+        "now": 7442,
+        "change": 1260,
+        "pct": 20.4,
+        "change_1y": 207,
+        "pct_1y": 2.9
+      },
+      {
+        "name": "Berrimah",
+        "region": "Darwin Suburbs",
+        "then": 1709,
+        "now": 2871,
+        "change": 1162,
+        "pct": 68.0,
+        "change_1y": 527,
+        "pct_1y": 22.5
+      },
+      {
+        "name": "Darwin City",
+        "region": "Darwin City",
+        "then": 7612,
+        "now": 8597,
+        "change": 985,
+        "pct": 12.9,
+        "change_1y": 324,
+        "pct_1y": 3.9
+      },
+      {
+        "name": "Mount Johns",
+        "region": "Alice Springs",
+        "then": 4300,
+        "now": 5069,
+        "change": 769,
+        "pct": 17.9,
+        "change_1y": 128,
+        "pct_1y": 2.6
+      },
+      {
+        "name": "East Side",
+        "region": "Alice Springs",
+        "then": 5853,
+        "now": 6544,
+        "change": 691,
+        "pct": 11.8,
+        "change_1y": 100,
+        "pct_1y": 1.6
+      }
+    ],
+    "fastest_1y": {
+      "name": "Berrimah",
+      "region": "Darwin Suburbs",
+      "then": 1709,
+      "now": 2871,
+      "change": 1162,
+      "pct": 68.0,
+      "change_1y": 527,
+      "pct_1y": 22.5
+    },
+    "falling": [
+      {
+        "name": "Brinkin - Nakara",
+        "region": "Darwin Suburbs",
+        "then": 3681,
+        "now": 3522,
+        "change": -159,
+        "pct": -4.3,
+        "change_1y": -33,
+        "pct_1y": -0.9
+      },
+      {
+        "name": "Karama",
+        "region": "Darwin Suburbs",
+        "then": 5209,
+        "now": 5050,
+        "change": -159,
+        "pct": -3.1,
+        "change_1y": -70,
+        "pct_1y": -1.4
+      },
+      {
+        "name": "Yuendumu - Anmatjere",
+        "region": "Alice Springs",
+        "then": 2166,
+        "now": 2095,
+        "change": -71,
+        "pct": -3.3,
+        "change_1y": 10,
+        "pct_1y": 0.5
+      }
+    ],
+    "national_release_same_june": 265978,
+    "vintage_difference": 1422
+  },
+  "validation": {
+    "age": {
+      "junes_compared": 45,
+      "first": "June 1981",
+      "last": "June 2025",
+      "largest_difference": 0.0,
+      "passes": true
+    },
+    "areas": {
+      "years_compared": 25,
+      "first": 2001,
+      "last": 2025,
+      "largest_difference": 0.0,
+      "passes": true,
+      "sa2_count": 68
+    }
+  }
+}

@@ -44,9 +44,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 RAW = ROOT / "data" / "raw"
 MARKER = RAW / "RELEASE"
+REGIONAL_MARKER = RAW / "RELEASE_REGIONAL"
 
 LANDING = ("https://www.abs.gov.au/statistics/people/population/"
            "national-state-and-territory-population/latest-release")
+REGIONAL_LANDING = ("https://www.abs.gov.au/statistics/people/population/"
+                    "regional-population/latest-release")
 BASE = "https://www.abs.gov.au"
 
 # The workbooks this project reads, and the Northern Territory column each one
@@ -58,6 +61,11 @@ WANTED = {
     "3101016B.xlsx": "interstate departures",
 }
 
+# Population by single year of age, Northern Territory. Same release and same
+# folder as the four above, so it is required in the same way. Its columns are
+# named by age, not by state, so it gets its own check: see verify_age().
+AGE = "3101057.xlsx"
+
 # A browser user agent: the ABS serves a block page to the default urllib one.
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/124.0 Safari/537.36")
@@ -65,6 +73,14 @@ UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
 LINK = re.compile(
     r'href="(/statistics/people/population/national-state-and-territory-population'
     r'/([a-z]{3}-\d{4})/([^"/]+\.xlsx))"',
+    re.I,
+)
+
+# Regional population is a separate annual release with its own page, and the
+# workbook name carries its year range (32180DS0003_2001-25.xlsx).
+REGIONAL_LINK = re.compile(
+    r'href="(/statistics/people/population/regional-population'
+    r'/(\d{4}-\d{2})/(32180DS0003_\d{4}-\d{2}\.xlsx))"',
     re.I,
 )
 
@@ -85,11 +101,11 @@ def discover() -> tuple[str, dict[str, str]]:
     found: dict[str, str] = {}
     releases: set[str] = set()
     for href, release, name in LINK.findall(page):
-        if name in WANTED:
+        if name in WANTED or name == AGE:
             found[name] = BASE + href
             releases.add(release.lower())
 
-    missing = set(WANTED) - set(found)
+    missing = (set(WANTED) | {AGE}) - set(found)
     if missing:
         sys.exit(
             "\nThe ABS page no longer links the workbooks this project reads.\n"
@@ -126,6 +142,63 @@ def verify(path: Path, fragment: str) -> None:
         )
 
 
+def verify_age(path: Path) -> None:
+    """The age table names its columns by age, so check the Index sheet for
+    the Territory and the first row for persons columns instead."""
+    import pandas as pd
+
+    if path.stat().st_size < 20_000:
+        sys.exit(f"{path.name} is only {path.stat().st_size} bytes. "
+                 "That is an error page, not a workbook.")
+    try:
+        index = pd.read_excel(path, sheet_name="Index", header=None)
+        head = pd.read_excel(path, sheet_name="Data1", header=None, nrows=1)
+    except Exception as e:
+        sys.exit(f"{path.name} did not open as an ABS workbook: {e}")
+    text = " ".join(str(v).lower() for v in index.to_numpy().ravel())
+    header = " | ".join(str(v).lower() for v in head.iloc[0])
+    if "northern territory" not in text or "persons" not in header:
+        sys.exit(f"\n{path.name} is not the Northern Territory age table it "
+                 "used to be. Nothing in data/raw was touched.")
+
+
+def regional(force: bool, check_only: bool) -> str:
+    """Check the regional release. Never fatal: it is published once a year
+    on its own timetable, and a problem here must not stop the quarterly
+    national update. Returns a one-line status."""
+    import pandas as pd
+
+    try:
+        page = get(REGIONAL_LANDING).decode("utf-8", "replace")
+    except urllib.error.URLError as e:
+        return f"regional: could not reach the page ({e}); left as it is"
+    links = REGIONAL_LINK.findall(page)
+    if not links:
+        return "regional: workbook link not found on the page; left as it is"
+    href, release, name = links[0]
+    current = REGIONAL_MARKER.read_text().strip() if REGIONAL_MARKER.exists() else "(none)"
+    print(f"Regional latest    : {release}")
+    print(f"Regional in data/raw: {current}")
+    if check_only or (release == current and not force):
+        return "regional: up to date" if release == current else "regional: new release available"
+
+    with tempfile.TemporaryDirectory() as tmp:
+        dest = Path(tmp) / name
+        try:
+            dest.write_bytes(get(BASE + href))
+            t1 = pd.read_excel(dest, sheet_name="Table 1", header=None)
+        except Exception as e:
+            return f"regional: download or open failed ({e}); left as it is"
+        if dest.stat().st_size < 100_000 or not t1.astype(str).apply(
+                lambda c: c.str.contains("Northern Territory")).any().any():
+            return "regional: workbook did not look right; left as it is"
+        for old in RAW.glob("32180DS0003_*.xlsx"):
+            old.unlink()
+        shutil.copy2(dest, RAW / name)
+        REGIONAL_MARKER.write_text(release + "\n")
+    return f"regional: updated to {release} ({name})"
+
+
 def main() -> None:
     force = "--force" in sys.argv
     check_only = "--check" in sys.argv
@@ -137,10 +210,12 @@ def main() -> None:
 
     if check_only:
         print("new release available" if release != current else "up to date")
+        print(regional(force, check_only))
         return
 
     if release == current and not force:
         print("\nNo new release. Nothing downloaded, nothing changed.")
+        print(regional(force, check_only))
         return
 
     with tempfile.TemporaryDirectory() as tmp:
@@ -154,7 +229,10 @@ def main() -> None:
             except urllib.error.URLError as e:
                 sys.exit(f"failed: {e}")
             print(f"{dest.stat().st_size // 1024} KB", end=" ")
-            verify(dest, WANTED[name])
+            if name == AGE:
+                verify_age(dest)
+            else:
+                verify(dest, WANTED[name])
             print("verified")
 
         # Every file is present and readable, so the swap is safe.
@@ -163,7 +241,9 @@ def main() -> None:
         MARKER.write_text(release + "\n")
 
     print(f"\nUpdated data/raw to the {release} release.")
-    print("Now run: python src/pipeline.py && python src/build_dashboard.py")
+    print(regional(force, check_only))
+    print("Now run: python src/pipeline.py && python src/interstate_flows.py "
+          "&& python src/services.py && python src/build_dashboard.py")
     print("The pipeline's reconciliation gate decides whether these figures "
           "are fit to publish.")
 
